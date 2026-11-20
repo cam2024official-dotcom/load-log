@@ -112,11 +112,11 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .sh h3{margin:0;font-size:15px;text-align:center}.sh h1{margin:2px 0;font-size:23px;text-align:center}
 .sh .it{margin:0 0 10px;font-size:11px;font-style:italic;text-align:center}
 .sh table{border-collapse:collapse;width:calc(100% - 24px);margin:0 12px;table-layout:fixed}
-.sh td,.sh th{border:1px solid #000;height:30px;padding:2px 6px;font-size:13px;overflow:hidden;color:#000}
-.sh th{background:#d9d9d9;font-size:12px;height:42px}
+.sh td,.sh th{border:1px solid #000;height:33px;padding:1px 6px;font-size:17px;font-weight:700;overflow:hidden;white-space:nowrap;color:#000}
+.sh th{background:#d9d9d9;font-size:13px;height:42px;white-space:normal}
 .sh td.c{text-align:center}.sh .gap{height:10px;border:0}
-.sh .dsh td{height:28px;font-weight:700;font-size:13px}
-.sh .tot td{background:#eaeaea;font-weight:700}
+.sh .dsh td{height:30px;font-size:16px}
+.sh .tot td{background:#eaeaea;font-size:17px}
 .sh .tot td.r{text-align:right}
 .sh .ft{margin:6px 12px 0;font-size:10px;font-style:italic}
 .sh .pg{float:right;font-style:normal}
@@ -467,6 +467,7 @@ $("chg").onclick=function(){try{localStorage.removeItem(PIN_KEY)}catch(e){}locat
 function ymdLocal(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 function sheetRows(){return ORD.filter(function(o){return o.startAt}).sort(function(a,b){return a.startAt-b.startAt})}
 function amt(x){return (Math.round(x*100)/100).toLocaleString("en-US")}
+function fit(t,max){t=String(t==null?'':t);var s=t.length>max?Math.max(11,Math.floor(17*max/t.length)):17;return '<span style="font-size:'+s+'px">'+esc(t)+'</span>'}
 function renderSheet(){
   var rows=sheetRows(),per=15,pages=Math.max(1,Math.ceil(rows.length/per));
   var dv=$("sv_date").value,dt=dv?dv.slice(5,7)+"/"+dv.slice(8,10)+"/"+dv.slice(0,4):"",sh=$("sv_shift").value;
@@ -479,8 +480,8 @@ function renderSheet(){
     for(var i=p*per;i<p*per+per;i++){
       var o=rows[i],c=['','','','','','',''];
       if(o){var a=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0);
-        c=[esc(o.loader),esc(o.name),esc(o.bol),o.gal?amt(o.gal):'',(o.acidGal||o.waterGal)?amt(a):'',esc(o.ticket),T(o.startAt)+(o.endAt?' - '+T(o.endAt):'')]}
-      r+='<tr><td class="c">'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td class="c">'+c[3]+'</td><td class="c">'+c[4]+'</td><td class="c">'+c[5]+'</td><td class="c" style="font-size:11px">'+c[6]+'</td></tr>';
+        c=[fit(o.loader,15),fit(o.name,10),fit(o.bol,10),o.gal?amt(o.gal):'',(o.acidGal||o.waterGal)?amt(a):'',fit(o.ticket,10),T(o.startAt)+(o.endAt?' - '+T(o.endAt):'')]}
+      r+='<tr><td class="c">'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td class="c">'+c[3]+'</td><td class="c">'+c[4]+'</td><td class="c">'+c[5]+'</td><td class="c" style="font-size:14px">'+c[6]+'</td></tr>';
     }
     var last=p===pages-1;
     out+='<section class="sh"><h3>Daily Tarquin Tank Battery to Trailer</h3><h1>EAST TANK LOADOUT SHEET</h1>'+
