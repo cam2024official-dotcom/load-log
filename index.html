@@ -100,6 +100,38 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .amt .g2{margin-top:0}
 .amt p{margin:8px 0 0;font-size:14px;color:var(--mute);font-weight:600}
 .small{min-height:40px;font-size:15px;padding:4px 12px}
+@page{size:letter landscape;margin:.4in}
+#sheetview{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;padding-bottom:40px}
+.sv-bar{background:var(--card);border-bottom:1px solid var(--line);padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:max(12px,env(safe-area-inset-top,0px))}
+.sv-bar .wrap{max-width:none}
+.sv-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+#sv_note{margin:0 0 10px}
+#sv_wrap{margin:14px max(16px,env(safe-area-inset-left,0px)) 0;overflow:hidden}
+#sv_sheet{width:980px;transform-origin:top left}
+.sh{width:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;padding:14px 0 10px;margin-bottom:16px;border:1px solid #bbb}
+.sh h3{margin:0;font-size:15px;text-align:center}.sh h1{margin:2px 0;font-size:23px;text-align:center}
+.sh .it{margin:0 0 10px;font-size:11px;font-style:italic;text-align:center}
+.sh table{border-collapse:collapse;width:calc(100% - 24px);margin:0 12px;table-layout:fixed}
+.sh td,.sh th{border:1px solid #000;height:30px;padding:2px 6px;font-size:13px;overflow:hidden;color:#000}
+.sh th{background:#d9d9d9;font-size:12px;height:42px}
+.sh td.c{text-align:center}.sh .gap{height:10px;border:0}
+.sh .dsh td{height:28px;font-weight:700;font-size:13px}
+.sh .tot td{background:#eaeaea;font-weight:700}
+.sh .tot td.r{text-align:right}
+.sh .ft{margin:6px 12px 0;font-size:10px;font-style:italic}
+.sh .pg{float:right;font-style:normal}
+.circ{display:inline-block;border:1.5px solid #000;border-radius:50%;padding:0 6px;margin:0 1px}
+@media print{
+ body>*:not(#sheetview){display:none!important}
+ body::before{display:none!important}
+ body{background:#fff!important}
+ #sheetview{position:static!important;overflow:visible!important;background:#fff!important;padding:0!important}
+ .sv-bar{display:none!important}
+ #sv_wrap{margin:0!important;height:auto!important;overflow:visible!important}
+ #sv_sheet{transform:none!important;width:100%!important}
+ .sh{border:0!important;margin:0!important;padding:0!important;page-break-after:always;break-after:page}
+ .sh:last-child{page-break-after:auto;break-after:auto}
+}
 </style>
 </head>
 <body>
@@ -141,6 +173,7 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
     <button id="copy" type="button">Copy shift log</button>
     <button id="clr" type="button">Clear finished orders</button>
   </div>
+  <button id="sheetbtn" class="go" type="button" style="width:100%;margin-top:12px">Print loadout sheet</button>
   <div id="cpbox" class="cp" hidden>
     <label class="f" for="cptxt">Columns are separated by tabs. Press and hold the text to copy it, then paste into a sheet.</label>
     <textarea id="cptxt" readonly rows="8" wrap="off" style="white-space:pre;overflow:auto"></textarea>
@@ -151,6 +184,17 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 </div></main>
 <div id="msg" class="msg" role="alert" hidden></div>
 
+<div id="sheetview" hidden>
+  <div class="sv-bar"><div class="wrap">
+    <div class="sv-row">
+      <div><label class="f" for="sv_date">Date</label><input id="sv_date" type="date"></div>
+      <div><label class="f" for="sv_shift">Shift</label><select id="sv_shift"><option value="">Not marked</option><option value="AM">AM</option><option value="PM">PM</option></select></div>
+    </div>
+    <p id="sv_note" class="note"></p>
+    <div class="acts"><button id="sv_print" class="go" type="button">Print</button><button id="sv_close" type="button">Close</button></div>
+  </div></div>
+  <div id="sv_wrap"><div id="sv_sheet"></div></div>
+</div>
 <script src="config.js"></script>
 <script>
 var PRODUCTS=[["acid","36% acid"],["32","32% HCl"],["28","28% HCl"],["20","20% HCl"],["15","15% HCl"],["10","10% HCl"],["7.5","7.5% HCl"],["5","5% HCl"],["cs100","CableShield 100%"],["cs33","CableShield 33%"],["other","Other"]];
@@ -419,6 +463,54 @@ $("s_go").onclick=function(){submitPin(false)};
 $("s_new").onclick=function(){submitPin(true)};
 $("s_pin").onkeydown=function(e){if(e.key==="Enter")submitPin(false)};
 $("chg").onclick=function(){try{localStorage.removeItem(PIN_KEY)}catch(e){}location.reload()};
+
+function ymdLocal(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function sheetRows(){return ORD.filter(function(o){return o.startAt}).sort(function(a,b){return a.startAt-b.startAt})}
+function amt(x){return (Math.round(x*100)/100).toLocaleString("en-US")}
+function renderSheet(){
+  var rows=sheetRows(),per=15,pages=Math.max(1,Math.ceil(rows.length/per));
+  var dv=$("sv_date").value,dt=dv?dv.slice(5,7)+"/"+dv.slice(8,10)+"/"+dv.slice(0,4):"",sh=$("sv_shift").value;
+  var tr=0,ta=0;
+  rows.forEach(function(o){tr+=parseFloat(o.gal)||0;ta+=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0)});
+  var shiftTxt='Shift: &nbsp;'+(sh==="AM"?'<span class="circ">AM</span>':'AM')+' / '+(sh==="PM"?'<span class="circ">PM</span>':'PM');
+  var out="";
+  for(var p=0;p<pages;p++){
+    var r='';
+    for(var i=p*per;i<p*per+per;i++){
+      var o=rows[i],c=['','','','','','',''];
+      if(o){var a=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0);
+        c=[esc(o.loader),esc(o.name),esc(o.bol),o.gal?amt(o.gal):'',(o.acidGal||o.waterGal)?amt(a):'',esc(o.ticket),T(o.startAt)+(o.endAt?' - '+T(o.endAt):'')]}
+      r+='<tr><td class="c">'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td class="c">'+c[3]+'</td><td class="c">'+c[4]+'</td><td class="c">'+c[5]+'</td><td class="c" style="font-size:11px">'+c[6]+'</td></tr>';
+    }
+    var last=p===pages-1;
+    out+='<section class="sh"><h3>Daily Tarquin Tank Battery to Trailer</h3><h1>EAST TANK LOADOUT SHEET</h1>'+
+     '<p class="it">One sheet per shift. Turn in at end of shift. Actual volume and BOL # must match the scale ticket.</p>'+
+     '<table><colgroup><col style="width:70%"><col style="width:30%"></colgroup><tr class="dsh"><td>Date: &nbsp;'+esc(dt)+'</td><td>'+shiftTxt+'</td></tr></table>'+
+     '<table><tr><td class="gap" colspan="8"></td></tr>'+
+     '<colgroup><col style="width:4.5%"><col style="width:15%"><col style="width:10%"><col style="width:14%"><col style="width:13%"><col style="width:13%"><col style="width:12%"><col style="width:18.5%"></colgroup>'+
+     '<tr><th>#</th><th>Loader</th><th>Trailer #</th><th>BOL #</th><th>Requested<br>Amount (gal)</th><th>Actual<br>Amount (gal)</th><th>Weight<br>Ticket #</th><th>Load Time</th></tr>'+r+
+     (last?'<tr class="tot"><td class="r" colspan="4">SHIFT TOTALS</td><td class="c">'+(rows.length?amt(tr):'')+'</td><td class="c">'+(ta?amt(ta):'')+'</td><td></td><td></td></tr>':'')+
+     '</table><p class="ft">Requested = gallons on the order. Actual = net gallons off the scale ticket.'+(pages>1?'<span class="pg">Page '+(p+1)+' of '+pages+'</span>':'')+'</p></section>';
+  }
+  $("sv_sheet").innerHTML=out;
+  $("sv_note").textContent=rows.length?(rows.length+" load"+(rows.length===1?"":"s")+" on this sheet (started loads only). Actual amount is acid plus water."):"No loads have been started yet, so the sheet is blank.";
+  fitSheet();
+}
+function fitSheet(){
+  var box=$("sv_sheet"),w=$("sv_wrap").clientWidth||980,k=Math.min(1,w/980);
+  box.style.transform="scale("+k+")";
+  $("sv_wrap").style.height=Math.ceil(box.offsetHeight*k)+"px";
+}
+$("sheetbtn").onclick=function(){
+  if(!$("sv_date").value)$("sv_date").value=ymdLocal(new Date());
+  if(!$("sv_shift").value)$("sv_shift").value=new Date().getHours()<12?"AM":"PM";
+  $("sheetview").hidden=false;renderSheet();
+};
+$("sv_close").onclick=function(){$("sheetview").hidden=true};
+$("sv_date").onchange=$("sv_date").oninput=renderSheet;
+$("sv_shift").onchange=renderSheet;
+$("sv_print").onclick=function(){try{window.print()}catch(e){toast("Printing is not available here. Open the app in your browser and try again.")}};
+window.addEventListener("resize",function(){if(!$("sheetview").hidden)fitSheet()});
 init();
 setInterval(tick,1000);
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
