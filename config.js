@@ -1,2 +1,2 @@
-// Filled in so nobody has to type the connection on their phone.
-window.TCL_CONFIG={url:"",code:""};
+// Connection settings. The PIN is typed once on each phone and never stored here.
+window.TCL_CONFIG={url:"https://tarquin-load-log-default-rtdb.firebaseio.com",prefix:"s08pjgadeiwz"};

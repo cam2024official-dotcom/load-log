@@ -104,12 +104,12 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 <div class="stripe"></div>
 <main><div class="wrap">
   <div id="setup" class="panel setup" hidden>
-    <h2>Connect to your crew</h2>
-    <p class="note">Enter the database address and crew code you were given. Everyone with the same two values sees the same orders.</p>
-    <div class="f2"><label class="f" for="s_url">Database address</label><input id="s_url" type="url" autocomplete="off" autocapitalize="off" placeholder="https://something-default-rtdb.firebaseio.com"></div>
-    <div class="f2"><label class="f" for="s_code">Crew code</label><input id="s_code" type="text" autocomplete="off" autocapitalize="off" placeholder="8 or more letters and numbers"></div>
+    <h2>Crew PIN</h2>
+    <p class="note">Enter the PIN your lead gave you. Everyone with the same PIN sees the same orders.</p>
+    <div class="f2"><label class="f" for="s_pin">PIN</label><input id="s_pin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="4 to 8 digits"></div>
     <p id="s_err" class="note" style="color:var(--bad)"></p>
-    <div class="acts"><button id="s_go" class="go" type="button">Connect</button><button id="s_x" type="button">Cancel</button></div>
+    <div class="acts"><button id="s_go" class="go" type="button">Continue</button></div>
+    <div class="acts"><button id="s_new" type="button" hidden>Start a new log with this PIN</button></div>
   </div>
   <div id="app">
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
@@ -141,8 +141,8 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
     <label class="f" for="cptxt">Press and hold the text to copy it</label>
     <textarea id="cptxt" readonly rows="8"></textarea>
   </div>
-  <p class="note">Orders are shared live with everyone using the same crew code. You need a signal to send or receive changes.</p>
-  <div class="tools"><button id="invite" class="small" type="button">Copy crew invite link</button><button id="chg" class="small" type="button">Change connection</button></div>
+  <p class="note">Orders are shared live with everyone using the same PIN. You need a signal to send or receive changes.</p>
+  <div class="tools"><button id="chg" class="small" type="button">Change PIN</button></div>
   </div>
 </div></main>
 <div id="msg" class="msg" role="alert" hidden></div>
@@ -350,32 +350,20 @@ function onDataErr(e){
   var c=String((e&&e.code)||"").toUpperCase();
   setSync("bad",c.indexOf("PERMISSION")>=0?"Access denied. Check the crew code in Change connection":"Lost the connection to shared data")
 }
-var CFG_KEY="tcw-loadlog-conn";
-function readCfg(){
-  var c=window.TCL_CONFIG||{};
-  if(c.url&&c.code)return {url:c.url,code:c.code};
-  try{var s=JSON.parse(localStorage.getItem(CFG_KEY)||"null");if(s&&s.url&&s.code)return s}catch(e){}
-  return null;
-}
-function saveCfg(c){try{localStorage.setItem(CFG_KEY,JSON.stringify(c))}catch(e){}}
-function fromHash(){
-  var h=location.hash.replace(/^#/,"");if(!h)return null;
-  var p={};h.split("&").forEach(function(kv){var i=kv.indexOf("=");if(i>0)p[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1))});
-  if(p.url&&p.code){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}return {url:p.url,code:p.code}}
-  return null;
-}
-function cleanCfg(url,code){
-  url=String(url||"").trim().replace(/\/+$/,"");code=String(code||"").trim();
-  if(!/^https:\/\/[A-Za-z0-9.-]+$/.test(url))return {err:"The database address should look like https://something-default-rtdb.firebaseio.com"};
-  if(!/^[A-Za-z0-9_-]{8,40}$/.test(code))return {err:"The crew code must be 8 to 40 letters or numbers, with no spaces."};
-  return {url:url,code:code};
-}
-async function makeFirebase(cfg){
+var PIN_KEY="tcw-loadlog-pin";
+function conf(){return window.TCL_CONFIG||{}}
+function readPin(){try{return localStorage.getItem(PIN_KEY)||""}catch(e){return ""}}
+function savePin(p){try{localStorage.setItem(PIN_KEY,p)}catch(e){}}
+function okPin(p){return /^[0-9]{4,8}$/.test(p)}
+async function makeFirebase(url){
   var A=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
   var D=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
-  var app=A.initializeApp({databaseURL:cfg.url});
-  var db=D.getDatabase(app),base="crews/"+cfg.code+"/orders";
+  var app=A.initializeApp({databaseURL:url});
+  var db=D.getDatabase(app),root="crews/x",base=root+"/orders";
   return {
+    setCode:function(code){root="crews/"+code;base=root+"/orders"},
+    exists:function(){return D.get(D.ref(db,root+"/meta")).then(function(s){return s.exists()})},
+    createMeta:function(){return D.set(D.ref(db,root+"/meta"),{created:Date.now()})},
     subscribe:function(cb,err){D.onValue(D.ref(db,base),function(s){var v=s.val()||{};cb(Object.keys(v).map(function(k){var x=Object.assign({},v[k]);x.id=k;return x}))},err)},
     onConn:function(cb){D.onValue(D.ref(db,".info/connected"),function(s){cb(s.val()===true)})},
     newId:function(){return D.push(D.ref(db,base)).key},
@@ -384,38 +372,42 @@ async function makeFirebase(cfg){
     remove:function(id){return D.remove(D.ref(db,base+"/"+id))}
   };
 }
-function showSetup(msg){
-  $("app").hidden=true;$("setup").hidden=false;$("s_err").textContent=msg||"";
-  var c=readCfg();if(c){$("s_url").value=c.url;$("s_code").value=c.code}
+function showSetup(msg,canNew){
+  $("app").hidden=true;$("setup").hidden=false;$("s_err").textContent=msg||"";$("s_new").hidden=!canNew;
+  $("s_go").disabled=false;
 }
-async function connect(cfg){
+async function connect(pin,create){
+  $("s_err").textContent="Connecting";$("s_go").disabled=true;$("s_new").hidden=true;
+  try{if(!DL)DL=window.__DL||await makeFirebase(conf().url)}catch(e){DL=null;showSetup("Could not load the shared database. Check your signal and try again.");return}
+  DL.setCode((conf().prefix||"")+pin);
+  var ex;
+  try{ex=await DL.exists()}catch(e){
+    var c=String((e&&e.code)||"").toUpperCase();
+    showSetup(c.indexOf("PERMISSION")>=0?"Access denied. The database rules may not be published yet.":"Can't reach the database. Check your signal and try again.");return}
+  if(!ex){
+    if(!create){showSetup("No log found for that PIN. Check the number, or start a new log with it.",true);return}
+    try{await DL.createMeta()}catch(e){showSetup("Could not create the log. Check your signal and try again.");return}
+  }
+  savePin(pin);
   $("setup").hidden=true;$("app").hidden=false;
   build();setSync("","Connecting");
-  try{DL=window.__DL||await makeFirebase(cfg)}catch(e){DL=null;setSync("bad","Could not load the shared database. Check your connection");return}
   loadTimer=setTimeout(function(){setSync("warn","Can't reach shared data yet. What you see may be out of date")},10000);
   DL.onConn(function(v){online=v;syncState()});
   DL.subscribe(onData,onDataErr);
 }
-async function init(){
-  var h=fromHash();if(h){var ch=cleanCfg(h.url,h.code);if(!ch.err)saveCfg(ch)}
-  var c=readCfg();
-  if(!c){showSetup("");return}
-  connect(c);
+function init(){
+  var p=readPin();
+  if(okPin(p)){connect(p,false)}else showSetup("");
 }
-$("s_go").onclick=function(){
-  var c=cleanCfg($("s_url").value,$("s_code").value);
-  if(c.err){$("s_err").textContent=c.err;return}
-  saveCfg(c);location.reload();
-};
-$("chg").onclick=function(){showSetup("")};
-$("s_x").onclick=function(){if(readCfg()){$("setup").hidden=true;$("app").hidden=false}};
-$("invite").onclick=function(){
-  var c=readCfg();if(!c)return;
-  var link=location.origin+location.pathname+"#url="+encodeURIComponent(c.url)+"&code="+encodeURIComponent(c.code);
-  var ta=$("cptxt"),box=$("cpbox");ta.value=link;
-  var show=function(){box.hidden=false;try{ta.focus();ta.select()}catch(e){}};
-  try{navigator.clipboard.writeText(link).then(function(){$("invite").textContent="Link copied";setTimeout(function(){$("invite").textContent="Copy crew invite link"},2000)},show)}catch(e){show()}
-};
+function submitPin(create){
+  var p=$("s_pin").value.trim();
+  if(!okPin(p)){$("s_err").textContent="The PIN is 4 to 8 digits, numbers only.";return}
+  connect(p,create);
+}
+$("s_go").onclick=function(){submitPin(false)};
+$("s_new").onclick=function(){submitPin(true)};
+$("s_pin").onkeydown=function(e){if(e.key==="Enter")submitPin(false)};
+$("chg").onclick=function(){try{localStorage.removeItem(PIN_KEY)}catch(e){}location.reload()};
 init();
 setInterval(tick,1000);
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
