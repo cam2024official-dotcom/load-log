@@ -6,12 +6,12 @@
 <meta name="theme-color" content="#0b3d91">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Load Log">
+<meta name="apple-mobile-web-app-title" content="Tarquin Hub">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
-<title>Load Log</title>
+<title>Tarquin Hub</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
@@ -132,12 +132,58 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
  .sh{border:0!important;margin:0!important;padding:0!important;page-break-after:always;break-after:page}
  .sh:last-child{page-break-after:auto;break-after:auto}
 }
+:root{--amber:#a9d0ff}
+.hd{display:flex;align-items:center;gap:14px}.hdt{min-width:0}
+.menu{flex:none;width:48px;height:48px;min-height:48px;padding:0;border:0;border-radius:12px;background:rgba(255,255,255,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.menu i{display:block;width:22px;height:3px;border-radius:2px;background:#fff}
+.menu:focus-visible{outline:3px solid #fff}
+#scrim{position:fixed;inset:0;background:rgba(5,15,35,.55);z-index:39;opacity:0;pointer-events:none;transition:opacity .2s}
+#scrim.open{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--card);z-index:40;transform:translateX(-102%);visibility:hidden;transition:transform .2s,visibility 0s .2s;box-shadow:4px 0 24px rgba(0,0,0,.25);overflow:auto}
+#drawer.open{transform:none;visibility:visible;transition:transform .2s}
+#drawer .dh{background:var(--head);color:#fff;padding-top:max(22px,calc(env(safe-area-inset-top,0px) + 14px));padding-bottom:18px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:18px}
+#drawer .dh b{display:block;font:700 28px/1 var(--display);letter-spacing:.01em}
+#drawer .dh span{display:block;margin-top:6px;color:#bcd6f5;font-size:15px}
+#drawer button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-left:6px solid transparent;border-radius:0;background:transparent;min-height:64px;padding:14px 18px;font:700 20px/1.2 var(--body)}
+#drawer button[aria-current="page"]{background:var(--hl);border-left-color:var(--acc);color:var(--acc)}
+.calc label.big{display:block;font-weight:600;font-size:15px;color:var(--mute);margin:20px 0 8px}
+.calc .tabs{display:flex;flex-wrap:wrap;gap:0;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:4px}
+.calc .tabs button{flex:1 1 30%;min-width:0;border:0;border-radius:10px;background:transparent;font-weight:600;padding:10px 6px;font-size:15px;line-height:1.15;min-height:48px}
+.calc .tabs button[aria-pressed="true"]{background:var(--acc);color:var(--accink)}
+.calc .chips{display:flex;gap:8px;flex-wrap:wrap}
+.calc .chips button{padding:8px 12px;min-height:40px;border-radius:999px;font-weight:600}
+.calc .chips button[aria-pressed="true"]{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:700}
+.calc input[type=number]{width:100%;font:700 48px/1.1 var(--display);padding:8px 14px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
+.calc .order{margin:16px 0 4px;padding:10px 12px;border-left:5px solid var(--acc);border-radius:0 12px 12px 0;background:var(--card);font-weight:600;font-size:16px}
+.calc .row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:8px;box-shadow:0 1px 3px rgba(11,61,145,.08)}
+.calc .row .n{display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px;min-width:0}
+.calc .row .t{font-weight:600}
+.calc .row .w{display:block;font-size:14px;color:var(--mute);font-weight:500}
+.calc .row .v{font:700 38px/1 var(--display);text-align:right;letter-spacing:.01em;flex:none}
+.calc .row .v small{font:600 15px var(--body);color:var(--mute);letter-spacing:0}
+.calc .sub{margin-left:26px;background:var(--hl);border-left:4px solid var(--acc)}
+.calc .sub .v{font-size:30px}
+.calc .tot{background:var(--head);border-color:var(--head);color:#fff;margin-top:14px;padding:18px 16px}
+.calc .tot .v{color:var(--amber);font-size:46px}
+.calc .tot .v small,.calc .tot .w{color:#bcd6f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .calc .tot{border-color:var(--acc)}}
+:root[data-theme="dark"] .calc .tot{border-color:var(--acc)}
+.calc .b{font:700 18px/1 var(--display);font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--head);color:var(--amber);display:grid;place-items:center;flex:none}
+.calc details{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.calc summary{font-weight:700;cursor:pointer;min-height:36px;display:flex;align-items:center}
+.calc summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.calc .wg{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin-top:8px}
+.calc .wg input{font:600 18px/1.2 var(--body);padding:8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.calc .warn{color:var(--warn);font-weight:600}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap"><h1>Load Log</h1><p>Tarquin Coolpro current orders, shared live</p></div></header>
+<header class="top"><div class="wrap hd">
+  <button id="menu" class="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  <div class="hdt"><h1 id="vt">Load Log</h1><p id="vs">Tarquin Coolpro current orders, shared live</p></div>
+</div></header>
 <div class="stripe"></div>
-<main><div class="wrap">
+<main id="v-log"><div class="wrap">
   <div id="setup" class="panel setup" hidden>
     <h2>Crew PIN</h2>
     <p class="note">Enter the PIN your lead gave you. Everyone with the same PIN sees the same orders.</p>
@@ -184,6 +230,39 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 </div></main>
 <div id="msg" class="msg" role="alert" hidden></div>
 
+
+<main id="v-dil" class="calc" hidden><div class="wrap">
+  <div class="tabs" id="ctabs"></div>
+  <div id="cpcts" class="chips" style="margin-top:12px"></div>
+  <label class="big" for="cg">Total gallons</label>
+  <input id="cg" type="number" inputmode="decimal" min="0" step="any" value="500">
+  <div class="chips" id="cq" style="margin-top:10px"></div>
+  <div id="cout"></div>
+  <p class="note">Blend factors come from the CableShield charts effective 11/10/2026 and the Acid Dilution Chart, and are scaled to any gallon amount. Results match the printed rows. Check against your chart before loading. Weights (lb per gallon) can be changed on the Load Weight page.</p>
+</div></main>
+<main id="v-lw" class="calc" hidden><div class="wrap">
+  <label class="big" for="clt">Light weight (scale in), lb</label>
+  <input id="clt" type="number" inputmode="decimal" min="0" step="any">
+  <label class="big" for="chv">Heavy weight (scale out), lb</label>
+  <input id="chv" type="number" inputmode="decimal" min="0" step="any">
+  <label class="big">Product</label>
+  <div class="chips" id="cpr"></div>
+  <label class="big" for="ccw">Product weight, lb per gallon</label>
+  <input id="ccw" type="number" inputmode="decimal" min="0" step="any">
+  <div id="cout2"></div>
+  <details>
+    <summary>Weights (lb per gallon)</summary>
+    <div class="wg" id="cwg"></div>
+    <p class="note">Acid weights are from your Acid concentrations and weights sheet. Water is the standard 8.34. <span class="warn">5% HCl is not on that sheet: 8.5 is an estimate, so confirm it.</span> Product weights (Y007, Y007A, A272) were not provided, so those show gallons only.</p>
+  </details>
+</div></main>
+<div id="scrim"></div>
+<nav id="drawer" aria-label="Sections" aria-hidden="true">
+  <div class="dh"><b>Tarquin Coolpro</b><span>Loader hub</span></div>
+  <button type="button" data-view="log">Load Log</button>
+  <button type="button" data-view="dil">Acid Dilution</button>
+  <button type="button" data-view="lw">Load Weight</button>
+</nav>
 <div id="sheetview" hidden>
   <div class="sv-bar"><div class="wrap">
     <div class="sv-row">
@@ -512,6 +591,95 @@ $("sv_date").onchange=$("sv_date").oninput=renderSheet;
 $("sv_shift").onchange=renderSheet;
 $("sv_print").onclick=function(){try{window.print()}catch(e){toast("Printing is not available here. Open the app in your browser and try again.")}};
 window.addEventListener("resize",function(){if(!$("sheetview").hidden)fitSheet()});
+
+(function(){
+var $=function(i){return document.getElementById("c"+i)};
+var DIL={5:[.123,.877],7.5:[.187,.813],10:[.253,.747],15:[.388,.612],20:[.53,.47],28:[.75,.25],32:[.88,.12]};
+var BL={
+ c100:{name:"CableShield 100%",hcl:15,f:{hcl:.97,y7:.01,y7a:.003,a272:.017}},
+ c33:{name:"CableShield 33%",hcl:5,f:{hcl:.99,y7:.01/3,y7a:.001,a272:.017/3}}
+};
+var DEF={acid:9.85,water:8.34,5:8.5,7.5:8.6,10:8.7,15:9.0,20:9.2,28:9.5,32:9.68};
+var W=Object.assign({},DEF);
+try{var s=JSON.parse(localStorage.getItem("tcw")||"null");if(s)W=Object.assign(W,s)}catch(e){}
+var mode="dil",pct=15,prodKey="acid";
+function fmt(n){var d=n<1?3:(n<500?2:1);return n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function lb(n){return Math.round(n).toLocaleString("en-US")+" lb"}
+function row(name,gal,wt,cls){var m=/^(\d)\. (.*)/.exec(name),b="";if(m){b='<i class="b">'+m[1]+'</i>';name=m[2]}return '<div class="row '+(cls||"")+'"><span class="n">'+b+'<span class="t">'+name+(wt!=null?'<span class="w">'+lb(wt)+'</span>':'')+'</span></span><span class="v">'+fmt(gal)+' <small>gal</small></span></div>'}
+function rowu(name,val,unit,cls,sub){return '<div class="row '+(cls||"")+'"><span class="n"><span class="t">'+name+(sub?'<span class="w">'+sub+'</span>':'')+'</span></span><span class="v">'+val+' <small>'+unit+'</small></span></div>'}
+var PN=[["acid","36%"],["32","32%"],["28","28%"],["20","20%"],["15","15%"],["10","10%"],["7.5","7.5%"],["5","5%"]];
+function rp(){$("pr").innerHTML=PN.map(function(p){return '<button data-k="'+p[0]+'" aria-pressed="'+(prodKey===p[0])+'">'+p[1]+'</button>'}).join("")}
+function calcLw(){
+  if(prodKey!==null)$("cw").value=prodKey==="acid"?W.acid:W[prodKey];
+  var L=parseFloat($("lt").value),H=parseFloat($("hv").value),P=parseFloat($("cw").value);
+  var msg=function(t){$("out2").innerHTML='<div class="order">'+t+'</div>'};
+  if(!(L>=0)||!(H>=0)){msg("Enter the light weight and the heavy weight.");return}
+  if(H<=L){msg("Heavy weight must be more than light weight.");return}
+  if(!(P>0)){msg("Enter the product weight per gallon.");return}
+  var net=H-L,gl=net/P,c=function(n){return Math.round(n).toLocaleString("en-US")};
+  $("out2").innerHTML=rowu("Heavy weight (scale out)",c(H),"lb")+rowu("Light weight (scale in)",c(L),"lb")+rowu("Net product (heavy minus light)",c(net),"lb")+rowu("Gallons loaded",fmt(gl),"gal","tot",c(net)+" lb ÷ "+P+" lb/gal");
+}
+function calcDil(){
+ var G=parseFloat($("g").value)||0,h="";
+ if(mode==="dil"){
+  var d=DIL[pct],a=G*d[0],w=G*d[1];
+  h+='<div class="order">Add water first, then acid, to make '+pct+'% HCl.</div>';
+  h+=row("Water",w,w*W.water)+row("36% acid",a,a*W.acid);
+  h+=row("Total "+pct+"% HCl",G,G*W[pct],"tot");
+ }else{
+  var b=BL[mode],f=b.f,hg=G*f.hcl,d2=DIL[b.hcl],a2=hg*d2[0],w2=hg*d2[1];
+  h+='<div class="order">Blend the '+b.hcl+'% HCl first. Then add Y007, then Y007A, then A272.</div>';
+  h+=row("1. "+b.hcl+"% HCl",hg,hg*W[b.hcl]);
+  h+=row("Water",w2,w2*W.water,"sub")+row("36% acid",a2,a2*W.acid,"sub");
+  h+=row("2. Y007",G*f.y7)+row("3. Y007A",G*f.y7a)+row("4. A272",G*f.a272);
+  h+=row("Total "+b.name,G,null,"tot");
+ }
+ $("out").innerHTML=h;
+}
+function calc(){calcDil();calcLw()}
+function tabs(){
+ var t=[["dil","Acid dilution"],["c100","CableShield 100%"],["c33","CableShield 33%"]];
+ $("tabs").innerHTML=t.map(function(x){return '<button data-m="'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("");
+ $("pcts").style.display=mode==="dil"?"flex":"none";
+ rp();
+ $("pcts").innerHTML=Object.keys(DIL).map(function(p){return '<button data-p="'+p+'" aria-pressed="'+(+p===pct)+'">'+p+'%</button>'}).join("");
+}
+$("tabs").onclick=function(e){var m=e.target.getAttribute("data-m");if(m){mode=m;tabs();calcDil()}};
+$("pcts").onclick=function(e){var p=e.target.getAttribute("data-p");if(p){pct=+p;tabs();calcDil()}};
+$("q").innerHTML=[100,265,330,500,1000,2000,3000,5000].map(function(n){return '<button data-g="'+n+'">'+n.toLocaleString("en-US")+'</button>'}).join("");
+$("q").onclick=function(e){var g=e.target.getAttribute("data-g");if(g){$("g").value=g;calcDil()}};
+$("g").oninput=calcDil;
+$("lt").oninput=calcLw;$("hv").oninput=calcLw;
+$("pr").onclick=function(e){var k=e.target.getAttribute("data-k");if(k){prodKey=k;rp();calcLw()}};
+$("cw").oninput=function(){prodKey=null;rp();calcLw()};
+var names=[["acid","36% acid"],["water","Water"],[5,"5% HCl (estimate)"],[7.5,"7.5% HCl"],[10,"10% HCl"],[15,"15% HCl"],[20,"20% HCl"],[28,"28% HCl"],[32,"32% HCl"]];
+$("wg").innerHTML=names.map(function(n){return '<label for="cwt'+n[0]+'">'+n[1]+'</label><input id="cwt'+n[0]+'" data-k="'+n[0]+'" type="number" inputmode="decimal" step="any" value="'+W[n[0]]+'">'}).join("");
+$("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e.target.value);if(k&&v>0){W[k]=v;try{localStorage.setItem("tcw",JSON.stringify(W))}catch(x){}calc()}};
+tabs();calc();
+})();
+
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"]};
+function setDrawer(open){
+  var was=$("drawer").classList.contains("open");
+  $("drawer").classList.toggle("open",open);$("scrim").classList.toggle("open",open);
+  $("drawer").setAttribute("aria-hidden",String(!open));$("menu").setAttribute("aria-expanded",String(open));
+  $("menu").setAttribute("aria-label",open?"Close menu":"Open menu");
+  if(open){var cur=$("drawer").querySelector('[aria-current="page"]')||$("drawer").querySelector("button");try{cur.focus()}catch(e){}}
+  else if(was){try{$("menu").focus()}catch(e){}}
+}
+function showView(k){
+  var v=VIEWS[k];if(!v)return;
+  Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
+  $("vt").textContent=v[1];$("vs").textContent=v[2];
+  var bs=$("drawer").querySelectorAll("button[data-view]");
+  for(var i=0;i<bs.length;i++){if(bs[i].getAttribute("data-view")===k)bs[i].setAttribute("aria-current","page");else bs[i].removeAttribute("aria-current")}
+  setDrawer(false);window.scrollTo(0,0);
+}
+$("menu").onclick=function(){setDrawer(!$("drawer").classList.contains("open"))};
+$("scrim").onclick=function(){setDrawer(false)};
+$("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-view]"):null;if(b)showView(b.getAttribute("data-view"))};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("open"))setDrawer(false)});
+showView("log");
 init();
 setInterval(tick,1000);
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
