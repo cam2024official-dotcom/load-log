@@ -146,6 +146,9 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 #drawer .dh span{display:block;margin-top:6px;color:#bcd6f5;font-size:15px}
 #drawer button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-left:6px solid transparent;border-radius:0;background:transparent;min-height:64px;padding:14px 18px;font:700 20px/1.2 var(--body)}
 #drawer button[aria-current="page"]{background:var(--hl);border-left-color:var(--acc);color:var(--acc)}
+.chk{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px;margin:0;cursor:pointer}
+.chk input{width:26px;height:26px;min-height:0;padding:0;margin:0;flex:none;accent-color:var(--acc)}
+.g2 .note{margin:0}
 .calc label.big{display:block;font-weight:600;font-size:15px;color:var(--mute);margin:20px 0 8px}
 .calc .tabs{display:flex;flex-wrap:wrap;gap:0;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:4px}
 .calc .tabs button{flex:1 1 30%;min-width:0;border:0;border-radius:10px;background:transparent;font-weight:600;padding:10px 6px;font-size:15px;line-height:1.15;min-height:48px}
@@ -206,8 +209,12 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div><label class="f" for="a_gal">Gallons</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
       <div><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"></div>
+      <div><label class="f" for="a_st">Start time</label><input id="a_st" type="time"></div>
+      <div><label class="f" for="a_en">End time</label><input id="a_en" type="time"></div>
+      <p class="note full">Fill in start and end only for a load that already happened. Leave them blank for a new order.</p>
       <div><label class="f" for="a_tk">Ticket #</label><input id="a_tk" type="text" autocomplete="off" placeholder="Ticket number"></div>
       <div><label class="f" for="a_bl">BOL #</label><input id="a_bl" type="text" autocomplete="off" placeholder="BOL number"></div>
+      <div class="full"><label class="chk"><input id="a_sh" type="checkbox" checked> Include on loadout sheet</label></div>
       <div class="full"><label class="f" for="a_nt">Notes</label><textarea id="a_nt" placeholder="Anything the next shift should know"></textarea></div>
     </div>
     <div class="acts"><button id="a_go" class="go" type="button">Save order</button><button id="a_x" type="button">Cancel</button></div>
@@ -309,6 +316,8 @@ function viewCard(o){
   if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
   if(w)b+='<div class="amt"><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" placeholder="Loader name" value="'+esc(o.loader)+'"></div>';
   else if(o.loader)b+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';
+  if(w)b+='<div class="amt"><label class="chk"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label></div>';
+  else if(o.onSheet===false)b+='<div class="meta"><span>Not on loadout sheet</span></div>';
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
@@ -326,6 +335,8 @@ function editCard(o){
    '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod)+'</select></div>'+
    '<div><label class="f" for="e_gal'+i+'">Gallons</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
    '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
+   '<div><label class="f" for="e_st'+i+'">Start time</label><input id="e_st'+i+'" data-f="startT" data-id="'+i+'" type="time" value="'+tval(o.startAt)+'"></div>'+
+   '<div><label class="f" for="e_en'+i+'">End time</label><input id="e_en'+i+'" data-f="endT" data-id="'+i+'" type="time" value="'+tval(o.endAt)+'"></div>'+
    '<div><label class="f" for="e_tk'+i+'">Ticket #</label><input id="e_tk'+i+'" data-f="ticket" data-id="'+i+'" type="text" value="'+esc(o.ticket)+'"></div>'+
    '<div><label class="f" for="e_bl'+i+'">BOL #</label><input id="e_bl'+i+'" data-f="bol" data-id="'+i+'" type="text" value="'+esc(o.bol)+'"></div>'+
    '<div class="full"><label class="f" for="e_nt'+i+'">Notes</label><textarea id="e_nt'+i+'" data-f="notes" data-id="'+i+'">'+esc(o.notes)+'</textarea></div>'+
@@ -379,7 +390,7 @@ function tick(){
 }
 
 function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
-function isEditingNow(){var a=document.activeElement;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
+function isEditingNow(){var a=document.activeElement;if(a&&a.type==="checkbox")return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
 function hasDeb(){for(var k in deb)return true;return false}
 function refresh(){if(isEditingNow()||hasDeb()){pendingBuild=true;tick();return}build()}
 
@@ -391,6 +402,8 @@ function onWriteErr(e){
 function enqueue(id,fn){q[id]=(q[id]||Promise.resolve()).then(fn).catch(onWriteErr)}
 function upd(id,data){enqueue(id,function(){return DL.update(id,data)})}
 
+function atTime(s,base){var p=String(s).split(":"),d=new Date(base);d.setHours(+p[0],+p[1],0,0);return d.getTime()}
+function pastTime(s){var t=atTime(s,Date.now());if(t>Date.now()+5*60000)t-=864e5;return t}
 function flushKey(k){
   var d=deb[k];if(!d)return 0;
   clearTimeout(d.t);delete deb[k];
@@ -398,6 +411,20 @@ function flushKey(k){
   var f=d.f,v=d.v,patch={};
   if(f==="lbt"){var l=lbtFrom(v);if((o.lbtAt||null)===(l||null))return 0;patch.lbtAt=l}
   else if(f==="acidGal"||f==="waterGal"){var n=parseFloat(v),nv=(String(v).trim()===""||!(n>=0))?null:n;var cur=(o[f]===undefined||o[f]===null)?null:parseFloat(o[f]);if(cur===nv)return 0;patch[f]=nv}
+  else if(f==="startT"){
+    if(!v)return 0;
+    var t=o.startAt?atTime(v,o.startAt):pastTime(v);if(o.startAt===t)return 0;
+    patch.startAt=t;
+    if(o.endAt&&o.endAt<t){var e=atTime(tval(o.endAt),t);if(e<t)e+=864e5;patch.endAt=e}
+  }
+  else if(f==="endT"){
+    if(!v){if(o.endAt==null)return 0;patch.endAt=null}
+    else{
+      if(!o.startAt){toast("Set a start time first.");return 0}
+      var t2=atTime(v,o.endAt||o.startAt);if(t2<o.startAt)t2+=864e5;
+      if(o.endAt===t2)return 0;patch.endAt=t2;
+    }
+  }
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
   else{var s=String(v).trim();if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
@@ -427,11 +454,15 @@ function doAct(a,id){
 function addOrder(){
   if(!DL||!can())return;
   var gal=parseFloat($("a_gal").value);
-  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,createdAt:Date.now()};
+  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  var st=$("a_st").value,en=$("a_en").value;
+  if(en&&!st){toast("Add a start time too, or clear the end time.");return}
+  if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
   var nid=DL.newId();
   enqueue(nid,function(){return DL.set(nid,data)});
   rememberLoader($("a_ld").value);
-  ["a_name","a_tk","a_bl","a_nt","a_lbt"].forEach(function(i){$(i).value=""});
+  ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
+  $("a_sh").checked=true;
   $("addp").hidden=true;
 }
 function buildText(){
@@ -445,7 +476,7 @@ function buildText(){
 }
 
 $("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act");if(a)doAct(a,b.getAttribute("data-id"))};
-function onEdit(e){var f=e.target.getAttribute("data-f");if(f)setField(e.target.getAttribute("data-id"),f,e.target.value)}
+function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}if(f)setField(e.target.getAttribute("data-id"),f,e.target.value)}
 $("list").oninput=onEdit;$("list").onchange=onEdit;
 $("list").addEventListener("focusout",function(){setTimeout(function(){
   var n=flushAll();
@@ -544,7 +575,7 @@ $("s_pin").onkeydown=function(e){if(e.key==="Enter")submitPin(false)};
 $("chg").onclick=function(){try{localStorage.removeItem(PIN_KEY)}catch(e){}location.reload()};
 
 function ymdLocal(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
-function sheetRows(){return ORD.filter(function(o){return o.startAt}).sort(function(a,b){return a.startAt-b.startAt})}
+function sheetRows(){return ORD.filter(function(o){return o.startAt&&o.onSheet!==false}).sort(function(a,b){return a.startAt-b.startAt})}
 function amt(x){return (Math.round(x*100)/100).toLocaleString("en-US")}
 function fit(t,max){t=String(t==null?'':t);var s=t.length>max?Math.max(11,Math.floor(17*max/t.length)):17;return '<span style="font-size:'+s+'px">'+esc(t)+'</span>'}
 function renderSheet(){
@@ -573,7 +604,7 @@ function renderSheet(){
      '</table><p class="ft">Requested = gallons on the order. Actual = net gallons off the scale ticket.'+(pages>1?'<span class="pg">Page '+(p+1)+' of '+pages+'</span>':'')+'</p></section>';
   }
   $("sv_sheet").innerHTML=out;
-  $("sv_note").textContent=rows.length?(rows.length+" load"+(rows.length===1?"":"s")+" on this sheet (started loads only). Actual amount is acid plus water."):"No loads have been started yet, so the sheet is blank.";
+  $("sv_note").textContent=rows.length?(rows.length+" load"+(rows.length===1?"":"s")+" on this sheet (started loads marked for the sheet). Actual amount is acid plus water."):"No started loads are marked for the sheet, so it is blank.";
   fitSheet();
 }
 function fitSheet(){
