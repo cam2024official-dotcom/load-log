@@ -351,7 +351,8 @@ function onDataErr(e){
   setSync("bad",c.indexOf("PERMISSION")>=0?"Access denied. Check the crew code in Change connection":"Lost the connection to shared data")
 }
 var PIN_KEY="tcw-loadlog-pin";
-function conf(){return window.TCL_CONFIG||{}}
+var DEFAULT_CONF={url:"https://tarquin-load-log-default-rtdb.firebaseio.com",prefix:"s08pjgadeiwz"};
+function conf(){var c=window.TCL_CONFIG||{};return {url:c.url||DEFAULT_CONF.url,prefix:c.prefix||DEFAULT_CONF.prefix}}
 function readPin(){try{return localStorage.getItem(PIN_KEY)||""}catch(e){return ""}}
 function savePin(p){try{localStorage.setItem(PIN_KEY,p)}catch(e){}}
 function okPin(p){return /^[0-9]{4,8}$/.test(p)}
@@ -378,7 +379,7 @@ function showSetup(msg,canNew){
 }
 async function connect(pin,create){
   $("s_err").textContent="Connecting";$("s_go").disabled=true;$("s_new").hidden=true;
-  try{if(!DL)DL=window.__DL||await makeFirebase(conf().url)}catch(e){DL=null;showSetup("Could not load the shared database. Check your signal and try again.");return}
+  try{if(!DL)DL=window.__DL||await makeFirebase(conf().url)}catch(e){DL=null;showSetup("Could not load the shared database ("+String((e&&e.message)||e).slice(0,120)+"). Check your signal and try again.");return}
   DL.setCode((conf().prefix||"")+pin);
   var ex;
   try{ex=await DL.exists()}catch(e){
