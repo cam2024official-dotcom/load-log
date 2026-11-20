@@ -96,6 +96,9 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .setup h2{margin-top:6px}
 .setup p{margin:0 0 12px}
 .setup .f2{margin-bottom:12px}
+.amt{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.amt .g2{margin-top:0}
+.amt p{margin:8px 0 0;font-size:14px;color:var(--mute);font-weight:600}
 .small{min-height:40px;font-size:15px;padding:4px 12px}
 </style>
 </head>
@@ -182,6 +185,10 @@ function viewCard(o){
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
+  if(st==="done"){
+    if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p></div>';
+    else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
+  }
   if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+(rmId===o.id?' class="arm"':'')+'>'+(rmId===o.id?"Tap again to remove":"Remove")+'</button></div>';
   return '<div class="ord '+st+'">'+b+'</div>';
 }
@@ -225,6 +232,8 @@ function tick(){
       else if(st==="loading")t.textContent="Loading: "+hms(now-o.startAt);
       else t.textContent="Took "+hm(o.endAt-(o.startAt||o.endAt));
     }
+    var at=$("at-"+o.id);
+    if(at){var a1=parseFloat(o.acidGal)||0,w1=parseFloat(o.waterGal)||0;at.textContent=(a1||w1)?"Total "+num(a1+w1)+" gal":"Optional. Enter what was actually loaded."}
     if(ch){
       var cls="chip",tx="";
       if(st==="done"){
@@ -261,6 +270,7 @@ function flushKey(k){
   var o=find(d.id);if(!o)return 0;
   var f=d.f,v=d.v,patch={};
   if(f==="lbt"){var l=lbtFrom(v);if((o.lbtAt||null)===(l||null))return 0;patch.lbtAt=l}
+  else if(f==="acidGal"||f==="waterGal"){var n=parseFloat(v),nv=(String(v).trim()===""||!(n>=0))?null:n;var cur=(o[f]===undefined||o[f]===null)?null:parseFloat(o[f]);if(cur===nv)return 0;patch[f]=nv}
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
   else{var s=String(v).trim();if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
@@ -303,6 +313,7 @@ function buildText(){
     if(st==="done"){if(o.startAt){p.push("Started "+T(o.startAt));}p.push("Ended "+T(o.endAt));if(o.startAt)p.push("Took "+hm(o.endAt-o.startAt));if(o.lbtAt)p.push(o.endAt<=o.lbtAt?"Out "+hm(o.lbtAt-o.endAt)+" early":"Out "+hm(o.endAt-o.lbtAt)+" late")}
     else if(st==="loading")p.push("Loading, started "+T(o.startAt));
     else p.push("Waiting");
+    if(st==="done"&&(o.acidGal||o.waterGal))p.push("Acid "+num(o.acidGal||0)+" gal, water "+num(o.waterGal||0)+" gal");
     if(o.notes)p.push("Notes: "+String(o.notes).replace(/\s*\n\s*/g," "));
     lines.push(p.join(" | "));
   });
