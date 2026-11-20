@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3d91">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Load Log">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>Load Log</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: blue header band, three count tiles, add-order panel, then orders grouped Loading, Waiting, Done */
+:root{
+  --bg:#f3f7fc;--card:#ffffff;--ink:#0b1f3a;--mute:#566a84;--line:#d2deed;
+  --head:#0b3d91;--acc:#1456c8;--accink:#ffffff;--hl:#e8f1fd;
+  --ok:#0f7a3d;--okbg:#e4f5ea;--warn:#8a5200;--warnbg:#fff3dd;--bad:#b3261e;--badbg:#fdeceb;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0a1424;--card:#111f36;--ink:#e8f0fb;--mute:#9fb2cc;--line:#243652;
+  --head:#0a2a63;--acc:#5aa2ff;--accink:#04152e;--hl:#162a4a;
+  --ok:#6fd49a;--okbg:#10301f;--warn:#f0b35a;--warnbg:#3a2a0e;--bad:#ff8f87;--badbg:#3a1614;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0a1424;--card:#111f36;--ink:#e8f0fb;--mute:#9fb2cc;--line:#243652;
+  --head:#0a2a63;--acc:#5aa2ff;--accink:#04152e;--hl:#162a4a;
+  --ok:#6fd49a;--okbg:#10301f;--warn:#f0b35a;--warnbg:#3a2a0e;--bad:#ff8f87;--badbg:#3a1614;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--body);font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--head);z-index:10}
+.top{background:var(--head);color:#fff;padding-block:22px 18px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:600px;margin:0 auto}
+.top h1{margin:0;font:700 36px/1 var(--display);letter-spacing:.01em}
+.top p{margin:6px 0 0;color:#bcd6f5;font-size:16px}
+.stripe{height:6px;background:linear-gradient(90deg,#1456c8,#6fb1ff 60%,#d6e9ff)}
+main{padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h2{font:700 24px/1.1 var(--display);letter-spacing:.01em;margin:24px 0 10px}
+label.f{display:block;font-weight:600;font-size:15px;color:var(--mute);margin:0 0 6px}
+input,select,textarea{font:600 18px/1.3 var(--body);color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea{font-weight:500;font-size:16px;min-height:64px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button{font:inherit;font-weight:600;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;min-height:48px;padding:8px 14px;cursor:pointer}
+button.go{background:var(--acc);border-color:var(--acc);color:var(--accink);font-weight:700}
+button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+.note{font-size:13px;color:var(--mute);margin:8px 0 0}
+.ex{background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ex button{min-height:40px;padding:4px 12px}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.tile b{display:block;font:700 34px/1 var(--display)}
+.tile span{font-size:14px;color:var(--mute)}
+.tile.on{border-color:var(--acc);background:var(--hl)}
+.gal{margin:10px 0 0;font-weight:600}
+.add{width:100%;margin-top:14px;border-style:dashed;border-color:var(--acc);background:var(--hl)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g2 .full{grid-column:1/-1}
+@media (max-width:380px){.g2{grid-template-columns:1fr}}
+.ord{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;min-width:0}
+.ord.loading{border:2px solid var(--acc)}
+.ord.done{opacity:.9}
+.oh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.oname{font-weight:700;font-size:20px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.od{margin:4px 0 0;font-weight:600}
+.meta{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:15px;color:var(--mute);margin-top:4px}
+.nt{margin:8px 0 0;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.chip{flex:none;font-weight:700;font-size:14px;border-radius:999px;padding:4px 10px;background:var(--okbg);color:var(--ok);text-align:center}
+.chip.warn{background:var(--warnbg);color:var(--warn)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.chip.mute{background:var(--hl);color:var(--mute)}
+.tm2{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:12px}
+.tmr{font:700 24px/1.15 var(--display);letter-spacing:.01em;min-width:0}
+.tm2 button{flex:none;min-width:120px}
+.acts{display:flex;gap:10px;margin-top:10px}
+.acts button{flex:1;min-height:44px;font-size:15px}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--mute);margin-top:14px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+@media (max-width:380px){.tools{grid-template-columns:1fr}}
+.cp{margin-top:12px}
+
+.sync{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--mute);margin:0 0 12px}
+.sync i{width:10px;height:10px;border-radius:50%;background:var(--mute);flex:none}
+.sync.ok i{background:var(--ok)}.sync.ok{color:var(--ok)}
+.sync.warn i{background:var(--warn)}.sync.warn{color:var(--warn)}
+.sync.bad i{background:var(--bad)}.sync.bad{color:var(--bad)}
+.ro{background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600;margin-bottom:14px}
+.msg{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));max-width:568px;margin:0 auto;background:var(--bad);color:#fff;border-radius:12px;padding:12px 14px;font-weight:600;font-size:15px;z-index:20}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .msg{color:#1a0705}}
+:root[data-theme="dark"] .msg{color:#1a0705}
+.setup h2{margin-top:6px}
+.setup p{margin:0 0 12px}
+.setup .f2{margin-bottom:12px}
+.small{min-height:40px;font-size:15px;padding:4px 12px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><h1>Load Log</h1><p>Tarquin Coolpro current orders, shared live</p></div></header>
+<div class="stripe"></div>
+<main><div class="wrap">
+  <div id="setup" class="panel setup" hidden>
+    <h2>Connect to your crew</h2>
+    <p class="note">Enter the database address and crew code you were given. Everyone with the same two values sees the same orders.</p>
+    <div class="f2"><label class="f" for="s_url">Database address</label><input id="s_url" type="url" autocomplete="off" autocapitalize="off" placeholder="https://something-default-rtdb.firebaseio.com"></div>
+    <div class="f2"><label class="f" for="s_code">Crew code</label><input id="s_code" type="text" autocomplete="off" autocapitalize="off" placeholder="8 or more letters and numbers"></div>
+    <p id="s_err" class="note" style="color:var(--bad)"></p>
+    <div class="acts"><button id="s_go" class="go" type="button">Connect</button><button id="s_x" type="button">Cancel</button></div>
+  </div>
+  <div id="app">
+  <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
+  <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
+  <div class="sum" id="sum"></div>
+  <p class="gal" id="gal"></p>
+
+  <button id="addbtn" class="add" type="button">Add an order</button>
+  <div id="addp" class="panel" hidden>
+    <div class="g2">
+      <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
+      <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
+      <div><label class="f" for="a_gal">Gallons</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
+      <div><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"></div>
+      <div><label class="f" for="a_tk">Ticket #</label><input id="a_tk" type="text" autocomplete="off" placeholder="Ticket number"></div>
+      <div><label class="f" for="a_bl">BOL #</label><input id="a_bl" type="text" autocomplete="off" placeholder="BOL number"></div>
+      <div class="full"><label class="f" for="a_nt">Notes</label><textarea id="a_nt" placeholder="Anything the next shift should know"></textarea></div>
+    </div>
+    <div class="acts"><button id="a_go" class="go" type="button">Save order</button><button id="a_x" type="button">Cancel</button></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="tools">
+    <button id="copy" type="button">Copy shift log</button>
+    <button id="clr" type="button">Clear finished orders</button>
+  </div>
+  <div id="cpbox" class="cp" hidden>
+    <label class="f" for="cptxt">Press and hold the text to copy it</label>
+    <textarea id="cptxt" readonly rows="8"></textarea>
+  </div>
+  <p class="note">Orders are shared live with everyone using the same crew code. You need a signal to send or receive changes.</p>
+  <div class="tools"><button id="invite" class="small" type="button">Copy crew invite link</button><button id="chg" class="small" type="button">Change connection</button></div>
+  </div>
+</div></main>
+<div id="msg" class="msg" role="alert" hidden></div>
+
+<script src="config.js"></script>
+<script>
+var PRODUCTS=[["acid","36% acid"],["32","32% HCl"],["28","28% HCl"],["20","20% HCl"],["15","15% HCl"],["10","10% HCl"],["7.5","7.5% HCl"],["5","5% HCl"],["cs100","CableShield 100%"],["cs33","CableShield 33%"],["other","Other"]];
+var $=function(i){return document.getElementById(i)};
+function pad(n){return (n<10?"0":"")+n}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function T(ms){return new Date(ms).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
+function hm(ms){var m=Math.round(Math.abs(ms)/60000),h=Math.floor(m/60);return (h?h+" h ":"")+(m%60)+" min"}
+function hms(ms){var s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h+":"+pad(m)+":"+pad(s%60)}
+function pname(k){for(var i=0;i<PRODUCTS.length;i++)if(PRODUCTS[i][0]===k)return PRODUCTS[i][1];return "36% acid"}
+function num(n){return Math.round(n).toLocaleString("en-US")}
+function lbtFrom(s){if(!s||s.indexOf(":")<0)return null;var p=s.split(":"),d=new Date();d.setHours(+p[0],+p[1],0,0);var t=d.getTime();if(t<Date.now()-60*60000)t+=864e5;return t}
+function tval(ms){if(!ms)return "";var d=new Date(ms);return pad(d.getHours())+":"+pad(d.getMinutes())}
+function status(o){return o.endAt?"done":o.startAt?"loading":"waiting"}
+function byLbt(a,b){return (a.lbtAt||9e15)-(b.lbtAt||9e15)}
+
+var ORD=[],editing={},rmId=null,clrArm=false,timers={},deb={},q={},pendingBuild=false;
+var DL=null,canWrite=true,ro=false,loadTimer=null,msgT=null,gotData=false,online=false;
+function can(){return !ro&&canWrite!==false}
+
+$("a_prod").innerHTML=PRODUCTS.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join("");
+function opts(sel){return PRODUCTS.map(function(p){return '<option value="'+p[0]+'"'+(p[0]===sel?" selected":"")+'>'+p[1]+'</option>'}).join("")}
+function setSync(cls,txt){var s=$("sync");s.className="sync "+cls;s.lastChild.textContent=txt}
+function toast(t){var m=$("msg");m.textContent=t;m.hidden=false;clearTimeout(msgT);msgT=setTimeout(function(){m.hidden=true},6000)}
+
+function viewCard(o){
+  var st=status(o),b="",id=esc(o.id),w=can();
+  b+='<div class="oh"><div class="oname">'+esc(o.name||"Unnamed order")+'</div><span class="chip" id="c-'+id+'"></span></div>';
+  b+='<p class="od">'+(o.gal?num(o.gal)+" gal ":"")+esc(pname(o.prod))+'</p>';
+  var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
+  if(m)b+='<div class="meta">'+m+'</div>';
+  if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
+  var btn="";
+  if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
+  b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
+  if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+(rmId===o.id?' class="arm"':'')+'>'+(rmId===o.id?"Tap again to remove":"Remove")+'</button></div>';
+  return '<div class="ord '+st+'">'+b+'</div>';
+}
+function editCard(o){
+  var i=esc(o.id);
+  return '<div class="ord"><div class="g2">'+
+   '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
+   '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod)+'</select></div>'+
+   '<div><label class="f" for="e_gal'+i+'">Gallons</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
+   '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
+   '<div><label class="f" for="e_tk'+i+'">Ticket #</label><input id="e_tk'+i+'" data-f="ticket" data-id="'+i+'" type="text" value="'+esc(o.ticket)+'"></div>'+
+   '<div><label class="f" for="e_bl'+i+'">BOL #</label><input id="e_bl'+i+'" data-f="bol" data-id="'+i+'" type="text" value="'+esc(o.bol)+'"></div>'+
+   '<div class="full"><label class="f" for="e_nt'+i+'">Notes</label><textarea id="e_nt'+i+'" data-f="notes" data-id="'+i+'">'+esc(o.notes)+'</textarea></div>'+
+   '</div><div class="acts"><button type="button" class="go" data-act="doneedit" data-id="'+i+'">Done editing</button></div></div>';
+}
+function build(){
+  pendingBuild=false;
+  var os=ORD,L=os.filter(function(o){return status(o)==="loading"}).sort(byLbt),
+      W=os.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
+      D=os.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
+  var h="";
+  [["Loading now",L],["Waiting",W],["Done",D]].forEach(function(g){
+    if(!g[1].length)return;
+    h+='<h2>'+g[0]+'</h2>'+g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join("")});
+  if(!os.length)h='<div class="empty">'+(can()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
+  $("list").innerHTML=h;
+  $("addbtn").hidden=!can();if(!can())$("addp").hidden=true;
+  $("clr").hidden=!can();
+  $("ro").hidden=can();
+  $("clr").className=clrArm?"arm":"";
+  $("clr").textContent=clrArm?"Tap again to clear":"Clear finished orders";
+  tick();
+}
+function tick(){
+  var now=Date.now(),c={loading:0,waiting:0,done:0},gal=0;
+  ORD.forEach(function(o){
+    var st=status(o);c[st]++;if(st==="done")gal+=parseFloat(o.gal)||0;
+    var t=$("t-"+o.id),ch=$("c-"+o.id);
+    if(t){
+      if(st==="waiting")t.textContent="Not started";
+      else if(st==="loading")t.textContent="Loading: "+hms(now-o.startAt);
+      else t.textContent="Took "+hm(o.endAt-(o.startAt||o.endAt));
+    }
+    if(ch){
+      var cls="chip",tx="";
+      if(st==="done"){
+        if(o.lbtAt){var df=o.lbtAt-o.endAt;if(df>=0){tx="Out "+hm(df)+" early"}else{tx="Out "+hm(df)+" late";cls+=" bad"}}
+        else{tx="Done "+T(o.endAt);cls+=" mute"}
+      }else if(!o.lbtAt){tx="No LBT";cls+=" mute"}
+      else{var m=(o.lbtAt-now)/60000;
+        if(m<0){tx="Late by "+hm(o.lbtAt-now);cls+=" bad"}
+        else if(m<30){tx="Leave in "+hm(o.lbtAt-now);cls+=" warn"}
+        else tx="LBT "+T(o.lbtAt)}
+      ch.className=cls;ch.textContent=tx;
+    }
+  });
+  $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
+  $("gal").textContent=num(gal)+" gal loaded";
+}
+
+function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
+function isEditingNow(){var a=document.activeElement;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
+function hasDeb(){for(var k in deb)return true;return false}
+function refresh(){if(isEditingNow()||hasDeb()){pendingBuild=true;tick();return}build()}
+
+function onWriteErr(e){
+  var c=String((e&&e.code)||"").toUpperCase();
+  if(c.indexOf("PERMISSION")>=0)toast("Not allowed. Check the crew code in Change connection.");
+  else toast("Could not save. Check your connection and try again.");
+}
+function enqueue(id,fn){q[id]=(q[id]||Promise.resolve()).then(fn).catch(onWriteErr)}
+function upd(id,data){enqueue(id,function(){return DL.update(id,data)})}
+
+function flushKey(k){
+  var d=deb[k];if(!d)return 0;
+  clearTimeout(d.t);delete deb[k];
+  var o=find(d.id);if(!o)return 0;
+  var f=d.f,v=d.v,patch={};
+  if(f==="lbt"){var l=lbtFrom(v);if((o.lbtAt||null)===(l||null))return 0;patch.lbtAt=l}
+  else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
+  else{var s=String(v).trim();if((o[f]||"")===s)return 0;patch[f]=s}
+  upd(d.id,patch);return 1;
+}
+function flushAll(id){var n=0;Object.keys(deb).forEach(function(k){if(id==null||deb[k].id===id)n+=flushKey(k)});return n}
+function setField(id,f,v){
+  var k=id+"|"+f;if(deb[k])clearTimeout(deb[k].t);
+  deb[k]={id:id,f:f,v:v,t:setTimeout(function(){flushKey(k);if(pendingBuild&&!isEditingNow()&&!hasDeb())build()},600)};
+}
+
+function doAct(a,id){
+  var o=find(id);if(!o||!can())return;
+  if(a==="rm"){
+    if(rmId===id){rmId=null;enqueue(id,function(){return DL.remove(id)});build();return}
+    rmId=id;build();clearTimeout(timers.rm);timers.rm=setTimeout(function(){rmId=null;build()},4000);return}
+  rmId=null;
+  if(a==="start")upd(id,{startAt:Date.now(),endAt:null});
+  else if(a==="end")upd(id,{endAt:Date.now()});
+  else if(a==="undo")upd(id,{startAt:null,endAt:null});
+  else if(a==="reopen")upd(id,{endAt:null});
+  else if(a==="edit"){editing[id]=true;build()}
+  else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
+}
+function addOrder(){
+  if(!DL||!can())return;
+  var gal=parseFloat($("a_gal").value);
+  var data={name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,createdAt:Date.now()};
+  var nid=DL.newId();
+  enqueue(nid,function(){return DL.set(nid,data)});
+  ["a_name","a_tk","a_bl","a_nt","a_lbt"].forEach(function(i){$(i).value=""});
+  $("addp").hidden=true;
+}
+function buildText(){
+  var d=new Date(),lines=["Load log "+d.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"}),""];
+  var rank={done:0,loading:1,waiting:2};
+  ORD.slice().sort(function(a,b){return rank[status(a)]-rank[status(b)]||byLbt(a,b)}).forEach(function(o){
+    var st=status(o),p=[o.name||"Unnamed order",(o.gal?num(o.gal)+" gal ":"")+pname(o.prod)];
+    if(o.ticket)p.push("Ticket "+o.ticket);if(o.bol)p.push("BOL "+o.bol);
+    if(o.lbtAt)p.push("LBT "+T(o.lbtAt));
+    if(st==="done"){if(o.startAt){p.push("Started "+T(o.startAt));}p.push("Ended "+T(o.endAt));if(o.startAt)p.push("Took "+hm(o.endAt-o.startAt));if(o.lbtAt)p.push(o.endAt<=o.lbtAt?"Out "+hm(o.lbtAt-o.endAt)+" early":"Out "+hm(o.endAt-o.lbtAt)+" late")}
+    else if(st==="loading")p.push("Loading, started "+T(o.startAt));
+    else p.push("Waiting");
+    if(o.notes)p.push("Notes: "+String(o.notes).replace(/\s*\n\s*/g," "));
+    lines.push(p.join(" | "));
+  });
+  var g=0;ORD.forEach(function(o){if(status(o)==="done")g+=parseFloat(o.gal)||0});
+  lines.push("","Loaded: "+num(g)+" gal");
+  return lines.join("\n");
+}
+
+$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act");if(a)doAct(a,b.getAttribute("data-id"))};
+function onEdit(e){var f=e.target.getAttribute("data-f");if(f)setField(e.target.getAttribute("data-id"),f,e.target.value)}
+$("list").oninput=onEdit;$("list").onchange=onEdit;
+$("list").addEventListener("focusout",function(){setTimeout(function(){
+  var n=flushAll();
+  if(!n&&pendingBuild&&!isEditingNow()&&!hasDeb())build();
+},0)});
+$("addbtn").onclick=function(){$("addp").hidden=!$("addp").hidden;if(!$("addp").hidden)$("a_name").focus()};
+$("a_x").onclick=function(){$("addp").hidden=true};
+$("a_go").onclick=addOrder;
+$("clr").onclick=function(){
+  if(!can())return;
+  if(!clrArm){clrArm=true;build();clearTimeout(timers.clr);timers.clr=setTimeout(function(){clrArm=false;build()},4000);return}
+  clearTimeout(timers.clr);clrArm=false;
+  ORD.filter(function(o){return status(o)==="done"}).forEach(function(o){enqueue(o.id,function(){return DL.remove(o.id)})});
+  build();
+};
+$("copy").onclick=function(){
+  var txt=buildText(),box=$("cpbox"),ta=$("cptxt");
+  ta.value=txt;
+  var show=function(){box.hidden=false;try{ta.focus();ta.select()}catch(e){}};
+  try{navigator.clipboard.writeText(txt).then(function(){$("copy").textContent="Copied";setTimeout(function(){$("copy").textContent="Copy shift log"},2000)},show)}catch(e){show()}
+};
+
+function syncState(){
+  if(!DL)return;
+  if(online&&gotData){clearTimeout(loadTimer);setSync("ok","Live. Everyone sees the same orders")}
+  else if(!online&&gotData)setSync("warn","Offline. Showing the last orders this phone saw")
+  else setSync("","Connecting")
+}
+function onData(list){
+  ORD=list.filter(function(o){return o.prod!==undefined});
+  gotData=true;syncState();refresh();
+}
+function onDataErr(e){
+  clearTimeout(loadTimer);
+  var c=String((e&&e.code)||"").toUpperCase();
+  setSync("bad",c.indexOf("PERMISSION")>=0?"Access denied. Check the crew code in Change connection":"Lost the connection to shared data")
+}
+var CFG_KEY="tcw-loadlog-conn";
+function readCfg(){
+  var c=window.TCL_CONFIG||{};
+  if(c.url&&c.code)return {url:c.url,code:c.code};
+  try{var s=JSON.parse(localStorage.getItem(CFG_KEY)||"null");if(s&&s.url&&s.code)return s}catch(e){}
+  return null;
+}
+function saveCfg(c){try{localStorage.setItem(CFG_KEY,JSON.stringify(c))}catch(e){}}
+function fromHash(){
+  var h=location.hash.replace(/^#/,"");if(!h)return null;
+  var p={};h.split("&").forEach(function(kv){var i=kv.indexOf("=");if(i>0)p[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1))});
+  if(p.url&&p.code){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}return {url:p.url,code:p.code}}
+  return null;
+}
+function cleanCfg(url,code){
+  url=String(url||"").trim().replace(/\/+$/,"");code=String(code||"").trim();
+  if(!/^https:\/\/[A-Za-z0-9.-]+$/.test(url))return {err:"The database address should look like https://something-default-rtdb.firebaseio.com"};
+  if(!/^[A-Za-z0-9_-]{8,40}$/.test(code))return {err:"The crew code must be 8 to 40 letters or numbers, with no spaces."};
+  return {url:url,code:code};
+}
+async function makeFirebase(cfg){
+  var A=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+  var D=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+  var app=A.initializeApp({databaseURL:cfg.url});
+  var db=D.getDatabase(app),base="crews/"+cfg.code+"/orders";
+  return {
+    subscribe:function(cb,err){D.onValue(D.ref(db,base),function(s){var v=s.val()||{};cb(Object.keys(v).map(function(k){var x=Object.assign({},v[k]);x.id=k;return x}))},err)},
+    onConn:function(cb){D.onValue(D.ref(db,".info/connected"),function(s){cb(s.val()===true)})},
+    newId:function(){return D.push(D.ref(db,base)).key},
+    set:function(id,d){return D.set(D.ref(db,base+"/"+id),d)},
+    update:function(id,p){return D.update(D.ref(db,base+"/"+id),p)},
+    remove:function(id){return D.remove(D.ref(db,base+"/"+id))}
+  };
+}
+function showSetup(msg){
+  $("app").hidden=true;$("setup").hidden=false;$("s_err").textContent=msg||"";
+  var c=readCfg();if(c){$("s_url").value=c.url;$("s_code").value=c.code}
+}
+async function connect(cfg){
+  $("setup").hidden=true;$("app").hidden=false;
+  build();setSync("","Connecting");
+  try{DL=window.__DL||await makeFirebase(cfg)}catch(e){DL=null;setSync("bad","Could not load the shared database. Check your connection");return}
+  loadTimer=setTimeout(function(){setSync("warn","Can't reach shared data yet. What you see may be out of date")},10000);
+  DL.onConn(function(v){online=v;syncState()});
+  DL.subscribe(onData,onDataErr);
+}
+async function init(){
+  var h=fromHash();if(h){var ch=cleanCfg(h.url,h.code);if(!ch.err)saveCfg(ch)}
+  var c=readCfg();
+  if(!c){showSetup("");return}
+  connect(c);
+}
+$("s_go").onclick=function(){
+  var c=cleanCfg($("s_url").value,$("s_code").value);
+  if(c.err){$("s_err").textContent=c.err;return}
+  saveCfg(c);location.reload();
+};
+$("chg").onclick=function(){showSetup("")};
+$("s_x").onclick=function(){if(readCfg()){$("setup").hidden=true;$("app").hidden=false}};
+$("invite").onclick=function(){
+  var c=readCfg();if(!c)return;
+  var link=location.origin+location.pathname+"#url="+encodeURIComponent(c.url)+"&code="+encodeURIComponent(c.code);
+  var ta=$("cptxt"),box=$("cpbox");ta.value=link;
+  var show=function(){box.hidden=false;try{ta.focus();ta.select()}catch(e){}};
+  try{navigator.clipboard.writeText(link).then(function(){$("invite").textContent="Link copied";setTimeout(function(){$("invite").textContent="Copy crew invite link"},2000)},show)}catch(e){show()}
+};
+init();
+setInterval(tick,1000);
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
+</script>
+
+</body>
+</html>
