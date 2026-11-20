@@ -123,6 +123,7 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
   <button id="addbtn" class="add" type="button">Add an order</button>
   <div id="addp" class="panel" hidden>
     <div class="g2">
+      <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" placeholder="Who is loading this"></div>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div><label class="f" for="a_gal">Gallons</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
@@ -141,8 +142,8 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
     <button id="clr" type="button">Clear finished orders</button>
   </div>
   <div id="cpbox" class="cp" hidden>
-    <label class="f" for="cptxt">Press and hold the text to copy it</label>
-    <textarea id="cptxt" readonly rows="8"></textarea>
+    <label class="f" for="cptxt">Columns are separated by tabs. Press and hold the text to copy it, then paste into a sheet.</label>
+    <textarea id="cptxt" readonly rows="8" wrap="off" style="white-space:pre;overflow:auto"></textarea>
   </div>
   <p class="note">Orders are shared live with everyone using the same PIN. You need a signal to send or receive changes.</p>
   <div class="tools"><button id="chg" class="small" type="button">Change PIN</button></div>
@@ -182,6 +183,9 @@ function viewCard(o){
   var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
   if(m)b+='<div class="meta">'+m+'</div>';
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
+  if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
+  if(w)b+='<div class="amt"><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" placeholder="Loader name" value="'+esc(o.loader)+'"></div>';
+  else if(o.loader)b+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
@@ -276,7 +280,10 @@ function flushKey(k){
   upd(d.id,patch);return 1;
 }
 function flushAll(id){var n=0;Object.keys(deb).forEach(function(k){if(id==null||deb[k].id===id)n+=flushKey(k)});return n}
-function setField(id,f,v){
+var LD_KEY="tcw-loadlog-loader";
+function rememberLoader(v){try{localStorage.setItem(LD_KEY,String(v||"").trim())}catch(e){}}
+try{$("a_ld").value=localStorage.getItem(LD_KEY)||""}catch(e){}
+function setField(id,f,v){if(f==="loader")rememberLoader(v);
   var k=id+"|"+f;if(deb[k])clearTimeout(deb[k].t);
   deb[k]={id:id,f:f,v:v,t:setTimeout(function(){flushKey(k);if(pendingBuild&&!isEditingNow()&&!hasDeb())build()},600)};
 }
@@ -297,29 +304,21 @@ function doAct(a,id){
 function addOrder(){
   if(!DL||!can())return;
   var gal=parseFloat($("a_gal").value);
-  var data={name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,createdAt:Date.now()};
+  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,createdAt:Date.now()};
   var nid=DL.newId();
   enqueue(nid,function(){return DL.set(nid,data)});
+  rememberLoader($("a_ld").value);
   ["a_name","a_tk","a_bl","a_nt","a_lbt"].forEach(function(i){$(i).value=""});
   $("addp").hidden=true;
 }
 function buildText(){
-  var d=new Date(),lines=["Load log "+d.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"}),""];
-  var rank={done:0,loading:1,waiting:2};
-  ORD.slice().sort(function(a,b){return rank[status(a)]-rank[status(b)]||byLbt(a,b)}).forEach(function(o){
-    var st=status(o),p=[o.name||"Unnamed order",(o.gal?num(o.gal)+" gal ":"")+pname(o.prod)];
-    if(o.ticket)p.push("Ticket "+o.ticket);if(o.bol)p.push("BOL "+o.bol);
-    if(o.lbtAt)p.push("LBT "+T(o.lbtAt));
-    if(st==="done"){if(o.startAt){p.push("Started "+T(o.startAt));}p.push("Ended "+T(o.endAt));if(o.startAt)p.push("Took "+hm(o.endAt-o.startAt));if(o.lbtAt)p.push(o.endAt<=o.lbtAt?"Out "+hm(o.lbtAt-o.endAt)+" early":"Out "+hm(o.endAt-o.lbtAt)+" late")}
-    else if(st==="loading")p.push("Loading, started "+T(o.startAt));
-    else p.push("Waiting");
-    if(st==="done"&&(o.acidGal||o.waterGal))p.push("Acid "+num(o.acidGal||0)+" gal, water "+num(o.waterGal||0)+" gal");
-    if(o.notes)p.push("Notes: "+String(o.notes).replace(/\s*\n\s*/g," "));
-    lines.push(p.join(" | "));
+  var cell=function(x){return String(x==null?"":x).replace(/[\t\r\n]+/g," ").trim()};
+  var rows=[["Loader","Trailer #","Start Time","End Time","BOL #","Ticket Number","Gallons Requested","Gallons Received"]];
+  ORD.slice().sort(function(a,b){return (a.startAt||9e15)-(b.startAt||9e15)||byLbt(a,b)}).forEach(function(o){
+    var rec=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0);
+    rows.push([o.loader,o.name,o.startAt?T(o.startAt):"",o.endAt?T(o.endAt):"",o.bol,o.ticket,o.gal?Math.round(o.gal*100)/100:"",(o.acidGal||o.waterGal)?Math.round(rec*100)/100:""]);
   });
-  var g=0;ORD.forEach(function(o){if(status(o)==="done")g+=parseFloat(o.gal)||0});
-  lines.push("","Loaded: "+num(g)+" gal");
-  return lines.join("\n");
+  return rows.map(function(r){return r.map(cell).join("\t")}).join("\n");
 }
 
 $("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act");if(a)doAct(a,b.getAttribute("data-id"))};
