@@ -266,6 +266,13 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 #drawer{box-shadow:0 0 0 1px var(--line),8px 0 24px rgba(0,0,0,.18)}
 .chk{font-size:14px}.chk input{width:20px;height:20px}
 .tmr{font-size:20px!important;font-weight:600!important;letter-spacing:-.01em;white-space:nowrap}
+#drawer .navsep{padding:14px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-top:1px solid var(--line);margin-top:12px}
+#v-lead .wrap{padding-top:12px}#v-lead .tools{display:flex;gap:10px;flex-wrap:wrap}
+@media screen and (min-width:700px){#v-lead .wrap{max-width:640px;margin-left:0}}
+.pinm{position:fixed;inset:0;background:rgba(5,15,35,.55);z-index:60;display:grid;place-items:center;padding:16px}
+.pinm[hidden]{display:none}
+.pinb{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;width:min(360px,100%);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.pinb b{font-size:17px}.pinr{display:flex;gap:10px;margin-top:14px}.pinr button{flex:1}
 </style>
 </head>
 <body>
@@ -313,6 +320,19 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 
   <div id="list"></div>
 
+  <p class="note">Orders are shared live with everyone using the same PIN. You need a signal to send or receive changes.</p>
+  <div class="tools"><button id="chg" class="small" type="button">Change PIN</button></div>
+  </div>
+</div></main>
+<main id="v-lead" hidden><div class="wrap">
+  <div id="ld_lock" class="panel">
+    <label class="f" for="ld_pin">Lead PIN</label>
+    <input id="ld_pin" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Enter lead PIN">
+    <p id="ld_err" class="note" style="color:var(--bad);margin:8px 0 0" hidden>Wrong PIN.</p>
+    <button id="ld_go" class="go" type="button" style="width:100%;margin-top:12px">Unlock</button>
+  </div>
+  <div id="ld_body" hidden>
+    <h2>Loader Paperwork</h2>
   <div class="tools">
     <button id="copy" type="button">Copy shift log</button>
     <button id="clr" type="button">Clear finished orders</button>
@@ -322,10 +342,16 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
     <label class="f" for="cptxt">Columns are separated by tabs. Press and hold the text to copy it, then paste into a sheet.</label>
     <textarea id="cptxt" readonly rows="8" wrap="off" style="white-space:pre;overflow:auto"></textarea>
   </div>
-  <p class="note">Orders are shared live with everyone using the same PIN. You need a signal to send or receive changes.</p>
-  <div class="tools"><button id="chg" class="small" type="button">Change PIN</button></div>
+    <div class="tools" style="margin-top:12px"><button id="ld_lockbtn" class="small" type="button">Lock panel</button></div>
   </div>
 </div></main>
+<div id="pinm" class="pinm" hidden><div class="pinb" role="dialog" aria-modal="true" aria-labelledby="pinm_t">
+  <b id="pinm_t">Lead PIN required</b>
+  <p id="pinm_m" class="note" style="margin:6px 0 10px">Enter the lead PIN to remove this load.</p>
+  <input id="pinm_in" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN">
+  <p id="pinm_e" class="note" style="color:var(--bad);margin:8px 0 0" hidden>Wrong PIN.</p>
+  <div class="pinr"><button id="pinm_c" type="button">Cancel</button><button id="pinm_ok" class="go" type="button">Remove load</button></div>
+</div></div>
 <div id="msg" class="msg" role="alert" hidden></div>
 
 
@@ -368,6 +394,8 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
   <button type="button" data-view="log">Load Log</button>
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
+  <div class="navsep">Lead</div>
+  <button type="button" data-view="lead">Lead Panel</button>
 </nav>
 <div id="sheetview" hidden>
   <div class="sv-bar"><div class="wrap">
@@ -485,7 +513,7 @@ function viewCard(o){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
-  if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+(rmId===o.id?' class="arm"':'')+'>'+(rmId===o.id?"Tap again to remove":"Remove")+'</button></div>';
+  if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+'>Remove</button></div>';
   return '<div class="ord '+st+(o.state==="NM"?' nm':'')+'">'+b+'</div>';
 }
 function editCard(o){
@@ -602,8 +630,7 @@ function setField(id,f,v){if(f==="loader")rememberLoader(v);
 function doAct(a,id){
   var o=find(id);if(!o||!can())return;
   if(a==="rm"){
-    if(rmId===id){rmId=null;enqueue(id,function(){return DL.remove(id)});build();return}
-    rmId=id;build();clearTimeout(timers.rm);timers.rm=setTimeout(function(){rmId=null;build()},4000);return}
+    askPin("Enter the lead PIN to remove this load.","Remove load",function(){enqueue(id,function(){return DL.remove(id)});build()});return}
   rmId=null;
   if(a==="start")upd(id,{startAt:Date.now(),endAt:null});
   else if(a==="end")upd(id,{endAt:Date.now()});
@@ -858,7 +885,8 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"]};
+var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
 if(wideMQ.addEventListener)wideMQ.addEventListener("change",syncNav);
@@ -872,6 +900,8 @@ function setDrawer(open){
 }
 function showView(k){
   var v=VIEWS[k];if(!v)return;
+  if(curView==="lead"&&k!=="lead")lockLead();
+  curView=k;
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
   $("vt").textContent=v[1];$("vs").textContent=v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
@@ -882,6 +912,14 @@ $("menu").onclick=function(){setDrawer(!$("drawer").classList.contains("open"))}
 $("scrim").onclick=function(){setDrawer(false)};
 $("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-view]"):null;if(b)showView(b.getAttribute("data-view"))};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("open"))setDrawer(false)});
+function lockLead(){$("ld_body").hidden=true;$("ld_lock").hidden=false;$("ld_pin").value="";$("ld_err").hidden=true}
+function tryLead(){if($("ld_pin").value===LEAD_PIN){$("ld_lock").hidden=true;$("ld_body").hidden=false;$("ld_pin").value="";$("ld_err").hidden=true}else{$("ld_err").hidden=false;$("ld_pin").value="";$("ld_pin").focus()}}
+$("ld_go").onclick=tryLead;$("ld_pin").onkeydown=function(e){if(e.key==="Enter")tryLead()};$("ld_lockbtn").onclick=lockLead;
+var pinCb=null;
+function askPin(msg,btn,cb){pinCb=cb;$("pinm_m").textContent=msg;$("pinm_ok").textContent=btn;$("pinm_in").value="";$("pinm_e").hidden=true;$("pinm").hidden=false;setTimeout(function(){try{$("pinm_in").focus()}catch(e){}},30)}
+function pinClose(){$("pinm").hidden=true;pinCb=null}
+function pinSubmit(){if($("pinm_in").value===LEAD_PIN){var f=pinCb;pinClose();if(f)f()}else{$("pinm_e").hidden=false;$("pinm_in").value="";$("pinm_in").focus()}}
+$("pinm_ok").onclick=pinSubmit;$("pinm_c").onclick=pinClose;$("pinm_in").onkeydown=function(e){if(e.key==="Enter")pinSubmit();else if(e.key==="Escape")pinClose()};
 showView("log");syncNav();
 init();
 setInterval(tick,1000);
