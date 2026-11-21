@@ -149,6 +149,13 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .chk{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px;margin:0;cursor:pointer}
 .chk input{width:26px;height:26px;min-height:0;padding:0;margin:0;flex:none;accent-color:var(--acc)}
 .g2 .note{margin:0}
+.split{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--hl);border-left:4px solid var(--acc)}
+.split .sl{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.split .sg{display:flex;flex-wrap:wrap;gap:6px 14px}
+.split .sg div{display:flex;flex-direction:column;min-width:0}
+.split .sg span{font-size:13px;color:var(--mute);font-weight:600}
+.split .sg b{font:700 24px/1.1 var(--display);letter-spacing:.01em}
+.split .sg small{font:600 13px var(--body);color:var(--mute)}
 .calc label.big{display:block;font-weight:600;font-size:15px;color:var(--mute);margin:20px 0 8px}
 .calc .tabs{display:flex;flex-wrap:wrap;gap:0;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:4px}
 .calc .tabs button{flex:1 1 30%;min-width:0;border:0;border-radius:10px;background:transparent;font-weight:600;padding:10px 6px;font-size:15px;line-height:1.15;min-height:48px}
@@ -207,7 +214,8 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
       <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" placeholder="Who is loading this"></div>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
-      <div><label class="f" for="a_gal">Gallons</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
+      <div><label class="f" for="a_gal">Total gallons (ticket)</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
+      <div class="full" id="a_split"></div>
       <div><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"></div>
       <div><label class="f" for="a_st">Start time</label><input id="a_st" type="time"></div>
       <div><label class="f" for="a_en">End time</label><input id="a_en" type="time"></div>
@@ -306,10 +314,26 @@ function opts(sel){return PRODUCTS.map(function(p){return '<option value="'+p[0]
 function setSync(cls,txt){var s=$("sync");s.className="sync "+cls;s.lastChild.textContent=txt}
 function toast(t){var m=$("msg");m.textContent=t;m.hidden=false;clearTimeout(msgT);msgT=setTimeout(function(){m.hidden=true},6000)}
 
+var DIL={5:[.123,.877],7.5:[.187,.813],10:[.253,.747],15:[.388,.612],20:[.53,.47],28:[.75,.25],32:[.88,.12]};
+var CSB={cs100:{hcl:15,f:{hcl:.97,y7:.01,y7a:.003,a272:.017}},cs33:{hcl:5,f:{hcl:.99,y7:.01/3,y7a:.001,a272:.017/3}}};
+function gf(n){var d=n<1?3:(n<500?2:1);return n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d})}
+function splitOf(prod,gal){
+  gal=parseFloat(gal)||0;if(!(gal>0))return null;
+  if(prod==="acid")return {acid:gal,head:"",parts:[["36% acid",gal]]};
+  if(DIL[prod]){var d=DIL[prod];return {acid:gal*d[0],head:"",parts:[["Water",gal*d[1]],["36% acid",gal*d[0]]]}}
+  if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d2=DIL[b.hcl];return {acid:hg*d2[0],head:"Blend "+gf(hg)+" gal of "+b.hcl+"% HCl first, then the chemicals",parts:[["Water",hg*d2[1]],["36% acid",hg*d2[0]],["Y007",gal*b.f.y7],["Y007A",gal*b.f.y7a],["A272",gal*b.f.a272]]}}
+  return null;
+}
+function splitHtml(prod,gal,label){
+  var s=splitOf(prod,gal);if(!s)return "";
+  return '<div class="split"><p class="sl">'+(label||"Needs")+(s.head?': '+esc(s.head):'')+'</p><div class="sg">'+s.parts.map(function(p){return '<div><span>'+p[0]+'</span><b>'+gf(p[1])+' <small>gal</small></b></div>'}).join("")+'</div></div>';
+}
+function reqAcid(o){var s=splitOf(o.prod,o.gal);return s?s.acid:(parseFloat(o.gal)||0)}
 function viewCard(o){
   var st=status(o),b="",id=esc(o.id),w=can();
   b+='<div class="oh"><div class="oname">'+esc(o.name||"Unnamed order")+'</div><span class="chip" id="c-'+id+'"></span></div>';
-  b+='<p class="od">'+(o.gal?num(o.gal)+" gal ":"")+esc(pname(o.prod))+'</p>';
+  b+='<p class="od">'+(o.gal?num(o.gal)+" gal total, ":"")+esc(pname(o.prod))+'</p>';
+  b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs");
   var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
   if(m)b+='<div class="meta">'+m+'</div>';
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
@@ -333,7 +357,7 @@ function editCard(o){
   return '<div class="ord"><div class="g2">'+
    '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
    '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod)+'</select></div>'+
-   '<div><label class="f" for="e_gal'+i+'">Gallons</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
+   '<div><label class="f" for="e_gal'+i+'">Total gallons (ticket)</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
    '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
    '<div><label class="f" for="e_st'+i+'">Start time</label><input id="e_st'+i+'" data-f="startT" data-id="'+i+'" type="time" value="'+tval(o.startAt)+'"></div>'+
    '<div><label class="f" for="e_en'+i+'">End time</label><input id="e_en'+i+'" data-f="endT" data-id="'+i+'" type="time" value="'+tval(o.endAt)+'"></div>'+
@@ -451,6 +475,8 @@ function doAct(a,id){
   else if(a==="edit"){editing[id]=true;build()}
   else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
 }
+function updSplit(){$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs")}
+$("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;updSplit();
 function addOrder(){
   if(!DL||!can())return;
   var gal=parseFloat($("a_gal").value);
@@ -576,21 +602,22 @@ $("chg").onclick=function(){try{localStorage.removeItem(PIN_KEY)}catch(e){}locat
 
 function ymdLocal(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
 function sheetRows(){return ORD.filter(function(o){return o.startAt&&o.onSheet!==false}).sort(function(a,b){return a.startAt-b.startAt})}
+function amt1(x){return (Math.round(x*10)/10).toLocaleString("en-US")}
 function amt(x){return (Math.round(x*100)/100).toLocaleString("en-US")}
 function fit(t,max){t=String(t==null?'':t);var s=t.length>max?Math.max(11,Math.floor(17*max/t.length)):17;return '<span style="font-size:'+s+'px">'+esc(t)+'</span>'}
 function renderSheet(){
   var rows=sheetRows(),per=15,pages=Math.max(1,Math.ceil(rows.length/per));
   var dv=$("sv_date").value,dt=dv?dv.slice(5,7)+"/"+dv.slice(8,10)+"/"+dv.slice(0,4):"",sh=$("sv_shift").value;
   var tr=0,ta=0;
-  rows.forEach(function(o){tr+=parseFloat(o.gal)||0;ta+=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0)});
+  rows.forEach(function(o){tr+=reqAcid(o);ta+=parseFloat(o.acidGal)||0});
   var shiftTxt='Shift: &nbsp;'+(sh==="AM"?'<span class="circ">AM</span>':'AM')+' / '+(sh==="PM"?'<span class="circ">PM</span>':'PM');
   var out="";
   for(var p=0;p<pages;p++){
     var r='';
     for(var i=p*per;i<p*per+per;i++){
       var o=rows[i],c=['','','','','','',''];
-      if(o){var a=(parseFloat(o.acidGal)||0)+(parseFloat(o.waterGal)||0);
-        c=[fit(o.loader,15),fit(o.name,10),fit(o.bol,10),o.gal?amt(o.gal):'',(o.acidGal||o.waterGal)?amt(a):'',fit(o.ticket,10),T(o.startAt)+(o.endAt?' - '+T(o.endAt):'')]}
+      if(o){var a=parseFloat(o.acidGal)||0;
+        c=[fit(o.loader,15),fit(o.name,10),fit(o.bol,10),o.gal?amt1(reqAcid(o)):'',a?amt(a):'',fit(o.ticket,10),T(o.startAt)+(o.endAt?' - '+T(o.endAt):'')]}
       r+='<tr><td class="c">'+(i+1)+'</td><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td class="c">'+c[3]+'</td><td class="c">'+c[4]+'</td><td class="c">'+c[5]+'</td><td class="c" style="font-size:14px">'+c[6]+'</td></tr>';
     }
     var last=p===pages-1;
@@ -600,11 +627,11 @@ function renderSheet(){
      '<table><tr><td class="gap" colspan="8"></td></tr>'+
      '<colgroup><col style="width:4.5%"><col style="width:15%"><col style="width:10%"><col style="width:14%"><col style="width:13%"><col style="width:13%"><col style="width:12%"><col style="width:18.5%"></colgroup>'+
      '<tr><th>#</th><th>Loader</th><th>Trailer #</th><th>BOL #</th><th>Requested<br>Amount (gal)</th><th>Actual<br>Amount (gal)</th><th>Weight<br>Ticket #</th><th>Load Time</th></tr>'+r+
-     (last?'<tr class="tot"><td class="r" colspan="4">SHIFT TOTALS</td><td class="c">'+(rows.length?amt(tr):'')+'</td><td class="c">'+(ta?amt(ta):'')+'</td><td></td><td></td></tr>':'')+
-     '</table><p class="ft">Requested = gallons on the order. Actual = net gallons off the scale ticket.'+(pages>1?'<span class="pg">Page '+(p+1)+' of '+pages+'</span>':'')+'</p></section>';
+     (last?'<tr class="tot"><td class="r" colspan="4">SHIFT TOTALS</td><td class="c">'+(rows.length?amt1(tr):'')+'</td><td class="c">'+(ta?amt(ta):'')+'</td><td></td><td></td></tr>':'')+
+     '</table><p class="ft">Requested = 36% acid gallons needed for the order. Actual = 36% acid gallons loaded.'+(pages>1?'<span class="pg">Page '+(p+1)+' of '+pages+'</span>':'')+'</p></section>';
   }
   $("sv_sheet").innerHTML=out;
-  $("sv_note").textContent=rows.length?(rows.length+" load"+(rows.length===1?"":"s")+" on this sheet (started loads marked for the sheet). Actual amount is acid plus water."):"No started loads are marked for the sheet, so it is blank.";
+  $("sv_note").textContent=rows.length?(rows.length+" load"+(rows.length===1?"":"s")+" on this sheet (started loads marked for the sheet). Requested and actual are 36% acid gallons."):"No started loads are marked for the sheet, so it is blank.";
   fitSheet();
 }
 function fitSheet(){
