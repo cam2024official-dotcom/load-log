@@ -185,6 +185,7 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .calc .sub .v{font-size:30px}
 .calc .tot{background:var(--head);border-color:var(--head);color:#fff;margin-top:14px;padding:18px 16px}
 .calc .tot .v{color:var(--amber);font-size:46px}
+@media screen and (min-width:700px) and (max-width:999px){.calc .wrap{grid-template-columns:minmax(260px,320px) minmax(0,1fr)}.calc .tot .v{font-size:36px}.calc .tot{flex-wrap:wrap}}
 .calc .tot .v small,.calc .tot .w{color:#bcd6f5}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .calc .tot{border-color:var(--acc)}}
 :root[data-theme="dark"] .calc .tot{border-color:var(--acc)}
@@ -195,6 +196,35 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .calc .wg{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;margin-top:8px}
 .calc .wg input{font:600 18px/1.2 var(--body);padding:8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
 .calc .warn{color:var(--warn);font-weight:600}
+.grp.none{display:none}
+.gn{margin:0 0 10px;padding:14px;border:1px dashed var(--line);border-radius:14px;color:var(--mute);font-weight:600}
+.cnt{font:600 15px var(--body);color:var(--mute);background:var(--hl);border-radius:999px;padding:2px 10px;vertical-align:middle;margin-left:6px}
+@media screen and (min-width:700px){
+  .wrap{max-width:1000px}
+  #app>.sum{max-width:480px}
+  #addbtn,#addp,#app>.tools,#cpbox,#sheetbtn{max-width:640px}
+  #list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;align-items:start}
+  .grp{display:contents}
+  .grp h2{grid-column:1/-1}
+  .calc .wrap{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:0 32px;align-items:start}
+  .calc .cr .order:first-child{margin-top:0}
+  .calc .cr details:first-child{margin-top:0}
+  #sv_wrap{max-width:980px;margin:14px auto 0}
+  .sv-bar .wrap{max-width:980px}
+}
+@media screen and (min-width:1000px){
+  body{padding-left:240px}
+  .wrap{max-width:1400px}
+  .calc .wrap{max-width:1100px}
+  #list{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px;margin-top:8px}
+  .grp{display:block;min-width:0}
+  .grp.none{display:block}
+  .grp h2{margin-top:10px}
+  #drawer{transform:none!important;visibility:visible!important;width:240px;z-index:5;box-shadow:none;border-right:1px solid var(--line);transition:none}
+  #drawer .dh{padding-top:22px}
+  #scrim{display:none}
+  .menu{display:none}
+}
 </style>
 </head>
 <body>
@@ -259,15 +289,20 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 
 
 <main id="v-dil" class="calc" hidden><div class="wrap">
+  <div class="cl">
   <div class="tabs" id="ctabs"></div>
   <div id="cpcts" class="chips" style="margin-top:12px"></div>
   <label class="big" for="cg">Total gallons</label>
   <input id="cg" type="number" inputmode="decimal" min="0" step="any" value="500">
   <div class="chips" id="cq" style="margin-top:10px"></div>
+  </div>
+  <div class="cr">
   <div id="cout"></div>
   <p class="note">Blend factors come from the CableShield charts effective 11/10/2026 and the Acid Dilution Chart, and are scaled to any gallon amount. Results match the printed rows. Check against your chart before loading. Weights (lb per gallon) can be changed on the Load Weight page.</p>
+  </div>
 </div></main>
 <main id="v-lw" class="calc" hidden><div class="wrap">
+  <div class="cl">
   <label class="big" for="clt">Light weight (scale in), lb</label>
   <input id="clt" type="number" inputmode="decimal" min="0" step="any">
   <label class="big" for="chv">Heavy weight (scale out), lb</label>
@@ -276,12 +311,15 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
   <div class="chips" id="cpr"></div>
   <label class="big" for="ccw">Product weight, lb per gallon</label>
   <input id="ccw" type="number" inputmode="decimal" min="0" step="any">
+  </div>
+  <div class="cr">
   <div id="cout2"></div>
   <details>
     <summary>Weights (lb per gallon)</summary>
     <div class="wg" id="cwg"></div>
     <p class="note">Acid weights are from your Acid concentrations and weights sheet. Water is the standard 8.34. <span class="warn">5% HCl is not on that sheet: 8.5 is an estimate, so confirm it.</span> Product weights (Y007, Y007A, A272) were not provided, so those show gallons only.</p>
   </details>
+  </div>
 </div></main>
 <div id="scrim"></div>
 <nav id="drawer" aria-label="Sections" aria-hidden="true">
@@ -429,9 +467,9 @@ function build(){
       W=os.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
       D=os.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
   var h="";
-  [["Loading now",L],["Waiting",W],["Done",D]].forEach(function(g){
-    if(!g[1].length)return;
-    h+='<h2>'+g[0]+'</h2>'+g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join("")});
+  [["Loading now",L,"Nothing loading right now."],["Waiting",W,"No orders waiting."],["Done",D,"Nothing finished yet."]].forEach(function(g){
+    h+='<section class="grp'+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
+      (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
   if(!os.length)h='<div class="empty">'+(can()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
   $("list").innerHTML=h;
   $("addbtn").hidden=!can();if(!can())$("addp").hidden=true;
@@ -780,10 +818,13 @@ tabs();calc();
 })();
 
 var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"]};
+var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
+function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
+if(wideMQ.addEventListener)wideMQ.addEventListener("change",syncNav);
 function setDrawer(open){
   var was=$("drawer").classList.contains("open");
   $("drawer").classList.toggle("open",open);$("scrim").classList.toggle("open",open);
-  $("drawer").setAttribute("aria-hidden",String(!open));$("menu").setAttribute("aria-expanded",String(open));
+  if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!open));$("menu").setAttribute("aria-expanded",String(open));
   $("menu").setAttribute("aria-label",open?"Close menu":"Open menu");
   if(open){var cur=$("drawer").querySelector('[aria-current="page"]')||$("drawer").querySelector("button");try{cur.focus()}catch(e){}}
   else if(was){try{$("menu").focus()}catch(e){}}
@@ -800,7 +841,7 @@ $("menu").onclick=function(){setDrawer(!$("drawer").classList.contains("open"))}
 $("scrim").onclick=function(){setDrawer(false)};
 $("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-view]"):null;if(b)showView(b.getAttribute("data-view"))};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("open"))setDrawer(false)});
-showView("log");
+showView("log");syncNav();
 init();
 setInterval(tick,1000);
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
