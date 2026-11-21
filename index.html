@@ -525,6 +525,8 @@ function nmUpdate(id){
   if(w)t.wtPerGal=w.value;
   out.innerHTML=nmOut(t,l?l.value:o.lightWt);
 }
+/* Redo every open NM card's numbers, e.g. after a weight per gallon is changed. */
+function nmRefreshAll(){ORD.forEach(function(o){if(o.state==="NM"&&status(o)!=="done")nmUpdate(o.id)})}
 function viewCard(o){
   var st=status(o),b="",id=esc(o.id),w=can();
   b+='<div class="oh"><div class="oname">'+esc(o.name||"Unnamed order")+'</div><span class="chip" id="c-'+id+'"></span></div>';
@@ -674,7 +676,7 @@ function refresh(){if(isEditingNow()||hasDeb()){pendingBuild=true;tick();return}
 
 function onWriteErr(e){
   var c=String((e&&e.code)||"").toUpperCase();
-  if(c.indexOf("PERMISSION")>=0)toast("Not allowed. Check the crew code in Change connection.");
+  if(c.indexOf("PERMISSION")>=0)toast("Not allowed. Ask your lead to check the crew PIN on this phone.");
   else toast("Could not save. Check your connection and try again.");
 }
 function enqueue(id,fn){q[id]=(q[id]||Promise.resolve()).then(fn).catch(onWriteErr)}
@@ -874,7 +876,7 @@ $("rs_list").onclick=function(e){
 function onDataErr(e){
   clearTimeout(loadTimer);
   var c=String((e&&e.code)||"").toUpperCase();
-  setSync("bad",c.indexOf("PERMISSION")>=0?"Access denied. Check the crew code in Change connection":"Lost the connection to shared data")
+  setSync("bad",c.indexOf("PERMISSION")>=0?"Access denied. Ask your lead to check the crew PIN on this phone":"Lost the connection to shared data")
 }
 var PIN_KEY="tcw-loadlog-pin";
 var DEFAULT_CONF={url:"https://tarquin-load-log-default-rtdb.firebaseio.com",prefix:"s08pjgadeiwz"};
@@ -1047,7 +1049,7 @@ $("pr").onclick=function(e){var k=e.target.getAttribute("data-k");if(k){prodKey=
 $("cw").oninput=function(){prodKey=null;rp();calcLw()};
 var names=[["acid","36% acid"],["water","Water"],[5,"5% HCl (estimate)"],[7.5,"7.5% HCl"],[10,"10% HCl"],[15,"15% HCl"],[20,"20% HCl"],[28,"28% HCl"],[32,"32% HCl"]];
 $("wg").innerHTML=names.map(function(n){return '<label for="cwt'+n[0]+'">'+n[1]+'</label><input id="cwt'+n[0]+'" data-k="'+n[0]+'" type="number" inputmode="decimal" step="any" value="'+W[n[0]]+'">'}).join("");
-$("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e.target.value);if(k&&v>0){W[k]=v;try{localStorage.setItem("tcw",JSON.stringify(W))}catch(x){}calc()}};
+$("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e.target.value);if(k&&v>0){W[k]=v;try{localStorage.setItem("tcw",JSON.stringify(W))}catch(x){}calc();nmRefreshAll()}};
 tabs();calc();
 })();
 
