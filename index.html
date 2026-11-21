@@ -149,6 +149,16 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .chk{display:flex;align-items:center;gap:12px;font-weight:600;font-size:16px;margin:0;cursor:pointer}
 .chk input{width:26px;height:26px;min-height:0;padding:0;margin:0;flex:none;accent-color:var(--acc)}
 .g2 .note{margin:0}
+.ord.nm{border:4px solid #f5c400!important;box-shadow:0 0 0 3px rgba(245,196,0,.28)}
+.nmb{margin:10px 0 0;padding:8px 10px;border-radius:8px;background:#f5c400;color:#1a1400;font-weight:700;font-size:15px}
+.nmc{margin-top:10px}
+.nmr{display:flex;gap:6px 22px;flex-wrap:wrap;margin-top:10px}
+.nmr div{display:flex;flex-direction:column;min-width:0}
+.nmr span{font-size:13px;color:var(--mute);font-weight:600}
+.nmr b{font:700 30px/1.1 var(--display);letter-spacing:.01em}
+.nmr small{font:600 13px var(--body);color:var(--mute)}
+.nmn{margin:8px 0 0;font-size:14px;color:var(--mute);font-weight:600}
+.nmn.bad{color:var(--bad)}.nmn.warn{color:var(--warn)}
 .split{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--hl);border-left:4px solid var(--acc)}
 .split .sl{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .split .sg{display:flex;flex-wrap:wrap;gap:6px 14px}
@@ -212,6 +222,8 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
   <div id="addp" class="panel" hidden>
     <div class="g2">
       <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" placeholder="Who is loading this"></div>
+      <div class="full"><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
+      <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div><label class="f" for="a_gal">Total gallons (ticket)</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
@@ -329,16 +341,61 @@ function splitHtml(prod,gal,label){
   return '<div class="split"><p class="sl">'+(label||"Needs")+(s.head?': '+esc(s.head):'')+'</p><div class="sg">'+s.parts.map(function(p){return '<div><span>'+p[0]+'</span><b>'+gf(p[1])+' <small>gal</small></b></div>'}).join("")+'</div></div>';
 }
 function reqAcid(o){var s=splitOf(o.prod,o.gal);return s?s.acid:(parseFloat(o.gal)||0)}
+var NM_TARGET=79000,NM_MAX=80000;
+var DEFW={acid:9.85,water:8.34,5:8.5,7.5:8.6,10:8.7,15:9.0,20:9.2,28:9.5,32:9.68};
+function wtFor(prod,o){
+  var s=null;try{s=JSON.parse(localStorage.getItem("tcw")||"null")}catch(e){}
+  var W=Object.assign({},DEFW,s||{});
+  if(prod==="acid")return {w:W.acid,est:""};
+  if(W[prod]>0&&prod!=="water")return {w:W[prod],est:""};
+  if(prod==="cs100")return {w:W[15],est:"15% HCl"};
+  if(prod==="cs33")return {w:W[5],est:"5% HCl"};
+  var c=parseFloat(o&&o.wtPerGal);return c>0?{w:c,est:""}:null;
+}
+function nmOut(o,L){
+  L=parseFloat(L);
+  if(!(L>0))return '<p class="nmn">Enter the scale-in light weight to see how much product fits.</p>';
+  var wi=wtFor(o.prod,o);
+  if(!wi)return '<p class="nmn">Enter the product weight per gallon above.</p>';
+  var net=NM_TARGET-L;
+  if(net<=0)return '<p class="nmn bad">The light weight is already at or over the '+num(NM_TARGET)+' lb target.</p>';
+  var gal=Math.floor(net/wi.w),gross=L+gal*wi.w,h='';
+  h+='<div class="nmr"><div><span>Max product at '+num(NM_TARGET)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(gross)+' <small>lb</small></b></div></div>';
+  h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
+  var og=parseFloat(o.gal)||0;
+  if(og>0){var ow=L+og*wi.w,cls=ow>NM_MAX?"nmn bad":ow>NM_TARGET?"nmn warn":"nmn";
+    h+='<p class="'+cls+'">Ordered '+gf(og)+' gal would weigh '+num(ow)+' lb'+(ow>NM_MAX?'. OVER '+num(NM_MAX)+' LB.':ow>NM_TARGET?'. Over the '+num(NM_TARGET)+' lb target.':'.')+'</p>'}
+  if(wi.est)h+='<p class="nmn">CableShield weight is not on file. This uses the '+wi.est+' weight as an estimate, so confirm on the scale.</p>';
+  return h;
+}
+function nmUpdate(id){
+  var o=find(id),out=$("nmo-"+id);if(!o||!out)return;
+  var t=Object.assign({},o),l=$("nml-"+id),w=$("nmw-"+id);
+  if(w)t.wtPerGal=w.value;
+  out.innerHTML=nmOut(t,l?l.value:o.lightWt);
+}
 function viewCard(o){
   var st=status(o),b="",id=esc(o.id),w=can();
   b+='<div class="oh"><div class="oname">'+esc(o.name||"Unnamed order")+'</div><span class="chip" id="c-'+id+'"></span></div>';
-  b+='<p class="od">'+(o.gal?num(o.gal)+" gal total, ":"")+esc(pname(o.prod))+'</p>';
+  b+='<p class="od">'+(o.gal?num(o.gal)+" gal total, ":"")+esc(pname(o.prod))+(o.state==="NM"?" \u00b7 NM":" \u00b7 TX")+'</p>';
   b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs");
   var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
   if(m)b+='<div class="meta">'+m+'</div>';
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
   if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
-  if(w)b+='<div class="amt"><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" placeholder="Loader name" value="'+esc(o.loader)+'"></div>';
+  if(o.state==="NM"){
+    b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
+    if(st!=="done"){
+      b+='<div class="nmc">';
+      if(w){
+        b+='<label class="f" for="nml-'+id+'">Scale-in light weight (lb)</label><input id="nml-'+id+'" data-f="lightWt" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.lightWt)+'">';
+        if(o.prod==="other")b+='<label class="f" for="nmw-'+id+'" style="margin-top:8px">Product weight (lb per gallon)</label><input id="nmw-'+id+'" data-f="wtPerGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.wtPerGal)+'">';
+      }
+      b+='<div id="nmo-'+id+'">'+nmOut(o,o.lightWt)+'</div></div>';
+    }
+  }
+  var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
+  if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" placeholder="Loader name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div></div>';
   else if(o.loader)b+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';
   if(w)b+='<div class="amt"><label class="chk"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label></div>';
   else if(o.onSheet===false)b+='<div class="meta"><span>Not on loadout sheet</span></div>';
@@ -350,11 +407,11 @@ function viewCard(o){
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
   if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+(rmId===o.id?' class="arm"':'')+'>'+(rmId===o.id?"Tap again to remove":"Remove")+'</button></div>';
-  return '<div class="ord '+st+'">'+b+'</div>';
+  return '<div class="ord '+st+(o.state==="NM"?' nm':'')+'">'+b+'</div>';
 }
 function editCard(o){
   var i=esc(o.id);
-  return '<div class="ord"><div class="g2">'+
+  return '<div class="ord'+(o.state==="NM"?' nm':'')+'"><div class="g2">'+
    '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
    '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod)+'</select></div>'+
    '<div><label class="f" for="e_gal'+i+'">Total gallons (ticket)</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
@@ -414,7 +471,7 @@ function tick(){
 }
 
 function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
-function isEditingNow(){var a=document.activeElement;if(a&&a.type==="checkbox")return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
+function isEditingNow(){var a=document.activeElement;if(a&&(a.type==="checkbox"||a.tagName==="SELECT"))return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
 function hasDeb(){for(var k in deb)return true;return false}
 function refresh(){if(isEditingNow()||hasDeb()){pendingBuild=true;tick();return}build()}
 
@@ -449,6 +506,7 @@ function flushKey(k){
       if(o.endAt===t2)return 0;patch.endAt=t2;
     }
   }
+  else if(f==="lightWt"||f==="wtPerGal"){var n9=parseFloat(v),nv9=(String(v).trim()===""||!(n9>0))?null:n9;var cu9=(o[f]==null)?null:parseFloat(o[f]);if(cu9===nv9)return 0;patch[f]=nv9}
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
   else{var s=String(v).trim();if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
@@ -475,12 +533,14 @@ function doAct(a,id){
   else if(a==="edit"){editing[id]=true;build()}
   else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
 }
+function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
+$("a_state").onchange=updState;
 function updSplit(){$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs")}
 $("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;updSplit();
 function addOrder(){
   if(!DL||!can())return;
   var gal=parseFloat($("a_gal").value);
-  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
   var st=$("a_st").value,en=$("a_en").value;
   if(en&&!st){toast("Add a start time too, or clear the end time.");return}
   if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
@@ -488,7 +548,7 @@ function addOrder(){
   enqueue(nid,function(){return DL.set(nid,data)});
   rememberLoader($("a_ld").value);
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
-  $("a_sh").checked=true;
+  $("a_sh").checked=true;$("a_state").value="TX";updState();
   $("addp").hidden=true;
 }
 function buildText(){
@@ -502,7 +562,10 @@ function buildText(){
 }
 
 $("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act");if(a)doAct(a,b.getAttribute("data-id"))};
-function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}if(f)setField(e.target.getAttribute("data-id"),f,e.target.value)}
+function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
+  if(f==="state"){setField(eid,f,e.target.value);flushAll(eid);return}
+  if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
+  if(f)setField(eid,f,e.target.value)}
 $("list").oninput=onEdit;$("list").onchange=onEdit;
 $("list").addEventListener("focusout",function(){setTimeout(function(){
   var n=flushAll();
