@@ -295,6 +295,16 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .ord.miss{animation:tcmiss 1.6s ease-in-out infinite}
 input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .mw{margin:8px 0 0;padding:6px 10px;border-radius:4px;background:#f5c400;color:#1a1400;font-weight:700;font-size:14px}
+.missb{margin:0 0 12px;padding:10px 12px;border-radius:var(--r);background:#fff6cc;border:1px solid #f5c400;border-left:4px solid #f5c400;color:#1a1400}
+.missb p{margin:0 0 8px;font-weight:700;font-size:14px}
+.missb .ml{display:flex;flex-wrap:wrap;gap:8px}
+.missb button{min-height:40px;padding:6px 12px;font-size:14px;background:#f5c400;border-color:#d9ad00;color:#1a1400;text-align:left;line-height:1.2}
+.missb button small{display:block;font-weight:500;font-size:12px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .missb{background:#3a300a;color:#ffe9a3}}
+:root[data-theme="dark"] .missb{background:#3a300a;color:#ffe9a3}
+@media screen and (min-width:700px){#missb{max-width:640px}}
+@keyframes tcfind{0%,100%{outline-color:rgba(245,196,0,0)}30%,70%{outline-color:#f5c400}}
+.ord.found{outline:4px solid transparent;outline-offset:2px;animation:tcfind 1.4s ease-in-out}
 @media (prefers-reduced-motion:reduce){.ord.miss{animation:none;box-shadow:0 0 0 4px rgba(245,196,0,.7)}input.miss{animation:none;border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
 </style>
 </head>
@@ -321,6 +331,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <textarea id="sn_txt" rows="2" placeholder="Anything the whole crew should know this shift"></textarea>
     <div class="snr" id="sn_row" hidden><button id="sn_clr" class="small" type="button">Clear note</button></div>
   </div>
+  <div id="missb" class="missb" role="status" hidden></div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
 
@@ -551,7 +562,7 @@ function viewCard(o){
 }
 function editCard(o){
   var i=esc(o.id);
-  return '<div class="ord'+(o.state==="NM"?' nm':'')+'"><div class="g2">'+
+  return '<div class="ord'+(o.state==="NM"?' nm':'')+'" id="o-'+i+'"><div class="g2">'+
    '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
    '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod)+'</select></div>'+
    '<div><label class="f" for="e_gal'+i+'">Total gallons (ticket)</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
@@ -622,6 +633,7 @@ function tick(){
       ch.className=cls;ch.textContent=tx;
     }
   });
+  missBanner();
   $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
   $("gal").textContent=num(gal)+" gal loaded";
 }
@@ -633,6 +645,28 @@ function missing(o){
   var p=o.prod,mix=!!(DIL[p]||CSB[p]);
   return {acid:(p==="acid"||mix)&&blankAmt(o,"acidGal",$("ac-"+o.id)),water:mix&&blankAmt(o,"waterGal",$("wa-"+o.id))};
 }
+/* Banner at the top listing finished loads still missing acid or water loaded.
+   Tapping one scrolls to that load and puts the cursor in the first empty box. */
+var missHtml="";
+function missBanner(){
+  var L=ORD.filter(function(o){return status(o)==="done"}).sort(function(a,b){return a.endAt-b.endAt}).map(function(o){var m=missing(o);return {o:o,m:m}}).filter(function(x){return x.m.acid||x.m.water});
+  var h="";
+  if(L.length){
+    h='<p>'+L.length+' finished load'+(L.length===1?' is':'s are')+' missing amounts loaded. Tap one to go to it.</p><div class="ml">'+
+      L.map(function(x){var o=x.o,lab=o.ticket?"Ticket "+o.ticket:o.name?o.name:"Unnamed load",what=x.m.acid&&x.m.water?"Acid and water":x.m.acid?"Acid":"Water";
+        return '<button type="button" data-goto="'+esc(o.id)+'">'+esc(lab)+'<small>'+what+' missing'+(o.ticket&&o.name?' · '+esc(o.name):'')+'</small></button>'}).join("")+'</div>';
+  }
+  if(h!==missHtml){missHtml=h;$("missb").innerHTML=h;$("missb").hidden=!h}
+}
+function gotoLoad(id){
+  var c=$("o-"+id);if(!c)return;
+  var m=missing(find(id)||{}),inp=m.acid?$("ac-"+id):m.water?$("wa-"+id):null;
+  (inp||c).scrollIntoView({behavior:"smooth",block:"center"});
+  c.classList.remove("found");void c.offsetWidth;c.classList.add("found");
+  setTimeout(function(){c.classList.remove("found")},1500);
+  if(inp)setTimeout(function(){try{inp.focus({preventScroll:true})}catch(e){}},450);
+}
+$("missb").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-goto]"):null;if(b)gotoLoad(b.getAttribute("data-goto"))};
 function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
 function isEditingNow(){var a=document.activeElement;if(a&&(a.type==="checkbox"||a.tagName==="SELECT"))return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
 function hasDeb(){for(var k in deb)return true;return false}
