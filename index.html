@@ -289,6 +289,13 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .rs li.none{color:var(--mute);font-weight:500;padding:12px}
 .rsa{display:flex;gap:10px}.rsa input{flex:1}.rsa button{flex:none}
 @media screen and (min-width:700px){#snote{max-width:640px}}
+/* Finished load missing acid or water loaded: yellow pulse */
+@keyframes tcmiss{0%,100%{box-shadow:0 0 0 0 rgba(245,196,0,0)}50%{box-shadow:0 0 0 5px rgba(245,196,0,.7)}}
+@keyframes tcmissin{0%,100%{border-color:var(--line);box-shadow:0 0 0 0 rgba(245,196,0,0)}50%{border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
+.ord.miss{animation:tcmiss 1.6s ease-in-out infinite}
+input.miss{animation:tcmissin 1.6s ease-in-out infinite}
+.mw{margin:8px 0 0;padding:6px 10px;border-radius:4px;background:#f5c400;color:#1a1400;font-weight:700;font-size:14px}
+@media (prefers-reduced-motion:reduce){.ord.miss{animation:none;box-shadow:0 0 0 4px rgba(245,196,0,.7)}input.miss{animation:none;border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
 </style>
 </head>
 <body>
@@ -540,7 +547,7 @@ function viewCard(o){
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
   if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+'>Remove</button></div>';
-  return '<div class="ord '+st+(o.state==="NM"?' nm':'')+'">'+b+'</div>';
+  return '<div class="ord '+st+(o.state==="NM"?' nm':'')+'" id="o-'+id+'">'+b+'</div>';
 }
 function editCard(o){
   var i=esc(o.id);
@@ -584,8 +591,24 @@ function tick(){
       else if(st==="loading")t.textContent="Loading: "+hms(now-o.startAt);
       else t.textContent="Took "+hm(o.endAt-(o.startAt||o.endAt));
     }
-    var at=$("at-"+o.id);
-    if(at){var a1=parseFloat(o.acidGal)||0,w1=parseFloat(o.waterGal)||0;at.textContent=(a1||w1)?"Total "+num(a1+w1)+" gal":"Optional. Enter what was actually loaded."}
+    var at=$("at-"+o.id),card=$("o-"+o.id);
+    if(card){
+      var ms=st==="done"?missing(o):{acid:false,water:false};
+      card.classList.toggle("miss",ms.acid||ms.water);
+      var ai=$("ac-"+o.id),wi=$("wa-"+o.id);
+      if(ai)ai.classList.toggle("miss",ms.acid);
+      if(wi)wi.classList.toggle("miss",ms.water);
+      var mt=ms.acid&&ms.water?"Enter acid and water loaded":ms.acid?"Enter acid loaded":ms.water?"Enter water loaded":"";
+      if(at){
+        var a1=parseFloat(o.acidGal)||0,w1=parseFloat(o.waterGal)||0;
+        at.className=mt?"mw":"";
+        at.textContent=mt||((a1||w1)?"Total "+num(a1+w1)+" gal":"Optional. Enter what was actually loaded.");
+      }else{
+        var mp=$("mw-"+o.id);
+        if(mt&&!mp){mp=document.createElement("p");mp.id="mw-"+o.id;mp.className="mw";card.appendChild(mp)}
+        if(mp){mp.hidden=!mt;mp.textContent=mt}
+      }
+    }
     if(ch){
       var cls="chip",tx="";
       if(st==="done"){
@@ -603,6 +626,13 @@ function tick(){
   $("gal").textContent=num(gal)+" gal loaded";
 }
 
+/* Which loaded amounts a finished load still needs. Uses what is typed in the box
+   right now when the box is on screen, so the warning stops as soon as a number goes in. */
+function blankAmt(o,f,inp){var v=inp?inp.value:o[f];return v==null||String(v).trim()===""}
+function missing(o){
+  var p=o.prod,mix=!!(DIL[p]||CSB[p]);
+  return {acid:(p==="acid"||mix)&&blankAmt(o,"acidGal",$("ac-"+o.id)),water:mix&&blankAmt(o,"waterGal",$("wa-"+o.id))};
+}
 function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
 function isEditingNow(){var a=document.activeElement;if(a&&(a.type==="checkbox"||a.tagName==="SELECT"))return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
 function hasDeb(){for(var k in deb)return true;return false}
