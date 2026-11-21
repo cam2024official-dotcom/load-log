@@ -271,6 +271,24 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .pinm[hidden]{display:none}
 .pinb{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;width:min(360px,100%);box-shadow:0 12px 40px rgba(0,0,0,.35)}
 .pinb b{font-size:17px}.pinr{display:flex;gap:10px;margin-top:14px}.pinr button{flex:1}
+/* Shift note */
+.snote{margin:0 0 12px;padding:12px 14px;border-left:3px solid var(--line)}
+.snote.has{border-left-color:var(--acc);background:var(--hl)}
+.snh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.snh label.f{margin:0;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.snm{font-size:12px;color:var(--mute);font-weight:500;text-align:right}
+.snote textarea{min-height:52px;font-size:15px;background:var(--card)}
+.snote textarea[readonly]{border-color:transparent;padding-inline:0;background:transparent;resize:none}
+.snr{display:flex;justify-content:flex-end;margin-top:8px}
+/* Crew roster */
+.rs{list-style:none;margin:0 0 10px;padding:0;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.rs li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 6px 6px 12px;border-bottom:1px solid var(--line);font-weight:600}
+.rs li:last-child{border-bottom:0}
+.rs li span{min-width:0;overflow-wrap:anywhere}
+.rs li button{flex:none;min-height:36px;font-size:13px;padding:4px 10px}
+.rs li.none{color:var(--mute);font-weight:500;padding:12px}
+.rsa{display:flex;gap:10px}.rsa input{flex:1}.rsa button{flex:none}
+@media screen and (min-width:700px){#snote{max-width:640px}}
 </style>
 </head>
 <body>
@@ -291,13 +309,18 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
   <div id="app">
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
+  <div id="snote" class="panel snote">
+    <div class="snh"><label class="f" for="sn_txt">Shift note</label><span id="sn_meta" class="snm"></span></div>
+    <textarea id="sn_txt" rows="2" placeholder="Anything the whole crew should know this shift"></textarea>
+    <div class="snr" id="sn_row" hidden><button id="sn_clr" class="small" type="button">Clear note</button></div>
+  </div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
 
   <button id="addbtn" class="add" type="button">Add an order</button>
   <div id="addp" class="panel" hidden>
     <div class="g2">
-      <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" placeholder="Who is loading this"></div>
+      <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name"></div>
       <div class="full"><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
       <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
@@ -317,6 +340,7 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
   </div>
 
   <div id="list"></div>
+  <datalist id="crewlist"></datalist>
 
   <p class="note">Orders are shared live with everyone using the same PIN. You need a signal to send or receive changes.</p>
   </div>
@@ -339,6 +363,11 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
     <label class="f" for="cptxt">Columns are separated by tabs. Press and hold the text to copy it, then paste into a sheet.</label>
     <textarea id="cptxt" readonly rows="8" wrap="off" style="white-space:pre;overflow:auto"></textarea>
   </div>
+    <h2>Crew Roster</h2>
+    <p class="note" style="margin:0 0 10px">Loaders pick their name from this list on every load, so names match on the loadout sheet. Typing a new name still works. Shared with everyone on this crew PIN.</p>
+    <ul id="rs_list" class="rs"></ul>
+    <div class="rsa"><input id="rs_in" type="text" autocomplete="off" maxlength="30" placeholder="Name as it should print" aria-label="New crew member name"><button id="rs_add" class="go" type="button">Add</button></div>
+    <p id="rs_err" class="note" style="color:var(--bad)" hidden></p>
     <div class="tools" style="margin-top:12px"><button id="ld_lockbtn" class="small" type="button">Lock panel</button></div>
   </div>
 </div></main>
@@ -499,7 +528,7 @@ function viewCard(o){
     }
   }
   var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
-  if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" placeholder="Loader name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div></div>';
+  if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div></div>';
   else if(o.loader)b+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';
   if(w)b+='<div class="amt"><label class="chk"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label></div>';
   else if(o.onSheet===false)b+='<div class="meta"><span>Not on loadout sheet</span></div>';
@@ -612,7 +641,7 @@ function flushKey(k){
   }
   else if(f==="lightWt"||f==="wtPerGal"){var n9=parseFloat(v),nv9=(String(v).trim()===""||!(n9>0))?null:n9;var cu9=(o[f]==null)?null:parseFloat(o[f]);if(cu9===nv9)return 0;patch[f]=nv9}
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
-  else{var s=String(v).trim();if((o[f]||"")===s)return 0;patch[f]=s}
+  else{var s=String(v).trim();if(f==="loader")s=canonName(s);if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
 }
 function flushAll(id){var n=0;Object.keys(deb).forEach(function(k){if(id==null||deb[k].id===id)n+=flushKey(k)});return n}
@@ -643,13 +672,13 @@ $("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;updSplit();
 function addOrder(){
   if(!DL||!can())return;
   var gal=parseFloat($("a_gal").value);
-  var data={loader:$("a_ld").value.trim(),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  var data={loader:canonName($("a_ld").value),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
   var st=$("a_st").value,en=$("a_en").value;
   if(en&&!st){toast("Add a start time too, or clear the end time.");return}
   if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
   var nid=DL.newId();
   enqueue(nid,function(){return DL.set(nid,data)});
-  rememberLoader($("a_ld").value);
+  rememberLoader(data.loader);$("a_ld").value=data.loader;
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";updState();
   $("addp").hidden=true;
@@ -698,9 +727,86 @@ function syncState(){
   else setSync("","Connecting")
 }
 function onData(list){
+  var nt=null,rs=null;
+  list.forEach(function(o){if(o.id===NOTE_ID)nt=o;else if(o.id===ROSTER_ID)rs=o});
   ORD=list.filter(function(o){return o.prod!==undefined});
-  gotData=true;syncState();refresh();
+  NOTE=nt||{};
+  ROSTER=rs&&rs.names?Object.keys(rs.names).map(function(k){return String(rs.names[k]||"").trim()}).filter(Boolean):[];
+  ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
+  gotData=true;syncState();renderNote();renderRoster();refresh();
 }
+
+/* Shift note and crew roster live beside the orders under fixed keys,
+   so the existing database rules cover them and v16 phones ignore them. */
+var NOTE_ID="_note",ROSTER_ID="_roster",NOTE={},ROSTER=[],noteT=null,noteDirty=false;
+function canonName(v){
+  v=String(v||"").trim().replace(/\s+/g," ");if(!v)return "";
+  for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v.toLowerCase())return ROSTER[i];
+  return v;
+}
+function noteMeta(){
+  if(!NOTE.text)return "";
+  var d=NOTE.at?new Date(NOTE.at):null,when="";
+  if(d){when=d.toDateString()===new Date().toDateString()?T(NOTE.at):(d.getMonth()+1)+"/"+d.getDate()+" "+T(NOTE.at)}
+  return "Updated "+when+(NOTE.by?" by "+NOTE.by:"");
+}
+function renderNote(){
+  var ta=$("sn_txt"),w=can(),txt=NOTE.text||"";
+  ta.readOnly=!w;
+  if(!(document.activeElement===ta||noteDirty))ta.value=txt;
+  var has=!!(ta.value.trim()||txt);
+  $("snote").hidden=!w&&!txt;
+  $("snote").classList.toggle("has",has);
+  $("sn_row").hidden=!w||!has;
+  if(!noteDirty)$("sn_meta").textContent=noteMeta();
+}
+function saveNote(){
+  clearTimeout(noteT);noteT=null;
+  if(!noteDirty||!DL||!can())return;
+  noteDirty=false;
+  var t=$("sn_txt").value.replace(/\s+$/,""),by="";
+  try{by=localStorage.getItem(LD_KEY)||""}catch(e){}
+  if(t===(NOTE.text||"")){renderNote();return}
+  var d=t?{text:t,at:Date.now(),by:by}:null;
+  NOTE=d||{};renderNote();
+  enqueue(NOTE_ID,function(){return d?DL.set(NOTE_ID,d):DL.remove(NOTE_ID)});
+}
+$("sn_txt").oninput=function(){
+  noteDirty=true;$("sn_meta").textContent="Saving…";
+  $("snote").classList.toggle("has",!!this.value.trim());
+  $("sn_row").hidden=!can()||!this.value.trim();
+  clearTimeout(noteT);noteT=setTimeout(saveNote,900);
+};
+$("sn_txt").onblur=saveNote;
+$("sn_clr").onclick=function(){$("sn_txt").value="";noteDirty=true;saveNote()};
+
+function renderRoster(){
+  $("crewlist").innerHTML=ROSTER.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("");
+  $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){return '<li><span>'+esc(n)+'</span><button type="button" data-rsi="'+i+'">Remove</button></li>'}).join(""):'<li class="none">No names yet. Add your crew below.</li>';
+}
+function saveRoster(names){
+  if(!DL||!can()){rsErr("Not connected. Open the Load Log with a signal first.");return false}
+  var obj={};names.forEach(function(n,i){obj["n"+i]=n});
+  ROSTER=names.slice();renderRoster();
+  enqueue(ROSTER_ID,function(){return names.length?DL.set(ROSTER_ID,{names:obj}):DL.remove(ROSTER_ID)});
+  return true;
+}
+function rsErr(t){$("rs_err").textContent=t||"";$("rs_err").hidden=!t}
+function addRoster(){
+  var v=$("rs_in").value.trim().replace(/\s+/g," ");rsErr("");
+  if(!v){$("rs_in").focus();return}
+  for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v.toLowerCase()){rsErr(ROSTER[i]+" is already on the roster.");return}
+  var n=ROSTER.concat([v]).sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
+  if(saveRoster(n)){$("rs_in").value="";$("rs_in").focus()}
+}
+$("rs_add").onclick=addRoster;
+$("rs_in").onkeydown=function(e){if(e.key==="Enter")addRoster()};
+$("rs_list").onclick=function(e){
+  var b=e.target.closest?e.target.closest("button[data-rsi]"):null;if(!b)return;
+  var i=+b.getAttribute("data-rsi"),nm=ROSTER[i];if(nm==null)return;
+  if(b.getAttribute("data-arm")!=="1"){b.setAttribute("data-arm","1");b.className="arm";b.textContent="Tap to confirm";setTimeout(function(){if(b.isConnected){b.removeAttribute("data-arm");b.className="";b.textContent="Remove"}},4000);return}
+  rsErr("");saveRoster(ROSTER.filter(function(x,j){return j!==i}));
+};
 function onDataErr(e){
   clearTimeout(loadTimer);
   var c=String((e&&e.code)||"").toUpperCase();
