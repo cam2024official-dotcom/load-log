@@ -363,6 +363,18 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .hp li{margin:6px 0;line-height:1.45}
 .kb{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-weight:600;font-size:.92em;background:var(--hl);white-space:nowrap}
 @media(min-width:1000px){.hp{max-width:820px}}
+.hx{margin:12px 0 6px}
+.hxb{pointer-events:none;user-select:none;-webkit-user-select:none;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.hxb .ord{margin:0 0 10px;overflow:visible}.hxb .ord:last-child{margin-bottom:0}
+.hxb .ct{overflow:visible}
+.hxb .pinb{box-shadow:none;margin:0 auto}
+.hxb .rs{margin:0}
+.hxa{text-align:center;color:var(--mute);font-size:20px;line-height:1;margin:8px 0}
+.hxb [data-n]{position:relative;outline:2px solid #f5c400;outline-offset:2px}
+.hxb [data-n]::after{content:attr(data-n);position:absolute;top:-14px;right:-13px;width:18px;height:18px;border-radius:50%;background:#f5c400;color:#1a1400;font:700 11px/18px var(--body);text-align:center;box-shadow:0 0 0 2px var(--bg);z-index:2}
+.hp .hxl{list-style:none;padding:0;margin:8px 0 0;font-size:13px;color:var(--mute)}
+.hp .hxl li{display:flex;gap:8px;align-items:flex-start;margin:5px 0;line-height:1.35}
+.hxl i{flex:none;width:18px;height:18px;border-radius:50%;background:#f5c400;color:#1a1400;font:700 11px/18px var(--body);font-style:normal;text-align:center}
 </style>
 </head>
 <body>
@@ -527,13 +539,15 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Finding and opening a load</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting"><button type="button" class="orow" aria-expanded="false" style="--lc:#d9600f" tabindex="-1"><span class="lcb" data-n="1"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip" data-n="2">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span data-n="3">Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"></div></div><div class="ord vc loading"><button type="button" class="orow" aria-expanded="false" style="--lc:#7b3fe4" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 187</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Jayden</span><span>4,500 gal 36% acid</span><span>Ticket 4409</span><span class="rsx" data-n="2">Loading 0:23:55</span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"></div></div></div><ol class="hxl"><li><i>1</i><span>The loader&rsquo;s color</span></li><li><i>2</i><span>Status: the leave-by time, or the loading timer</span></li><li><i>3</i><span>Ticket number. Tap anywhere on the row to open it</span></li></ol></figure>
     <ol>
       <li>Each order on the Load Log is one row: trailer or customer, loader, gallons and product, and ticket number. The colored bar on the left is the loader's color.</li>
       <li>Tap a row to open it. Tap it again to close it.</li>
-      <li>The chip on the right shows the status: waiting, loading (with a running timer), or done.</li>
+      <li>The right side shows the leave-by time, or the time it finished. While a load is going, the row shows a running timer.</li>
     </ol>
   </details>
   <details><summary>Starting a load</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><div class="meta"><span>Ticket 4412</span><span>BOL 88120</span></div><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
@@ -541,6 +555,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc loading open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1f8a3a" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 152</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Tony</span><span>5,000 gal 20% HCl</span><span>Ticket 4405</span><span class="rsx">Loading 0:44:10</span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="tm2"><span class="tmr">Loading: 0:44:10</span><button type="button" class="go" tabindex="-1" data-n="1">End load</button></div></div></div><div class="hxa">↓</div><div class="pinb finb"><b>Load weight</b><p class="note" style="margin:2px 0 12px">Trailer 152 · Ticket 4405 · 5,000 gal 20% HCl</p><div class="g2"><div data-n="2"><label class="f">Light weight (in), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="31200" tabindex="-1"></div><div data-n="3"><label class="f">Heavy weight (out), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="77200" tabindex="-1"></div><div class="full"><label class="f">Product loaded</label><select tabindex="-1"><option value="20" selected="">20% HCl</option></select></div></div><div class="finout"><div class="fr"><span>Net product</span><b>46,000 lb</b></div><div class="fr big"><span>Gallons loaded</span><b>5,000 gal</b></div></div><div class="g2" style="margin-top:10px"><div data-n="4"><label class="f">Acid loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2650" tabindex="-1"></div><div data-n="4"><label class="f">Water loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2350" tabindex="-1"></div></div><p class="note">Acid and water are worked out from the gallons and the dilution chart. Change them if your meter shows different. Uses 9.2 lb/gal.</p><div class="pinr"><button type="button" tabindex="-1">Later</button><button class="go" type="button" tabindex="-1" data-n="5">Save amounts</button></div></div></div><ol class="hxl"><li><i>1</i><span>Tap End load</span></li><li><i>2</i><span>Light weight from the scale ticket</span></li><li><i>3</i><span>Heavy weight from the scale ticket</span></li><li><i>4</i><span>Acid and water fill in from the gallons loaded. Change them if your meter shows different</span></li><li><i>5</i><span>Tap Save amounts</span></li></ol></figure>
     <ol>
       <li>Tap <span class="kb">End load</span>. The load weight window opens.</li>
       <li>Enter the light weight (scale in) and heavy weight (scale out). Check the product is right.</li>
@@ -550,6 +565,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Entering acid and water by hand</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc done open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1f8a3a" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 152</span><span class="chip mute">Done 2:15 PM</span></span><span class="orl2"><span class="lp">Tony</span><span>5,000 gal 20% HCl</span><span>Ticket 4405</span><span class="rsx ms" data-n="1">Needs acid + water</span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="tm2"><span class="tmr">Took 45 min</span><button type="button" tabindex="-1">Reopen</button></div><div class="amt"><div class="g2"><div data-n="2"><label class="f">Acid loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="" class="miss" tabindex="-1"></div><div data-n="2"><label class="f">Water loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="" class="miss" tabindex="-1"></div></div><p class="mw">Enter acid and water loaded</p><button type="button" class="small wbtn" tabindex="-1" data-n="3">Figure from scale weights</button></div></div></div></div><ol class="hxl"><li><i>1</i><span>The row says what&rsquo;s missing</span></li><li><i>2</i><span>Yellow boxes still need numbers</span></li><li><i>3</i><span>Or work them out from the scale weights</span></li></ol></figure>
     <ol>
       <li>Open the finished load and type the gallons in Acid loaded and Water loaded. It saves as you type.</li>
       <li>Acid is needed on every acid load. Water is needed on diluted acid and CableShield loads.</li>
@@ -557,6 +573,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>The crew board</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="cg"><div class="ct" style="--lc:#7b3fe4"><button type="button" class="ctn" tabindex="-1" data-n="1">Jayden</button><button type="button" class="ctl ld" tabindex="-1" data-n="2"><b>Loading</b> Trailer 187 · <span class="ctm">0:23:55</span></button></div><div class="ct" style="--lc:#1f8a3a"><button type="button" class="ctn" tabindex="-1" data-n="1">Tony</button><button type="button" class="ctl ctx" tabindex="-1" data-n="3">Needs acid + water · Ticket 4405</button></div></div></div><ol class="hxl"><li><i>1</i><span>Tap a name to go to their load</span></li><li><i>2</i><span>Loading now, with a live timer</span></li><li><i>3</i><span>Yellow means a finished load is missing amounts. Tap it to go to the empty box</span></li></ol></figure>
     <ol>
       <li>The tiles at the top show each loader and what they're loading right now, with a live timer.</li>
       <li>Tap a name to jump to that loader's load.</li>
@@ -565,6 +582,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>New Mexico loads</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="nmc"><label class="f" data-n="2">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><div class="split"><p class="sl">Updated mix for 5,444 gal</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div><p class="nmn bad">Ordered 6,000 gal would weigh 84,000 lb. OVER 80,000 LB.</p></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Enter the scale-in light weight. It shows the most product that fits and warns when the order is over</span></li></ol></figure>
     <ol>
       <li>NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
       <li>Before loading, open the load and enter the scale-in light weight. It shows how many gallons fit.</li>
@@ -592,6 +610,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Adding people and setting PINs</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><ul class="rs"><li><span class="rsn"><i style="background:#d9600f"></i>Sam</span><button type="button" tabindex="-1" data-n="4">Remove</button><div class="sw" role="group" aria-label="Color for Sam" data-n="1"><button type="button" aria-label="Blue" aria-pressed="false" style="--c:#1d64d8" tabindex="-1"></button><button type="button" aria-label="Green" aria-pressed="false" style="--c:#1f8a3a" tabindex="-1"></button><button type="button" aria-label="Orange" aria-pressed="true" style="--c:#d9600f" tabindex="-1"></button><button type="button" aria-label="Purple" aria-pressed="false" style="--c:#7b3fe4" tabindex="-1"></button><button type="button" aria-label="Red" aria-pressed="false" style="--c:#cf2e2e" tabindex="-1"></button><button type="button" aria-label="Teal" aria-pressed="false" style="--c:#0f8287" tabindex="-1"></button><button type="button" aria-label="Pink" aria-pressed="false" style="--c:#c92a75" tabindex="-1"></button><button type="button" aria-label="Brown" aria-pressed="false" style="--c:#8b5a2b" tabindex="-1"></button><button type="button" aria-label="Slate" aria-pressed="false" style="--c:#4b5a6b" tabindex="-1"></button></div><div class="rsp"><span>PIN set</span><button type="button" tabindex="-1" data-n="2">Change PIN</button><label class="chk" data-n="3"><input type="checkbox" tabindex="-1"> Lead</label></div></li></ul></div><ol class="hxl"><li><i>1</i><span>Tap a color for their rows and crew tile</span></li><li><i>2</i><span>Set or change their PIN</span></li><li><i>3</i><span>Tick for lead access</span></li><li><i>4</i><span>Take them off the roster</span></li></ol></figure>
     <ol>
       <li>Open the Lead Panel. Under Crew Roster, type the name as it should print, add a PIN, tick Lead if they're a lead, and tap <span class="kb">Add</span>.</li>
       <li>To give someone a new PIN, tap <span class="kb">Set PIN</span> or <span class="kb">Change PIN</span> next to their name.</li>
