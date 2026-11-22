@@ -536,6 +536,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <input id="chv" type="number" inputmode="decimal" min="0" step="any">
   <label class="big">Product</label>
   <div class="chips" id="cpr"></div>
+  <label class="big" for="ctg">Total Gallons Requested</label>
+  <input id="ctg" type="number" inputmode="decimal" min="0" step="any" placeholder="From the ticket">
   <label class="big" for="ccw">Product weight, lb per gallon</label>
   <input id="ccw" type="number" inputmode="decimal" min="0" step="any">
   </div>
@@ -625,7 +627,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <details><summary>Acid Dilution and Load Weight pages</summary>
     <ol>
       <li><b>Acid Dilution</b>: pick the product and strength, enter total gallons, and it shows how much acid, water and chemicals go in.</li>
-      <li><b>Load Weight</b>: enter light and heavy weights and the product to get gallons loaded, without tying it to an order. Product weights can be changed at the bottom of that page.</li>
+      <li><b>Load Weight</b>: works like the load weight window, without tying it to an order. Enter light and heavy weights, the product, and the Total Gallons Requested from the ticket. It shows gallons loaded, water from the ticket, and acid as the rest (CableShield chemicals come off first). Product weights can be changed at the bottom of that page.</li>
     </ol>
   </details>
   <details><summary>Crew Chat</summary>
@@ -1514,17 +1516,39 @@ function fmt(n){var d=n<1?3:(n<500?2:1);return n.toLocaleString("en-US",{minimum
 function lb(n){return Math.round(n).toLocaleString("en-US")+" lb"}
 function row(name,gal,wt,cls){var m=/^(\d)\. (.*)/.exec(name),b="";if(m){b='<i class="b">'+m[1]+'</i>';name=m[2]}return '<div class="row '+(cls||"")+'"><span class="n">'+b+'<span class="t">'+name+(wt!=null?'<span class="w">'+lb(wt)+'</span>':'')+'</span></span><span class="v">'+fmt(gal)+' <small>gal</small></span></div>'}
 function rowu(name,val,unit,cls,sub){return '<div class="row '+(cls||"")+'"><span class="n"><span class="t">'+name+(sub?'<span class="w">'+sub+'</span>':'')+'</span></span><span class="v">'+val+' <small>'+unit+'</small></span></div>'}
-var PN=[["acid","36%"],["32","32%"],["28","28%"],["20","20%"],["15","15%"],["10","10%"],["7.5","7.5%"],["5","5%"]];
+var PN=[["acid","36%"],["32","32%"],["28","28%"],["20","20%"],["15","15%"],["10","10%"],["7.5","7.5%"],["5","5%"],["cs100","CableShield 100%"],["cs33","CableShield 33%"]];
+var customW=false;
 function rp(){$("pr").innerHTML=PN.map(function(p){return '<button data-k="'+p[0]+'" aria-pressed="'+(prodKey===p[0])+'">'+p[1]+'</button>'}).join("")}
+/* Same math as the load weight window at the end of a load: CableShield chemicals come off
+   first (exact ticket amounts), water comes from the ticket, acid is the rest. */
 function calcLw(){
-  if(prodKey!==null)$("cw").value=prodKey==="acid"?W.acid:W[prodKey];
-  var L=parseFloat($("lt").value),H=parseFloat($("hv").value),P=parseFloat($("cw").value);
+  var est=prodKey==="cs100"?"15% HCl":prodKey==="cs33"?"5% HCl":"";
+  if(!customW)$("cw").value=prodKey==="acid"?W.acid:prodKey==="cs100"?W[15]:prodKey==="cs33"?W[5]:W[prodKey];
+  var L=parseFloat($("lt").value),H=parseFloat($("hv").value),P=parseFloat($("cw").value),tg=parseFloat($("tg").value)||0;
   var msg=function(t){$("out2").innerHTML='<div class="order">'+t+'</div>'};
   if(!(L>=0)||!(H>=0)){msg("Enter the light weight and the heavy weight.");return}
   if(H<=L){msg("Heavy weight must be more than light weight.");return}
   if(!(P>0)){msg("Enter the product weight per gallon.");return}
   var net=H-L,gl=net/P,c=function(n){return Math.round(n).toLocaleString("en-US")};
-  $("out2").innerHTML=rowu("Heavy weight (scale out)",c(H),"lb")+rowu("Light weight (scale in)",c(L),"lb")+rowu("Net product (heavy minus light)",c(net),"lb")+rowu("Gallons loaded",fmt(gl),"gal","tot",c(net)+" lb ÷ "+P+" lb/gal");
+  var h=rowu("Heavy weight (scale out)",c(H),"lb")+rowu("Light weight (scale in)",c(L),"lb")+rowu("Net product (heavy minus light)",c(net),"lb")+rowu("Gallons loaded",fmt(gl),"gal","",c(net)+" lb ÷ "+P+" lb/gal");
+  var s=finSplit(prodKey,gl,tg);
+  if(CSB[prodKey]){
+    var ch=csChems(prodKey,gl,tg),hb=gl-ch.total;
+    h+=rowu("− CableShield chemicals","−"+fmt(ch.total),"gal","sub","Y007 "+gf(ch.y7)+" · Y007A "+gf(ch.y7a)+" · A272 "+gf(ch.a272)+(ch.fromTicket?" · for "+gf(ch.base)+" gal ticket":" · no ticket gallons, scaled"));
+    if(!(hb>0)){h+='<div class="order">The scale shows less than the chemicals alone. Check the weights.</div>';$("out2").innerHTML=h;return}
+    h+=rowu("= "+CSB[prodKey].hcl+"% HCl blend",fmt(hb),"gal");
+  }
+  if(s&&s.fromTicket){
+    h+=rowu("− Water from ticket","−"+fmt(s.water),"gal","sub",gf(tg)+" gal ticket");
+    if(s.short){h+='<div class="order">The scale shows less than the ticket water. Check the weights.</div>';$("out2").innerHTML=h;return}
+  }
+  if(s){
+    h+=rowu("Acid loaded",c(s.acid),"gal","tot",prodKey==="acid"?"All of the gallons loaded":s.fromTicket?"The rest of the gallons loaded":"Split by the dilution chart");
+    if(prodKey!=="acid")h+=rowu("Water loaded",c(s.water),"gal","tot",s.fromTicket?"From the ticket":"Split by the dilution chart");
+    if(prodKey!=="acid"&&!s.fromTicket)h+='<div class="order">Enter the Total Gallons Requested to fill water from the ticket and give the rest to acid.</div>';
+  }
+  if(est&&!customW)h+='<div class="order">CableShield weight is not on file. This uses the '+est+' weight as an estimate, so confirm on the scale.</div>';
+  $("out2").innerHTML=h;
 }
 function calcDil(){
  var G=parseFloat($("g").value)||0,h="";
@@ -1556,9 +1580,9 @@ $("pcts").onclick=function(e){var p=e.target.getAttribute("data-p");if(p){pct=+p
 $("q").innerHTML=[100,265,330,500,1000,2000,3000,5000].map(function(n){return '<button data-g="'+n+'">'+n.toLocaleString("en-US")+'</button>'}).join("");
 $("q").onclick=function(e){var g=e.target.getAttribute("data-g");if(g){$("g").value=g;calcDil()}};
 $("g").oninput=calcDil;
-$("lt").oninput=calcLw;$("hv").oninput=calcLw;
-$("pr").onclick=function(e){var k=e.target.getAttribute("data-k");if(k){prodKey=k;rp();calcLw()}};
-$("cw").oninput=function(){prodKey=null;rp();calcLw()};
+$("lt").oninput=calcLw;$("hv").oninput=calcLw;$("tg").oninput=calcLw;
+$("pr").onclick=function(e){var k=e.target.getAttribute("data-k");if(k){prodKey=k;customW=false;rp();calcLw()}};
+$("cw").oninput=function(){customW=true;calcLw()};
 var names=[["acid","36% acid"],["water","Water"],[5,"5% HCl (estimate)"],[7.5,"7.5% HCl"],[10,"10% HCl"],[15,"15% HCl"],[20,"20% HCl"],[28,"28% HCl"],[32,"32% HCl"]];
 $("wg").innerHTML=names.map(function(n){return '<label for="cwt'+n[0]+'">'+n[1]+'</label><input id="cwt'+n[0]+'" data-k="'+n[0]+'" type="number" inputmode="decimal" step="any" value="'+W[n[0]]+'">'}).join("");
 $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e.target.value);if(k&&v>0){W[k]=v;try{localStorage.setItem("tcw",JSON.stringify(W))}catch(x){}calc();nmRefreshAll()}};
