@@ -1327,7 +1327,7 @@ function shiftState(n,cs){
 }
 function onShift(n){return shiftState(n).on}
 function onShiftSig(){var cs=curShift();return cs.start+"|"+ROSTER.filter(function(n){return shiftState(n,cs).on}).join(",")}
-function hm(min){var x=new Date(2000,0,1);x.setMinutes(min);return T(x.getTime())}
+function clockAt(min){var x=new Date(2000,0,1);x.setMinutes(min);return T(x.getTime())}
 function hhmm(min){return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0")}
 function scErr(t){$("sc_err").textContent=t||"";$("sc_err").hidden=!t}
 function saveSched(p){
@@ -1340,7 +1340,7 @@ function liveOv(){var o={},now=Date.now();Object.keys(SCHED.ov).forEach(function
 function renderSched(){
   if(curView!=="sched")return;
   var cs=curShift(),lead=canManage();
-  $("sc_now").innerHTML=(cs.s==="D"?"Day":"Night")+" shift now<small>"+WD[cs.wd]+" "+hm(cs.s==="D"?SCHED.hrs.d:SCHED.hrs.n)+" to "+hm(cs.s==="D"?SCHED.hrs.n:SCHED.hrs.d)+"</small>";
+  $("sc_now").innerHTML=(cs.s==="D"?"Day":"Night")+" shift now<small>"+WD[cs.wd]+" "+clockAt(cs.s==="D"?SCHED.hrs.d:SCHED.hrs.n)+" to "+clockAt(cs.s==="D"?SCHED.hrs.n:SCHED.hrs.d)+"</small>";
   $("sc_ro").hidden=lead;$("sc_lh").hidden=!lead;$("sc_hrs").hidden=!lead;
   var a=document.activeElement;if(!(a&&(a.id==="sc_d"||a.id==="sc_n"))){$("sc_d").value=hhmm(SCHED.hrs.d);$("sc_n").value=hhmm(SCHED.hrs.n)}
   if(!ROSTER.length){$("sc_list").innerHTML='<p class="gn">No crew names yet. A lead adds them in the Lead Panel.</p>';return}
