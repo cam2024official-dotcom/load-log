@@ -336,6 +336,24 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .finout .fr.big b{color:var(--acc)}
 .finout .er{margin:0;font-size:14px;color:var(--mute);font-weight:600}
 .wbtn{margin-top:8px;width:100%}
+/* Sign-in: pick your name, enter your PIN, once per phone */
+.silist{display:grid;gap:8px;margin:0 0 12px}
+@media screen and (min-width:700px){.silist{grid-template-columns:repeat(2,minmax(0,1fr))}#signin{max-width:640px}}
+.silist button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border-left:6px solid var(--lc,#8a97a8);min-height:48px;font-size:16px}
+.silist button:disabled{opacity:.55;cursor:not-allowed}
+.silist button small{font-size:12px;color:var(--mute);font-weight:500}
+.silist button[aria-pressed="true"]{background:var(--hl);border-color:var(--acc);border-left-color:var(--lc,#8a97a8)}
+.who{padding:12px 18px;border-top:1px solid var(--line);margin-top:12px;font-size:13px;color:var(--mute)}
+.who b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+#drawer .who button{margin-top:8px;border:1px solid var(--line);border-radius:var(--r);min-height:40px;padding:6px 12px;text-align:center;font-size:14px}
+/* Roster logins (Lead Panel) */
+.lbadge{font-size:11px;font-weight:700;background:var(--acc);color:var(--accink);padding:1px 6px;border-radius:3px}
+.rs li .rsp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;width:100%;padding:0 0 6px;font-size:13px;font-weight:500;color:var(--mute)}
+.rs li .rsp .chk{font-size:13px;margin-left:auto}
+.rs li .rsp input[type=password]{width:130px;flex:none;padding:6px 8px}
+.rs li .rsp button{min-height:34px}
+.rsa2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+.rsa2 input[type=password]{width:150px;flex:none}
 </style>
 </head>
 <body>
@@ -352,6 +370,19 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <p id="s_err" class="note" style="color:var(--bad)"></p>
     <div class="acts"><button id="s_go" class="go" type="button">Continue</button></div>
     <div class="acts"><button id="s_new" type="button" hidden>Start a new log with this PIN</button></div>
+  </div>
+  <div id="signin" class="panel setup" hidden>
+    <h2>Who's using this phone?</h2>
+    <p class="note">Tap your name, then enter your PIN. This phone stays signed in after that.</p>
+    <div id="si_list" class="silist"></div>
+    <div id="si_pinrow" hidden>
+      <label class="f" for="si_pin">PIN for <span id="si_name"></span></label>
+      <input id="si_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="Your PIN">
+      <p id="si_err" class="note" style="color:var(--bad)"></p>
+      <div class="acts"><button id="si_go" class="go" type="button">Sign in</button><button id="si_back" type="button">Back</button></div>
+    </div>
+    <div class="acts"><button id="si_cancel" type="button" hidden>Keep current person</button></div>
+    <p class="note">Not on the list or forgot your PIN? Ask a lead. <button id="si_lead" class="small" type="button">Lead setup</button></p>
   </div>
   <div id="app">
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
@@ -409,7 +440,9 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <h2>Crew Roster</h2>
     <p class="note" style="margin:0 0 10px">Loaders pick their name from this list on every load, so names match on the loadout sheet. Typing a new name still works. Shared with everyone on this crew PIN.</p>
     <ul id="rs_list" class="rs"></ul>
+    <p class="note" style="margin:0 0 10px">Logins: give each person a PIN and they sign in once on their phone with their name and PIN. Leads open this panel and remove loads without the lead PIN. The lead PIN still works on any phone as a backup.</p>
     <div class="rsa"><input id="rs_in" type="text" autocomplete="off" maxlength="30" placeholder="Name as it should print" aria-label="New crew member name"><button id="rs_add" class="go" type="button">Add</button></div>
+    <div class="rsa2"><input id="rs_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="PIN (4 to 8 digits)" aria-label="PIN for new crew member"><label class="chk"><input id="rs_lead" type="checkbox"> Lead</label></div>
     <p id="rs_err" class="note" style="color:var(--bad)" hidden></p>
     <div class="tools" style="margin-top:12px"><button id="ld_lockbtn" class="small" type="button">Lock panel</button></div>
   </div>
@@ -482,6 +515,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <button type="button" data-view="lw">Load Weight</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
+  <div class="who" id="who" hidden><span id="who_t"></span><button id="who_sw" type="button">Switch person</button></div>
 </nav>
 <div id="sheetview" hidden>
   <div class="sv-bar"><div class="wrap">
@@ -800,9 +834,12 @@ function setField(id,f,v){if(f==="loader")rememberLoader(v);
 function doAct(a,id){
   var o=find(id);if(!o||!can())return;
   if(a==="rm"){
-    askPin("Enter the lead PIN to remove this load.","Remove load",function(){enqueue(id,function(){return DL.remove(id)});build()});return}
+    var rmGo=function(){enqueue(id,function(){return DL.remove(id)});build()};
+    if(isLead())askPin("Remove "+(o.name||"this load")+"? This can't be undone.","Remove load",rmGo,true);
+    else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
+    return}
   rmId=null;
-  if(a==="start")upd(id,{startAt:Date.now(),endAt:null});
+  if(a==="start"){var sp={startAt:Date.now(),endAt:null};if(!o.loader&&ME)sp.loader=ME.name;upd(id,sp)}
   else if(a==="end"){upd(id,{endAt:Date.now()});openFin(id)}
   else if(a==="weigh"){flushAll(id);openFin(id)}
   else if(a==="undo")upd(id,{startAt:null,endAt:null});
@@ -873,7 +910,7 @@ function addOrder(){
   if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
   var nid=DL.newId();
   enqueue(nid,function(){return DL.set(nid,data)});
-  rememberLoader(data.loader);$("a_ld").value=data.loader;
+  rememberLoader(data.loader);$("a_ld").value=ME?ME.name:data.loader;
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";updState();
   $("addp").hidden=true;
@@ -925,10 +962,13 @@ function onData(list){
   var rs=null;
   list.forEach(function(o){if(o.id===ROSTER_ID)rs=o});
   ORD=list.filter(function(o){return o.prod!==undefined});
-  ROSTER=[];RCOL={};
-  if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var c=rs.colors&&rs.colors[k];if(c)RCOL[n.toLowerCase()]=String(c)});
+  ROSTER=[];RCOL={};RPIN={};RLEAD={};
+  if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var lk=n.toLowerCase();
+    var c=rs.colors&&rs.colors[k];if(c)RCOL[lk]=String(c);
+    var p=rs.pins&&rs.pins[k];if(p)RPIN[lk]=String(p);
+    if(rs.leads&&rs.leads[k])RLEAD[lk]=true});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
-  gotData=true;syncState();renderRoster();refresh();
+  gotData=true;syncState();renderRoster();applyAuth();refresh();
 }
 
 /* The crew roster lives beside the orders under a fixed key, so the existing
@@ -941,40 +981,131 @@ function canonName(v){
   return v;
 }
 
+var rsEdit=-1;
 function renderRoster(){
   $("crewlist").innerHTML=ROSTER.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("");
-  $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var cur=RCOL[n.toLowerCase()];
-    return '<li><span class="rsn"><i style="background:'+colOf(n)+'"></i>'+esc(n)+'</span><button type="button" data-rsi="'+i+'">Remove</button>'+
-      '<div class="sw" role="group" aria-label="Color for '+esc(n)+'">'+LCOL.map(function(c){return '<button type="button" data-rsc="'+i+'" data-col="'+c[0]+'" aria-label="'+c[2]+'" aria-pressed="'+(cur===c[0])+'" style="--c:'+c[1]+'"></button>'}).join("")+'</div></li>'}).join(""):'<li class="none">No names yet. Add your crew below.</li>';
+  /* Don't redraw while the lead is typing a PIN; Save or Cancel redraws. */
+  var a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.type!=="checkbox"&&$("rs_list").contains(a))return;
+  $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var k=n.toLowerCase(),cur=RCOL[k],hp=!!RPIN[k],ld=!!RLEAD[k];
+    var s='<li><span class="rsn"><i style="background:'+colOf(n)+'"></i>'+esc(n)+(ld?' <span class="lbadge">Lead</span>':'')+'</span><button type="button" data-rsi="'+i+'">Remove</button>'+
+      '<div class="sw" role="group" aria-label="Color for '+esc(n)+'">'+LCOL.map(function(c){return '<button type="button" data-rsc="'+i+'" data-col="'+c[0]+'" aria-label="'+c[2]+'" aria-pressed="'+(cur===c[0])+'" style="--c:'+c[1]+'"></button>'}).join("")+'</div><div class="rsp">';
+    if(rsEdit===i)s+='<input id="rsp_in" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" placeholder="4 to 8 digits" aria-label="New PIN for '+esc(n)+'"><button type="button" class="go" data-rsps="'+i+'">Save PIN</button><button type="button" data-rspx="1">Cancel</button>';
+    else s+='<span>'+(hp?'PIN set':'No PIN yet')+'</span><button type="button" data-rsp="'+i+'">'+(hp?'Change PIN':'Set PIN')+'</button>';
+    return s+'<label class="chk"><input type="checkbox" data-rsl="'+i+'"'+(ld?' checked':'')+'> Lead</label></div></li>'}).join(""):'<li class="none">No names yet. Add your crew below.</li>';
+  if(rsEdit>=0){var pi=$("rsp_in");if(pi)try{pi.focus()}catch(e){}}
 }
-/* Saved as {names:{n0:"Sam"}, colors:{n0:"blue"}}. Phones on v20 or older read names only. */
+/* Saved as {names:{n0:"Sam"}, colors:{n0:"blue"}, pins:{n0:<hash>}, leads:{n0:true}}.
+   Phones on v23 or older read names (and colors) only. */
 function saveRoster(names){
   if(!DL||!can()){rsErr("Not connected. Open the Load Log with a signal first.");return false}
-  var obj={},cols={},hasCol=false;
-  names.forEach(function(n,i){obj["n"+i]=n;var c=RCOL[n.toLowerCase()];if(c){cols["n"+i]=c;hasCol=true}});
-  var data={names:obj};if(hasCol)data.colors=cols;
-  ROSTER=names.slice();renderRoster();refresh();
+  var obj={},cols={},pins={},leads={},hc=false,hp=false,hl=false;
+  names.forEach(function(n,i){var k=n.toLowerCase();obj["n"+i]=n;
+    if(RCOL[k]){cols["n"+i]=RCOL[k];hc=true}
+    if(RPIN[k]){pins["n"+i]=RPIN[k];hp=true}
+    if(RLEAD[k]){leads["n"+i]=true;hl=true}});
+  var data={names:obj};if(hc)data.colors=cols;if(hp)data.pins=pins;if(hl)data.leads=leads;
+  ROSTER=names.slice();renderRoster();applyAuth();refresh();
   enqueue(ROSTER_ID,function(){return names.length?DL.set(ROSTER_ID,data):DL.remove(ROSTER_ID)});
   return true;
 }
 function rsErr(t){$("rs_err").textContent=t||"";$("rs_err").hidden=!t}
-function addRoster(){
-  var v=$("rs_in").value.trim().replace(/\s+/g," ");rsErr("");
+async function addRoster(){
+  var v=$("rs_in").value.trim().replace(/\s+/g," "),pin=$("rs_pin").value.trim();rsErr("");
   if(!v){$("rs_in").focus();return}
   for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v.toLowerCase()){rsErr(ROSTER[i]+" is already on the roster.");return}
+  if(pin&&!okPin(pin)){rsErr("The PIN is 4 to 8 digits, numbers only.");$("rs_pin").focus();return}
+  var k=v.toLowerCase();delete RPIN[k];delete RLEAD[k];
+  if(pin)RPIN[k]=await pinHash(v,pin);
+  if($("rs_lead").checked)RLEAD[k]=true;
   var n=ROSTER.concat([v]).sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
-  if(saveRoster(n)){$("rs_in").value="";$("rs_in").focus()}
+  if(saveRoster(n)){$("rs_in").value="";$("rs_pin").value="";$("rs_lead").checked=false;$("rs_in").focus()}
+}
+async function savePinFor(i){
+  var nm=ROSTER[i],inp=$("rsp_in");if(nm==null||!inp)return;
+  var pin=inp.value.trim();
+  if(!okPin(pin)){rsErr("The PIN is 4 to 8 digits, numbers only.");inp.value="";inp.focus();return}
+  rsErr("");RPIN[nm.toLowerCase()]=await pinHash(nm,pin);
+  rsEdit=-1;try{inp.blur()}catch(e){}
+  saveRoster(ROSTER);
 }
 $("rs_add").onclick=addRoster;
 $("rs_in").onkeydown=function(e){if(e.key==="Enter")addRoster()};
+$("rs_pin").onkeydown=function(e){if(e.key==="Enter")addRoster()};
+$("rs_list").onkeydown=function(e){if(e.key==="Enter"&&e.target.id==="rsp_in")savePinFor(rsEdit)};
+$("rs_list").onchange=function(e){
+  var c=e.target;if(!c.hasAttribute("data-rsl"))return;
+  var nm=ROSTER[+c.getAttribute("data-rsl")];if(nm==null)return;
+  if(c.checked)RLEAD[nm.toLowerCase()]=true;else delete RLEAD[nm.toLowerCase()];
+  rsErr("");saveRoster(ROSTER);
+};
 $("rs_list").onclick=function(e){
-  var sw=e.target.closest?e.target.closest("button[data-rsc]"):null;
-  if(sw){var nm2=ROSTER[+sw.getAttribute("data-rsc")];if(nm2==null)return;rsErr("");RCOL[nm2.toLowerCase()]=sw.getAttribute("data-col");saveRoster(ROSTER);return}
-  var b=e.target.closest?e.target.closest("button[data-rsi]"):null;if(!b)return;
-  var i=+b.getAttribute("data-rsi"),nm=ROSTER[i];if(nm==null)return;
+  var t=e.target.closest?e.target.closest("button"):null;if(!t)return;
+  if(t.hasAttribute("data-rsp")){rsEdit=+t.getAttribute("data-rsp");rsErr("");renderRoster();return}
+  if(t.hasAttribute("data-rsps")){savePinFor(+t.getAttribute("data-rsps"));return}
+  if(t.hasAttribute("data-rspx")){rsEdit=-1;var pi=$("rsp_in");if(pi)try{pi.blur()}catch(x){}rsErr("");renderRoster();return}
+  if(t.hasAttribute("data-rsc")){var nm2=ROSTER[+t.getAttribute("data-rsc")];if(nm2==null)return;rsErr("");RCOL[nm2.toLowerCase()]=t.getAttribute("data-col");saveRoster(ROSTER);return}
+  if(!t.hasAttribute("data-rsi"))return;
+  var b=t,i=+b.getAttribute("data-rsi"),nm=ROSTER[i];if(nm==null)return;
   if(b.getAttribute("data-arm")!=="1"){b.setAttribute("data-arm","1");b.className="arm";b.textContent="Tap to confirm";setTimeout(function(){if(b.isConnected){b.removeAttribute("data-arm");b.className="";b.textContent="Remove"}},4000);return}
+  var k=nm.toLowerCase();delete RPIN[k];delete RLEAD[k];rsEdit=-1;
   rsErr("");saveRoster(ROSTER.filter(function(x,j){return j!==i}));
 };
+
+/* Personal logins. Each phone signs in once as a roster name with that person's PIN.
+   PINs are stored hashed (not readable in the database) but checked in the browser,
+   so this is casual protection, same as the crew PIN and the lead PIN. */
+var USER_KEY="tcw-user",ME=null,RPIN={},RLEAD={},leadOpen=false,siName=null,siSwitching=false;
+async function pinHash(name,pin){
+  var s=(conf().prefix||"")+"|"+String(name).trim().toLowerCase()+"|"+pin;
+  if(!(window.crypto&&crypto.subtle&&window.TextEncoder))return "p:"+s;
+  var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return Array.prototype.map.call(new Uint8Array(b),function(x){return (x<16?"0":"")+x.toString(16)}).join("");
+}
+function rosterName(v){v=String(v||"").trim().toLowerCase();for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v)return ROSTER[i];return null}
+function needSignIn(){for(var i=0;i<ROSTER.length;i++)if(RPIN[ROSTER[i].toLowerCase()])return true;return false}
+function isLead(){return !!(ME&&ME.lead)}
+async function checkLeadPin(pin){
+  if(!pin)return false;if(pin===LEAD_PIN)return true;
+  for(var i=0;i<ROSTER.length;i++){var k=ROSTER[i].toLowerCase();if(RLEAD[k]&&RPIN[k]&&await pinHash(ROSTER[i],pin)===RPIN[k])return true}
+  return false;
+}
+function applyAuth(){
+  var saved="";try{saved=localStorage.getItem(USER_KEY)||""}catch(e){}
+  var nm=saved?rosterName(saved):null;
+  if(saved&&!nm&&gotData){try{localStorage.removeItem(USER_KEY)}catch(e){}}  /* removed from the roster: signed out */
+  var was=ME&&ME.name;
+  ME=nm?{name:nm,lead:!!RLEAD[nm.toLowerCase()]}:null;
+  if(ME&&ME.name!==was&&$("addp").hidden)$("a_ld").value=ME.name;
+  var w=$("who");w.hidden=!ME&&!needSignIn();
+  $("who_t").innerHTML=ME?'<b>'+esc(ME.name)+'</b>'+(ME.lead?'Lead on this phone':'Signed in on this phone'):'<b>Not signed in</b>';
+  $("who_sw").textContent=ME?"Switch person":"Sign in";
+  if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
+  if(curView==="lead")leadGate();
+}
+function showSignIn(){$("app").hidden=true;$("signin").hidden=false;renderSignIn()}
+function hideSignIn(){$("signin").hidden=true;siName=null;if($("setup").hidden)$("app").hidden=false}
+function renderSignIn(){
+  $("si_list").innerHTML=ROSTER.map(function(n){var k=n.toLowerCase(),hp=!!RPIN[k];
+    return '<button type="button" data-si="'+esc(n)+'" style="--lc:'+colOf(n)+'"'+(hp?'':' disabled')+' aria-pressed="'+(siName===n)+'"><span>'+esc(n)+'</span><small>'+(hp?(RLEAD[k]?'Lead':''):'No PIN yet')+'</small></button>'}).join("")||'<p class="note">No crew names yet. A lead adds them in the Lead Panel.</p>';
+  $("si_pinrow").hidden=!siName;$("si_name").textContent=siName||"";
+  $("si_cancel").hidden=!(siSwitching&&ME);
+}
+$("si_list").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-si]"):null;if(!b||b.disabled)return;
+  siName=b.getAttribute("data-si");$("si_pin").value="";$("si_err").textContent="";renderSignIn();try{$("si_pin").focus()}catch(x){}};
+async function siGo(){
+  var nm=siName,pin=$("si_pin").value.trim();if(!nm)return;
+  var k=nm.toLowerCase();
+  if(!RPIN[k]||await pinHash(nm,pin)!==RPIN[k]){$("si_err").textContent="Wrong PIN.";$("si_pin").value="";$("si_pin").focus();return}
+  try{localStorage.setItem(USER_KEY,nm)}catch(e){}
+  rememberLoader(nm);siSwitching=false;siName=null;$("si_pin").value="";$("si_err").textContent="";
+  applyAuth();refresh();
+}
+$("si_go").onclick=siGo;
+$("si_pin").onkeydown=function(e){if(e.key==="Enter")siGo()};
+$("si_back").onclick=function(){siName=null;renderSignIn()};
+$("si_cancel").onclick=function(){siSwitching=false;applyAuth()};
+$("si_lead").onclick=function(){askPin("Enter the lead PIN to open the Lead Panel.","Open Lead Panel",function(){leadOpen=true;showView("lead")})};
+$("who_sw").onclick=function(){siSwitching=true;siName=null;showView("log");applyAuth()};
 function onDataErr(e){
   clearTimeout(loadTimer);
   var c=String((e&&e.code)||"").toUpperCase();
@@ -1172,6 +1303,7 @@ function showView(k){
   var v=VIEWS[k];if(!v)return;
   if(curView==="lead"&&k!=="lead")lockLead();
   curView=k;
+  if(k==="lead"){leadGate();renderRoster()}
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
   $("vt").textContent=v[1];$("vs").textContent=v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
@@ -1182,13 +1314,16 @@ $("menu").onclick=function(){setDrawer(!$("drawer").classList.contains("open"))}
 $("scrim").onclick=function(){setDrawer(false)};
 $("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-view]"):null;if(b)showView(b.getAttribute("data-view"))};
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("open"))setDrawer(false)});
-function lockLead(){$("ld_body").hidden=true;$("ld_lock").hidden=false;$("ld_pin").value="";$("ld_err").hidden=true}
-function tryLead(){if($("ld_pin").value===LEAD_PIN){$("ld_lock").hidden=true;$("ld_body").hidden=false;$("ld_pin").value="";$("ld_err").hidden=true}else{$("ld_err").hidden=false;$("ld_pin").value="";$("ld_pin").focus()}}
+/* Leads signed in on this phone skip the lock. Anyone else unlocks with the lead PIN
+   (the shared backup) or any lead's personal PIN. */
+function leadGate(){var ok=isLead()||leadOpen;$("ld_lock").hidden=ok;$("ld_body").hidden=!ok;$("ld_lockbtn").hidden=isLead()}
+function lockLead(){leadOpen=false;rsEdit=-1;$("ld_pin").value="";$("ld_err").hidden=true;leadGate()}
+async function tryLead(){var v=$("ld_pin").value;if(await checkLeadPin(v)){leadOpen=true;$("ld_pin").value="";$("ld_err").hidden=true;renderRoster();leadGate()}else{$("ld_err").hidden=false;$("ld_pin").value="";$("ld_pin").focus()}}
 $("ld_go").onclick=tryLead;$("ld_pin").onkeydown=function(e){if(e.key==="Enter")tryLead()};$("ld_lockbtn").onclick=lockLead;
-var pinCb=null;
-function askPin(msg,btn,cb){pinCb=cb;$("pinm_m").textContent=msg;$("pinm_ok").textContent=btn;$("pinm_in").value="";$("pinm_e").hidden=true;$("pinm").hidden=false;setTimeout(function(){try{$("pinm_in").focus()}catch(e){}},30)}
+var pinCb=null,pinNo=false;
+function askPin(msg,btn,cb,noPin){pinCb=cb;pinNo=!!noPin;$("pinm_t").textContent=noPin?"Are you sure?":"Lead PIN required";$("pinm_m").textContent=msg;$("pinm_ok").textContent=btn;$("pinm_in").value="";$("pinm_in").hidden=pinNo;$("pinm_e").hidden=true;$("pinm").hidden=false;setTimeout(function(){try{(pinNo?$("pinm_ok"):$("pinm_in")).focus()}catch(e){}},30)}
 function pinClose(){$("pinm").hidden=true;pinCb=null}
-function pinSubmit(){if($("pinm_in").value===LEAD_PIN){var f=pinCb;pinClose();if(f)f()}else{$("pinm_e").hidden=false;$("pinm_in").value="";$("pinm_in").focus()}}
+async function pinSubmit(){if(pinNo||await checkLeadPin($("pinm_in").value)){var f=pinCb;pinClose();if(f)f()}else{$("pinm_e").hidden=false;$("pinm_in").value="";$("pinm_in").focus()}}
 $("pinm_ok").onclick=pinSubmit;$("pinm_c").onclick=pinClose;$("pinm_in").onkeydown=function(e){if(e.key==="Enter")pinSubmit();else if(e.key==="Escape")pinClose()};
 showView("log");syncNav();
 init();
