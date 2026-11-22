@@ -613,6 +613,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <ol>
       <li>NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
       <li>Before loading, open the load and enter the scale-in light weight. It shows how many gallons fit.</li>
+      <li>If the whole order fits, it says so. Load the amounts in Needs. The Updated mix only shows when the order is too heavy and has to be cut back.</li>
     </ol>
   </details>
   <details><summary>Fixing a mistake</summary>
@@ -756,8 +757,10 @@ function nmOut(o,L){
   if(net<=0)return '<p class="nmn bad">The light weight is already at or over the '+num(NM_TARGET)+' lb target.</p>';
   var gal=Math.floor(net/wi.w),gross=L+gal*wi.w,h='';
   h+='<div class="nmr"><div><span>Max product at '+num(NM_TARGET)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(gross)+' <small>lb</small></b></div></div>';
-  h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
   var og=parseFloat(o.gal)||0;
+  /* When the whole order fits, only the Needs box above applies: no second mix to confuse it with */
+  if(og>0&&gal>=og){h+='<p class="nmn">The full '+gf(og)+' gal order fits ('+num(L+og*wi.w)+' lb). Load the amounts in Needs above.</p>';og=0}
+  else h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
   if(og>0){var ow=L+og*wi.w,cls=ow>NM_MAX?"nmn bad":ow>NM_TARGET?"nmn warn":"nmn";
     h+='<p class="'+cls+'">Ordered '+gf(og)+' gal would weigh '+num(ow)+' lb'+(ow>NM_MAX?'. OVER '+num(NM_MAX)+' LB.':ow>NM_TARGET?'. Over the '+num(NM_TARGET)+' lb target.':'.')+'</p>'}
   if(wi.est)h+='<p class="nmn">CableShield weight is not on file. This uses the '+wi.est+' weight as an estimate, so confirm on the scale.</p>';
