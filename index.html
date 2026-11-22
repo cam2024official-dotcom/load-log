@@ -271,15 +271,6 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .pinm[hidden]{display:none}
 .pinb{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;width:min(360px,100%);box-shadow:0 12px 40px rgba(0,0,0,.35)}
 .pinb b{font-size:17px}.pinr{display:flex;gap:10px;margin-top:14px}.pinr button{flex:1}
-/* Shift note */
-.snote{margin:0 0 12px;padding:12px 14px;border-left:3px solid var(--line)}
-.snote.has{border-left-color:var(--acc);background:var(--hl)}
-.snh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
-.snh label.f{margin:0;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
-.snm{font-size:12px;color:var(--mute);font-weight:500;text-align:right}
-.snote textarea{min-height:52px;font-size:15px;background:var(--card)}
-.snote textarea[readonly]{border-color:transparent;padding-inline:0;background:transparent;resize:none}
-.snr{display:flex;justify-content:flex-end;margin-top:8px}
 /* Crew roster */
 .rs{list-style:none;margin:0 0 10px;padding:0;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
 .rs li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 6px 6px 12px;border-bottom:1px solid var(--line);font-weight:600}
@@ -288,7 +279,6 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .rs li button{flex:none;min-height:36px;font-size:13px;padding:4px 10px}
 .rs li.none{color:var(--mute);font-weight:500;padding:12px}
 .rsa{display:flex;gap:10px}.rsa input{flex:1}.rsa button{flex:none}
-@media screen and (min-width:700px){#snote{max-width:640px}}
 /* Finished load missing acid or water loaded: the empty box pulses yellow when the load is open */
 @keyframes tcmissin{0%,100%{border-color:var(--line);box-shadow:0 0 0 0 rgba(245,196,0,0)}50%{border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
 input.miss{animation:tcmissin 1.6s ease-in-out infinite}
@@ -366,11 +356,6 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div id="app">
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
-  <div id="snote" class="panel snote">
-    <div class="snh"><label class="f" for="sn_txt">Shift note</label><span id="sn_meta" class="snm"></span></div>
-    <textarea id="sn_txt" rows="2" placeholder="Anything the whole crew should know this shift"></textarea>
-    <div class="snr" id="sn_row" hidden><button id="sn_clr" class="small" type="button">Clear note</button></div>
-  </div>
   <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
@@ -937,59 +922,24 @@ function syncState(){
   else setSync("","Connecting")
 }
 function onData(list){
-  var nt=null,rs=null;
-  list.forEach(function(o){if(o.id===NOTE_ID)nt=o;else if(o.id===ROSTER_ID)rs=o});
+  var rs=null;
+  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o});
   ORD=list.filter(function(o){return o.prod!==undefined});
-  NOTE=nt||{};
   ROSTER=[];RCOL={};
   if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var c=rs.colors&&rs.colors[k];if(c)RCOL[n.toLowerCase()]=String(c)});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
-  gotData=true;syncState();renderNote();renderRoster();refresh();
+  gotData=true;syncState();renderRoster();refresh();
 }
 
-/* Shift note and crew roster live beside the orders under fixed keys,
-   so the existing database rules cover them and v16 phones ignore them. */
-var NOTE_ID="_note",ROSTER_ID="_roster",NOTE={},ROSTER=[],noteT=null,noteDirty=false;
+/* The crew roster lives beside the orders under a fixed key, so the existing
+   database rules cover it and older phones ignore it. (The shift note was removed
+   in v23; an old _note entry in the database is simply ignored.) */
+var ROSTER_ID="_roster",ROSTER=[];
 function canonName(v){
   v=String(v||"").trim().replace(/\s+/g," ");if(!v)return "";
   for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v.toLowerCase())return ROSTER[i];
   return v;
 }
-function noteMeta(){
-  if(!NOTE.text)return "";
-  var d=NOTE.at?new Date(NOTE.at):null,when="";
-  if(d){when=d.toDateString()===new Date().toDateString()?T(NOTE.at):(d.getMonth()+1)+"/"+d.getDate()+" "+T(NOTE.at)}
-  return "Updated "+when+(NOTE.by?" by "+NOTE.by:"");
-}
-function renderNote(){
-  var ta=$("sn_txt"),w=can(),txt=NOTE.text||"";
-  ta.readOnly=!w;
-  if(!(document.activeElement===ta||noteDirty))ta.value=txt;
-  var has=!!(ta.value.trim()||txt);
-  $("snote").hidden=!w&&!txt;
-  $("snote").classList.toggle("has",has);
-  $("sn_row").hidden=!w||!has;
-  if(!noteDirty)$("sn_meta").textContent=noteMeta();
-}
-function saveNote(){
-  clearTimeout(noteT);noteT=null;
-  if(!noteDirty||!DL||!can())return;
-  noteDirty=false;
-  var t=$("sn_txt").value.replace(/\s+$/,""),by="";
-  try{by=localStorage.getItem(LD_KEY)||""}catch(e){}
-  if(t===(NOTE.text||"")){renderNote();return}
-  var d=t?{text:t,at:Date.now(),by:by}:null;
-  NOTE=d||{};renderNote();
-  enqueue(NOTE_ID,function(){return d?DL.set(NOTE_ID,d):DL.remove(NOTE_ID)});
-}
-$("sn_txt").oninput=function(){
-  noteDirty=true;$("sn_meta").textContent="Saving…";
-  $("snote").classList.toggle("has",!!this.value.trim());
-  $("sn_row").hidden=!can()||!this.value.trim();
-  clearTimeout(noteT);noteT=setTimeout(saveNote,900);
-};
-$("sn_txt").onblur=saveNote;
-$("sn_clr").onclick=function(){$("sn_txt").value="";noteDirty=true;saveNote()};
 
 function renderRoster(){
   $("crewlist").innerHTML=ROSTER.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("");
