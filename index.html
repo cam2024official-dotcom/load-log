@@ -200,6 +200,23 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .grp.mine h2{color:var(--acc)}
 .grp.mine .mnm{font:600 13px var(--body);color:var(--mute);margin-left:2px;text-transform:none;letter-spacing:0}
 .grp.mine .ord:not(.nm){box-shadow:0 0 0 1px var(--acc)}
+#v-chat{padding-bottom:0}
+.chat{max-width:760px}
+.chl{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.cday{align-self:center;font-size:11px;font-weight:600;color:var(--mute);margin:6px 0 0;text-transform:uppercase;letter-spacing:.08em}
+.cm{align-self:flex-start;max-width:86%;min-width:0;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--lc);border-radius:var(--r);padding:8px 10px}
+.cm.me{align-self:flex-end;background:var(--hl)}
+.cmh{display:flex;align-items:baseline;gap:8px;font-size:13px}
+.cmh span{color:var(--mute);font-size:12px}
+.cm p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.4}
+.cmx{margin-left:auto;min-height:0;border:0;background:transparent;color:var(--mute);font-size:12px;font-weight:500;padding:0 0 0 10px;text-decoration:underline}
+.chf{position:sticky;bottom:0;display:flex;gap:8px;align-items:flex-end;background:var(--bg);padding:10px 0 max(12px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);margin-top:10px;z-index:3}
+.chf textarea{flex:1;min-height:44px;max-height:120px;resize:none}
+.chf button{flex:none;min-height:44px}
+.nb{display:inline-block;margin-left:8px;min-width:20px;padding:1px 6px;border-radius:999px;background:var(--bad);color:#fff;font-size:12px;font-weight:700;line-height:18px;text-align:center;vertical-align:middle}
+.menu{position:relative}
+.mdot{position:absolute;top:6px;right:6px;width:10px;height:10px;border-radius:50%;background:var(--bad);box-shadow:0 0 0 2px var(--head)}
+.nb[hidden],.mdot[hidden]{display:none}
 .gn{margin:0 0 10px;padding:14px;border:1px dashed var(--line);border-radius:14px;color:var(--mute);font-weight:600}
 .cnt{font:600 15px var(--body);color:var(--mute);background:var(--hl);border-radius:999px;padding:2px 10px;vertical-align:middle;margin-left:6px}
 @media screen and (min-width:700px){
@@ -382,7 +399,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 </head>
 <body>
 <header class="top"><div class="wrap hd">
-  <button id="menu" class="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+  <button id="menu" class="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i><span id="ch_dot" class="mdot" hidden></span></button>
   <div class="hdt"><h1 id="vt">Load Log</h1><p id="vs">Tarquin Coolpro current orders, shared live</p></div>
 </div></header>
 <div class="stripe"></div>
@@ -531,6 +548,12 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   </div>
 </div></main>
+<main id="v-chat" hidden><div class="wrap chat">
+  <p class="note">Messages delete themselves 24 hours after they're sent. Everyone on this crew can read them.</p>
+  <div id="ch_list" class="chl" role="log" aria-live="polite"></div>
+  <p id="ch_err" class="note" style="color:var(--bad)" hidden></p>
+  <div class="chf"><textarea id="ch_in" rows="1" maxlength="500" aria-label="Message" placeholder="Message the crew"></textarea><button id="ch_send" class="go" type="button">Send</button></div>
+</div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
   <h2>Loaders</h2>
@@ -604,6 +627,15 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li><b>Load Weight</b>: enter light and heavy weights and the product to get gallons loaded, without tying it to an order. Product weights can be changed at the bottom of that page.</li>
     </ol>
   </details>
+  <details><summary>Crew Chat</summary>
+    <ol>
+      <li>Open the menu and tap <span class="kb">Crew Chat</span>. A red number next to it, or a red dot on the menu button, means new messages.</li>
+      <li>Type in the box at the bottom and tap <span class="kb">Send</span>. Your name and the time go on it for you.</li>
+      <li>Messages delete themselves 24 hours after they're sent. Everyone on the crew can read them, so keep private things out.</li>
+      <li>Tap <span class="kb">Delete</span> on your own message to take it down. Leads can delete any message.</li>
+      <li>The phone doesn't buzz for new messages while the app is closed. You'll see them next time you open it.</li>
+    </ol>
+  </details>
   <div id="hp_lead" hidden>
   <h2>Leads</h2>
   <details><summary>Adding and removing orders</summary>
@@ -647,6 +679,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <button type="button" data-view="log">Load Log</button>
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
+  <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
   <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
@@ -1121,8 +1154,13 @@ function syncState(){
   else setSync("","Connecting")
 }
 function onData(list){
-  var rs=null;
-  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o});
+  var rs=null,ch=null;
+  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o});
+  setChat(ch);
+  /* A new chat message alone doesn't need the board rebuilt */
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID}));
+  if(gotData&&sig===dataSig)return;
+  dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
   ROSTER=[];RCOL={};RPIN={};RLEAD={};
   if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var lk=n.toLowerCase();
@@ -1137,6 +1175,48 @@ function onData(list){
    database rules cover it and older phones ignore it. (The shift note was removed
    in v23; an old _note entry in the database is simply ignored.) */
 var ROSTER_ID="_roster",ROSTER=[];
+
+/* Crew chat lives beside the orders under a fixed key too, as
+   {mID:{t:ms,by:"Sam",tx:"..."}}. Messages older than 24 hours are hidden and
+   deleted by the first phone that sees them, so the database holds a day at most. */
+var CHAT_ID="_chat",CHAT_TTL=24*3600e3,CHAT={},chatSig="",chatShown="",dataSig="",SEEN_KEY="tcw-chat-seen";
+function chatMsgs(){var now=Date.now();return Object.keys(CHAT).map(function(k){var m=CHAT[k]||{};return {id:k,t:+m.t||0,by:String(m.by||""),tx:String(m.tx||"")}}).filter(function(m){return m.tx&&now-m.t<CHAT_TTL}).sort(function(a,b){return a.t-b.t})}
+function setChat(o){var c={};if(o)Object.keys(o).forEach(function(k){if(k!=="id"&&o[k]&&typeof o[k]==="object")c[k]=o[k]});CHAT=c;pruneChat();var s=JSON.stringify(c);if(s!==chatSig){chatSig=s;renderChat()}}
+function pruneChat(){if(!DL||!can())return;var now=Date.now(),p={},n=0;Object.keys(CHAT).forEach(function(k){var t=+(CHAT[k]&&CHAT[k].t)||0;if(now-t>=CHAT_TTL){p[k]=null;n++}});if(n)upd(CHAT_ID,p)}
+function seenAt(){try{return +localStorage.getItem(SEEN_KEY)||0}catch(e){return 0}}
+function markSeen(ms){var t=ms.length?ms[ms.length-1].t:0;if(t>seenAt()){try{localStorage.setItem(SEEN_KEY,String(t))}catch(e){}}}
+function chatBadge(ms){var s=seenAt(),me=ME?ME.name.toLowerCase():"",n=curView==="chat"?0:ms.filter(function(m){return m.t>s&&m.by.toLowerCase()!==me}).length;
+  $("ch_badge").textContent=n>9?"9+":String(n);$("ch_badge").hidden=!n;$("ch_dot").hidden=!n}
+function renderChat(force){
+  var ms=chatMsgs(),me=ME?ME.name.toLowerCase():"",del=can(),sig=ms.map(function(m){return m.id}).join(",")+"|"+me+"|"+isLead()+"|"+del;
+  if(curView==="chat")markSeen(ms);
+  chatBadge(ms);
+  var inp=$("ch_in");inp.disabled=!ME||!can();$("ch_send").disabled=inp.disabled;
+  inp.placeholder=!can()?"Not connected":ME?"Message the crew":"Sign in to send messages";
+  if(!force&&sig===chatShown)return;chatShown=sig;
+  var de=document.documentElement,atBottom=window.innerHeight+window.scrollY>=de.scrollHeight-120,last="",today=new Date().toDateString();
+  $("ch_list").innerHTML=ms.length?ms.map(function(m){var mine=!!me&&m.by.toLowerCase()===me,day=new Date(m.t).toDateString(),h="";
+    if(day!==last){last=day;h='<p class="cday">'+(day===today?"Today":"Yesterday")+'</p>'}
+    return h+'<div class="cm'+(mine?' me':'')+'" style="--lc:'+colOf(m.by)+'"><div class="cmh"><b>'+esc(m.by||"Unknown")+'</b><span>'+T(m.t)+'</span>'+
+      ((mine||isLead())&&del?'<button type="button" class="cmx" data-chdel="'+esc(m.id)+'">Delete</button>':'')+'</div><p>'+esc(m.tx)+'</p></div>'}).join(""):'<p class="gn">No messages in the last 24 hours.</p>';
+  if(curView==="chat"&&(atBottom||force))window.scrollTo(0,de.scrollHeight);
+}
+function chErr(t){$("ch_err").textContent=t||"";$("ch_err").hidden=!t}
+function chGrow(){var i=$("ch_in");i.style.height="auto";i.style.height=Math.min(i.scrollHeight+2,120)+"px"}
+function sendChat(){
+  var tx=$("ch_in").value.trim();chErr("");if(!tx)return;
+  if(!DL||!can()){chErr("Not connected. Messages need a signal.");return}
+  if(!ME){chErr("Sign in with your name to send messages.");return}
+  var id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),m={t:Date.now(),by:ME.name,tx:tx.slice(0,500)},p={};
+  p[id]=m;CHAT[id]=m;upd(CHAT_ID,p);
+  $("ch_in").value="";chGrow();renderChat(true);
+}
+$("ch_send").onclick=sendChat;
+$("ch_in").oninput=chGrow;
+$("ch_in").onkeydown=function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendChat()}};
+$("ch_list").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-chdel]"):null;if(!b)return;var id=b.getAttribute("data-chdel");
+  askPin("Delete this message for everyone?","Delete",function(){var p={};p[id]=null;delete CHAT[id];upd(CHAT_ID,p);renderChat(true)},true)};
+setInterval(function(){pruneChat();renderChat()},60000);
 function canonName(v){
   v=String(v||"").trim().replace(/\s+/g," ");if(!v)return "";
   for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v.toLowerCase())return ROSTER[i];
@@ -1247,6 +1327,7 @@ function applyAuth(){
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
+  renderChat();
 }
 function showSignIn(){$("app").hidden=true;$("signin").hidden=false;renderSignIn()}
 function hideSignIn(){$("signin").hidden=true;siName=null;if($("setup").hidden)$("app").hidden=false}
@@ -1452,7 +1533,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -1471,6 +1552,8 @@ function showView(k){
   curView=k;
   if(k==="lead"){leadGate();renderRoster()}
   if(k==="help")$("hp_lead").hidden=!canManage();
+  if(k==="chat")setTimeout(function(){renderChat(true)},0);
+  else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
   $("vt").textContent=v[1];$("vs").textContent=v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
