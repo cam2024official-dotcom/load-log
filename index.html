@@ -331,7 +331,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 @media screen and (min-width:700px){.pinm.fin{align-items:center}}
 .finout{margin-top:12px}
 .finout .fr{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
-.finout .fr b{font-variant-numeric:tabular-nums}
+.finout .fr b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.finout .fr small{display:block;font-size:12px;color:var(--mute);font-weight:500;margin-top:1px}
 .finout .fr.big{font-size:17px;border-bottom:0}
 .finout .fr.big b{color:var(--acc)}
 .finout .er{margin:0;font-size:14px;color:var(--mute);font-weight:600}
@@ -851,10 +852,18 @@ function doAct(a,id){
    from the dilution ratios. The loader can change the amounts before saving. */
 var finId=null;
 $("fin_pr").innerHTML=PRODUCTS.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join("");
-function finSplit(prod,gal){
+/* CableShield chemicals are added in exact amounts for the ticket gallons, so they are
+   worked out from the order's ticket gallons (tg), not the scaled gallons. Falls back to
+   the scaled gallons when the order has no ticket gallons. */
+function csChems(prod,gal,tg){
+  var f=CSB[prod].f,base=tg>0?tg:gal;
+  var c={y7:base*f.y7,y7a:base*f.y7a,a272:base*f.a272,fromTicket:tg>0,base:base};
+  c.total=c.y7+c.y7a+c.a272;return c;
+}
+function finSplit(prod,gal,tg){
   if(prod==="acid")return {acid:gal,water:null};
   if(DIL[prod])return {acid:gal*DIL[prod][0],water:gal*DIL[prod][1]};
-  if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d=DIL[b.hcl];return {acid:hg*d[0],water:hg*d[1]}}
+  if(CSB[prod]){var hg=gal-csChems(prod,gal,tg).total,d=DIL[CSB[prod].hcl];if(!(hg>0))return null;return {acid:hg*d[0],water:hg*d[1]}}
   return null;
 }
 function finCalc(){
@@ -866,8 +875,17 @@ function finCalc(){
   if(!(L>0)||!(H>0)){out.innerHTML='<p class="er">Enter the light and heavy weights from the scale ticket.</p>';$("fin_n").textContent="";return}
   if(H<=L){out.innerHTML='<p class="er">Heavy weight must be more than light weight.</p>';$("fin_n").textContent="";return}
   if(!wi){out.innerHTML='<p class="er">Enter the product weight per gallon.</p>';$("fin_n").textContent="";return}
-  var net=H-L,gal=net/wi.w,s=finSplit(prod,gal);
-  out.innerHTML='<div class="fr"><span>Net product</span><b>'+num(net)+' lb</b></div><div class="fr big"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>';
+  var fo=find(finId),tg=fo?parseFloat(fo.gal)||0:0;
+  var net=H-L,gal=net/wi.w,s=finSplit(prod,gal,tg);
+  var oh='<div class="fr"><span>Net product</span><b>'+num(net)+' lb</b></div>';
+  if(CSB[prod]){
+    /* Show the exact chemicals coming off before the acid/water split (the split uses the HCl blend only) */
+    var c=csChems(prod,gal,tg),hb=gal-c.total;
+    oh+='<div class="fr"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>'+
+      '<div class="fr"><span>− CableShield chemicals<small>Y007 '+gf(c.y7)+' · Y007A '+gf(c.y7a)+' · A272 '+gf(c.a272)+(c.fromTicket?' · for '+gf(c.base)+' gal ticket':' · no ticket gallons, scaled')+'</small></span><b>−'+gf(c.total)+' gal</b></div>'+
+      (hb>0?'<div class="fr big"><span>= '+CSB[prod].hcl+'% HCl blend</span><b>'+gf(hb)+' gal</b></div>':'<p class="er">The scale shows less than the chemicals alone. Check the weights.</p>');
+  }else oh+='<div class="fr big"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>';
+  out.innerHTML=oh;
   if(s){put($("fin_ac"),s.acid);if(prod!=="acid")put($("fin_wa"),s.water)}
   note=s?"Acid and water are worked out from the gallons and the dilution chart. Change them if your meter shows different.":"Other product: enter acid and water by hand if they apply.";
   if(wi.est)note+=" CableShield uses the "+wi.est+" weight as an estimate.";
