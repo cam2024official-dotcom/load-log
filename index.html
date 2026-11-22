@@ -197,6 +197,9 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .calc .wg input{font:600 18px/1.2 var(--body);padding:8px;border:2px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
 .calc .warn{color:var(--warn);font-weight:600}
 .grp.none{display:none}
+.grp.mine h2{color:var(--acc)}
+.grp.mine .mnm{font:600 13px var(--body);color:var(--mute);margin-left:2px;text-transform:none;letter-spacing:0}
+.grp.mine .ord:not(.nm){box-shadow:0 0 0 1px var(--acc)}
 .gn{margin:0 0 10px;padding:14px;border:1px dashed var(--line);border-radius:14px;color:var(--mute);font-weight:600}
 .cnt{font:600 15px var(--body);color:var(--mute);background:var(--hl);border-radius:999px;padding:2px 10px;vertical-align:middle;margin-left:6px}
 @media screen and (min-width:700px){
@@ -543,6 +546,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <ol>
       <li>Each order on the Load Log is one row: trailer or customer, loader, gallons and product, and ticket number. The colored bar on the left is the loader's color.</li>
       <li>Tap a row to open it. Tap it again to close it.</li>
+      <li>When you're signed in, your own loads sit first under <b>Your loads</b>: the one you're loading, any finished ones still missing acid or water, then the ones waiting on you. The top one opens by itself.</li>
       <li>The right side shows the leave-by time, or the time it finished. While a load is going, the row shows a running timer.</li>
     </ol>
   </details>
@@ -788,12 +792,19 @@ function editCard(o){
 }
 function build(){
   pendingBuild=false;
-  var os=ORD,L=os.filter(function(o){return status(o)==="loading"}).sort(byLbt),
-      W=os.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
-      D=os.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
+  /* Your loads: the signed-in person's loads (loading, finished but missing amounts, waiting) pinned at the top */
+  var me=ME&&can()?ME.name.toLowerCase():"";
+  function mine(o){if(!me)return false;var n=canonName(o.loader);if(!n||n.toLowerCase()!==me)return false;if(status(o)!=="done")return true;var m=missing(o);return m.acid||m.water}
+  function rank(o){var s=status(o);return s==="loading"?0:s==="done"?1:2}
+  var os=ORD,M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||byLbt(a,b)}),rest=os.filter(function(o){return !mine(o)});
+  var L=rest.filter(function(o){return status(o)==="loading"}).sort(byLbt),
+      W=rest.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
+      D=rest.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
+  if(M.length&&OPEN[M[0].id]===undefined)OPEN[M[0].id]=true;
   var h="";
-  [["Loading now",L,"Nothing loading right now."],["Waiting",W,"No orders waiting."],["Done",D,"Nothing finished yet."]].forEach(function(g){
-    h+='<section class="grp'+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
+  [["Your loads",M,"",true],["Loading now",L,"Nothing loading right now."],["Waiting",W,"No orders waiting."],["Done",D,"Nothing finished yet."]].forEach(function(g){
+    if(g[3]&&!g[1].length)return;
+    h+='<section class="grp'+(g[3]?' mine':'')+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
       (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
   if(!os.length)h='<div class="empty">'+(can()&&canManage()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
   $("list").innerHTML=h;
