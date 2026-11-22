@@ -355,6 +355,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .rs li .rsp button{min-height:34px}
 .rsa2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
 .rsa2 input[type=password]{width:150px;flex:none}
+.hp h2{margin:18px 0 6px}
+.hp details{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-top:8px;padding:0 14px}
+.hp summary{font-weight:600;cursor:pointer;min-height:48px;display:flex;align-items:center}
+.hp details[open] summary{border-bottom:1px solid var(--line)}
+.hp ol{margin:10px 0 12px;padding-left:22px}
+.hp li{margin:6px 0;line-height:1.45}
+.kb{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:0 6px;font-weight:600;font-size:.92em;background:var(--hl);white-space:nowrap}
+@media(min-width:1000px){.hp{max-width:820px}}
 </style>
 </head>
 <body>
@@ -508,12 +516,115 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   </div>
 </div></main>
+<main id="v-help" hidden><div class="wrap hp">
+  <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
+  <h2>Loaders</h2>
+  <details><summary>Signing in on your phone</summary>
+    <ol>
+      <li>The first time you open the app, tap your name and enter your PIN. The phone stays signed in after that.</li>
+      <li>On a shared phone, open the menu and tap <span class="kb">Switch person</span> at the bottom. Pick your name and enter your own PIN.</li>
+      <li>Not on the list or forgot your PIN? Ask a lead to add you or set a new one.</li>
+    </ol>
+  </details>
+  <details><summary>Finding and opening a load</summary>
+    <ol>
+      <li>Each order on the Load Log is one row: trailer or customer, loader, gallons and product, and ticket number. The colored bar on the left is the loader's color.</li>
+      <li>Tap a row to open it. Tap it again to close it.</li>
+      <li>The chip on the right shows the status: waiting, loading (with a running timer), or done.</li>
+    </ol>
+  </details>
+  <details><summary>Starting a load</summary>
+    <ol>
+      <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
+      <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
+      <li>Started the wrong one? Tap <span class="kb">Undo start</span>.</li>
+    </ol>
+  </details>
+  <details><summary>Ending a load and the load weight window</summary>
+    <ol>
+      <li>Tap <span class="kb">End load</span>. The load weight window opens.</li>
+      <li>Enter the light weight (scale in) and heavy weight (scale out). Check the product is right.</li>
+      <li>The window works out the gallons loaded and fills in Acid loaded and Water loaded. For CableShield, the exact chemicals from the ticket are taken out first.</li>
+      <li>Change the acid or water numbers if they don't match what you pulled, then tap <span class="kb">Save amounts</span>.</li>
+      <li>No scale ticket yet? Tap <span class="kb">Later</span>. You can open the window again from the finished load with <span class="kb">Figure from scale weights</span>.</li>
+    </ol>
+  </details>
+  <details><summary>Entering acid and water by hand</summary>
+    <ol>
+      <li>Open the finished load and type the gallons in Acid loaded and Water loaded. It saves as you type.</li>
+      <li>Acid is needed on every acid load. Water is needed on diluted acid and CableShield loads.</li>
+      <li>Until they're filled in, the load shows "Needs acid" (or water) and the box is marked in yellow.</li>
+    </ol>
+  </details>
+  <details><summary>The crew board</summary>
+    <ol>
+      <li>The tiles at the top show each loader and what they're loading right now, with a live timer.</li>
+      <li>Tap a name to jump to that loader's load.</li>
+      <li>A yellow "Needs acid · Ticket ..." line means a finished load is missing amounts. Tap it to go straight to the empty box.</li>
+      <li>The line under the counts shows the total acid pulled this shift and how many finished loads are still missing acid.</li>
+    </ol>
+  </details>
+  <details><summary>New Mexico loads</summary>
+    <ol>
+      <li>NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
+      <li>Before loading, open the load and enter the scale-in light weight. It shows how many gallons fit.</li>
+    </ol>
+  </details>
+  <details><summary>Fixing a mistake</summary>
+    <ol>
+      <li><span class="kb">Edit</span> changes the trailer, product, gallons, times, ticket and BOL.</li>
+      <li><span class="kb">Reopen</span> puts a finished load back to loading.</li>
+    </ol>
+  </details>
+  <details><summary>Acid Dilution and Load Weight pages</summary>
+    <ol>
+      <li><b>Acid Dilution</b>: pick the product and strength, enter total gallons, and it shows how much acid, water and chemicals go in.</li>
+      <li><b>Load Weight</b>: enter light and heavy weights and the product to get gallons loaded, without tying it to an order. Product weights can be changed at the bottom of that page.</li>
+    </ol>
+  </details>
+  <div id="hp_lead" hidden>
+  <h2>Leads</h2>
+  <details><summary>Adding and removing orders</summary>
+    <ol>
+      <li>Tap <span class="kb">Add an order</span> on the Load Log. Fill in the trailer or customer, product, ticket gallons, ticket number and anything else you have, then tap <span class="kb">Save order</span>.</li>
+      <li>Pick New Mexico under Delivering to for NM loads.</li>
+      <li>To remove one, open it and tap <span class="kb">Remove</span>. Only leads see these buttons.</li>
+    </ol>
+  </details>
+  <details><summary>Adding people and setting PINs</summary>
+    <ol>
+      <li>Open the Lead Panel. Under Crew Roster, type the name as it should print, add a PIN, tick Lead if they're a lead, and tap <span class="kb">Add</span>.</li>
+      <li>To give someone a new PIN, tap <span class="kb">Set PIN</span> or <span class="kb">Change PIN</span> next to their name.</li>
+      <li>Leads get into the Lead Panel and can remove loads without typing the lead PIN.</li>
+      <li>Removing someone from the roster signs them out on their phone.</li>
+    </ol>
+  </details>
+  <details><summary>Loader colors</summary>
+    <ol>
+      <li>In the Lead Panel, tap a color swatch next to a name. That color shows on their load rows and crew tile.</li>
+    </ol>
+  </details>
+  <details><summary>Paperwork</summary>
+    <ol>
+      <li><span class="kb">Print loadout sheet</span> builds the sheet from the loads marked "On loadout sheet."</li>
+      <li><span class="kb">Copy shift log</span> gives a table you can paste into a spreadsheet.</li>
+      <li><span class="kb">Clear finished orders</span> removes done loads when the shift is wrapped up. Tap it twice to confirm.</li>
+    </ol>
+  </details>
+  <details><summary>The backup lead PIN</summary>
+    <ol>
+      <li>The crew's backup lead PIN opens the Lead Panel and removes loads on any phone, even one signed in as a loader. Keep it to leads.</li>
+    </ol>
+  </details>
+  </div>
+</div></main>
 <div id="scrim"></div>
 <nav id="drawer" aria-label="Sections" aria-hidden="true">
   <div class="dh"><b>Tarquin Coolpro</b><span>Loader hub</span></div>
   <button type="button" data-view="log">Load Log</button>
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
+  <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
   <div class="who" id="who" hidden><span id="who_t"></span><button id="who_sw" type="button">Switch person</button></div>
@@ -1105,6 +1216,7 @@ function applyAuth(){
   $("who_sw").textContent=ME?"Switch person":"Sign in";
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
+  if(curView==="help")$("hp_lead").hidden=!canManage();
 }
 function showSignIn(){$("app").hidden=true;$("signin").hidden=false;renderSignIn()}
 function hideSignIn(){$("signin").hidden=true;siName=null;if($("setup").hidden)$("app").hidden=false}
@@ -1310,7 +1422,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -1328,6 +1440,7 @@ function showView(k){
   if(curView==="lead"&&k!=="lead")lockLead();
   curView=k;
   if(k==="lead"){leadGate();renderRoster()}
+  if(k==="help")$("hp_lead").hidden=!canManage();
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
   $("vt").textContent=v[1];$("vs").textContent=v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
