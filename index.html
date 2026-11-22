@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <title>Tarquin Hub</title>
+<script>/* Theme picked on this device (Auto follows the device). Set before paint so there is no flash. */try{var tm=localStorage.getItem("tcw-theme");if(tm==="dark"||tm==="light")document.documentElement.setAttribute("data-theme",tm)}catch(e){}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
@@ -312,6 +313,9 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 #drawer{box-shadow:0 0 0 1px var(--line),8px 0 24px rgba(0,0,0,.18)}
 .chk{font-size:14px}.chk input{width:20px;height:20px}
 .tmr{font-size:20px!important;font-weight:600!important;letter-spacing:-.01em;white-space:nowrap}
+#drawer .thm{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px 18px 18px}
+#drawer .thm button{min-height:38px;padding:6px 0;text-align:center;font-size:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--ink)}
+#drawer .thm button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accink);font-weight:700}
 #drawer .navsep{padding:14px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-top:1px solid var(--line);margin-top:12px}
 #v-lead .wrap{padding-top:12px}#v-lead .tools{display:flex;gap:10px;flex-wrap:wrap}
 @media screen and (min-width:700px){#v-lead .wrap{max-width:640px;margin-left:0}}
@@ -749,6 +753,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
   <div class="who" id="who" hidden><span id="who_t"></span><button id="who_sw" type="button">Switch person</button></div>
+  <div class="navsep">Theme on this device</div>
+  <div class="thm" id="thm" role="group" aria-label="Theme"><button type="button" data-thm="auto">Auto</button><button type="button" data-thm="light">Light</button><button type="button" data-thm="dark">Dark</button></div>
 </nav>
 <div id="sheetview" hidden>
   <div class="sv-bar"><div class="wrap">
@@ -1806,6 +1812,14 @@ function showView(k){
   for(var i=0;i<bs.length;i++){if(bs[i].getAttribute("data-view")===k)bs[i].setAttribute("aria-current","page");else bs[i].removeAttribute("aria-current")}
   setDrawer(false);window.scrollTo(0,0);
 }
+/* Theme switch: saved on this device only */
+function curTheme(){try{var t=localStorage.getItem("tcw-theme");return t==="dark"||t==="light"?t:"auto"}catch(e){return "auto"}}
+function paintThm(){var t=curTheme(),bs=$("thm").querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(bs[i].getAttribute("data-thm")===t))}
+$("thm").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-thm]"):null;if(!b)return;var t=b.getAttribute("data-thm");
+  try{if(t==="auto")localStorage.removeItem("tcw-theme");else localStorage.setItem("tcw-theme",t)}catch(x){}
+  if(t==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",t);
+  paintThm()};
+paintThm();
 $("menu").onclick=function(){setDrawer(!$("drawer").classList.contains("open"))};
 $("scrim").onclick=function(){setDrawer(false)};
 $("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-view]"):null;if(b)showView(b.getAttribute("data-view"))};
