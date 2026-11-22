@@ -201,6 +201,26 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .grp.mine .mnm{font:600 13px var(--body);color:var(--mute);margin-left:2px;text-transform:none;letter-spacing:0}
 .grp.mine .ord:not(.nm){box-shadow:0 0 0 1px var(--acc)}
 #v-chat{padding-bottom:0}
+.sch{max-width:760px}
+.scnow{margin:0 0 4px;font-weight:700;font-size:16px}
+.scnow small{display:block;font-weight:500;font-size:13px;color:var(--mute)}
+.sch h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:16px 0 8px}
+.scp{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--lc);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.scp.off{opacity:.8}
+.sch1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sch1 b{font-size:16px;margin-right:auto;overflow-wrap:anywhere;min-width:0}
+.scs{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--okbg);color:var(--ok)}
+.scs.off{background:var(--badbg);color:var(--bad)}
+.scm{font-size:12px;color:var(--mute);flex-basis:100%}
+.scw{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.scw button,.scw span{min-height:0;padding:5px 0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);color:var(--mute)}
+.scw i{font-style:normal;font-size:13px;font-weight:700}
+.scw .D{background:var(--okbg);color:var(--ok);border-color:transparent}
+.scw .N{background:var(--hl);color:var(--acc);border-color:transparent}
+.scw .now{box-shadow:0 0 0 2px var(--acc)}
+.sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.sca button{min-height:36px;font-size:14px}
+.silall{margin-top:8px}
 .chat{max-width:760px}
 .chl{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .cday{align-self:center;font-size:11px;font-weight:600;color:var(--mute);margin:6px 0 0;text-transform:uppercase;letter-spacing:.08em}
@@ -416,6 +436,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <h2 id="si_h">Who's using this phone?</h2>
     <p class="note">Tap your name, then enter your PIN. This phone stays signed in after that.</p>
     <div id="si_list" class="silist"></div>
+    <button id="si_all" type="button" class="silall" hidden>Show everyone</button>
     <div id="si_pinrow" hidden>
       <label class="f" for="si_pin">PIN for <span id="si_name"></span></label>
       <input id="si_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="Your PIN">
@@ -556,6 +577,20 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <p id="ch_err" class="note" style="color:var(--bad)" hidden></p>
   <div class="chf"><textarea id="ch_in" rows="1" maxlength="500" aria-label="Message" placeholder="Message the crew"></textarea><button id="ch_send" class="go" type="button">Send</button></div>
 </div></main>
+<main id="v-sched" hidden><div class="wrap sch">
+  <p id="sc_now" class="scnow"></p>
+  <p id="sc_ro" class="note">Only leads can change the schedule. Off-shift names stay off the crew board and the loader list.</p>
+  <p id="sc_lh" class="note" hidden>Tap a day to switch it between Day, Night and Off. It repeats every week. Mark someone on or off to override the schedule until the end of this shift. Anyone with no days set always shows.</p>
+  <div id="sc_list"></div>
+  <p id="sc_err" class="note" style="color:var(--bad)" hidden></p>
+  <details id="sc_hrs" hidden><summary>Shift hours</summary>
+    <div class="g2" style="margin-top:10px">
+      <div><label class="f" for="sc_d">Day shift starts</label><input id="sc_d" type="time"></div>
+      <div><label class="f" for="sc_n">Night shift starts</label><input id="sc_n" type="time"></div>
+    </div>
+    <div class="acts"><button id="sc_hsave" class="go" type="button">Save hours</button></div>
+  </details>
+</div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
   <h2>Loaders</h2>
@@ -639,6 +674,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>The phone doesn't buzz for new messages while the app is closed. You'll see them next time you open it.</li>
     </ol>
   </details>
+  <details><summary>The schedule</summary>
+    <ol>
+      <li>Open the menu and tap <span class="kb">Schedule</span> to see who's on day and night shift this week.</li>
+      <li>Day shift is 6 AM to 6 PM and night shift is 6 PM to 6 AM, unless a lead changes the hours.</li>
+      <li>Only people on shift show on the crew board and in the loader list. Anyone already on a load still shows.</li>
+      <li>Covering a shift and your name isn't on the sign-in screen? Tap <span class="kb">Show everyone</span>, or ask a lead to mark you on shift.</li>
+    </ol>
+  </details>
   <div id="hp_lead" hidden>
   <h2>Leads</h2>
   <details><summary>Adding and removing orders</summary>
@@ -655,6 +698,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>To give someone a new PIN, tap <span class="kb">Set PIN</span> or <span class="kb">Change PIN</span> next to their name.</li>
       <li>Leads get into the Lead Panel and can remove loads without typing the lead PIN.</li>
       <li>Removing someone from the roster signs them out on their phone.</li>
+    </ol>
+  </details>
+  <details><summary>Setting the schedule</summary>
+    <ol>
+      <li>Open <span class="kb">Schedule</span> from the menu. Tap a day under someone's name to switch it between Day, Night and Off. It repeats every week.</li>
+      <li>Someone with no days set always shows, so nothing changes until you set their days.</li>
+      <li>Tap <span class="kb">Mark on shift</span> or <span class="kb">Mark off shift</span> to override the schedule. It clears at the end of the current shift. Tap <span class="kb">Follow schedule</span> to clear it sooner.</li>
+      <li>To change the shift start times, open <span class="kb">Shift hours</span> at the bottom of the Schedule page.</li>
     </ol>
   </details>
   <details><summary>Loader colors</summary>
@@ -683,6 +734,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
   <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
+  <button type="button" data-view="sched">Schedule</button>
   <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
@@ -923,7 +975,7 @@ function colOf(name){var t=RCOL[String(name||"").trim().toLowerCase()];for(var i
 var crewHtml="";
 function crewBoard(){
   var E={},ros=[],extra=[],none=null;
-  ROSTER.forEach(function(n){var k=n.toLowerCase();if(!E[k]){E[k]={name:n,ld:[],ms:[]};ros.push(E[k])}});
+  var cs=curShift();ROSTER.forEach(function(n){var k=n.toLowerCase();if(!E[k]&&shiftState(n,cs).on){E[k]={name:n,ld:[],ms:[]};ros.push(E[k])}});
   ORD.forEach(function(o){
     var st=status(o);if(st==="waiting")return;
     var m=null;if(st==="done"){m=missing(o);if(!(m.acid||m.water))return}
@@ -1179,8 +1231,9 @@ function syncState(){
   else setSync("","Connecting")
 }
 function onData(list){
-  var rs=null,ch=null;
-  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o});
+  var rs=null,ch=null,sc=null;
+  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o});
+  setSched(sc);
   setChat(ch);
   /* A new chat message alone doesn't need the board rebuilt */
   var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID}));
@@ -1193,8 +1246,96 @@ function onData(list){
     var p=rs.pins&&rs.pins[k];if(p)RPIN[lk]=String(p);
     if(rs.leads&&rs.leads[k])RLEAD[lk]=true});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
-  gotData=true;syncState();renderRoster();applyAuth();refresh();
+  gotData=true;syncState();renderRoster();applyAuth();refresh();renderSched();shiftSig=onShiftSig();
 }
+
+/* Shift schedule, beside the orders under a fixed key:
+   {hrs:{d:360,n:1080}, w:{"sam":"OODDDNO"}, ov:{"sam":{on:1,u:<ms>}}}
+   hrs = minutes after midnight that day and night shift start. w = a weekly pattern per
+   person, Sunday first: D day, N night, O off. ov = a lead's manual on/off mark that
+   lasts until u (the end of the shift it was set in). Anyone with no pattern always shows. */
+var SCHED_ID="_sched",SCHED={hrs:{d:360,n:1080},w:{},ov:{}},shiftSig="",siAll=false;
+var WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function skey(n){return String(n).trim().toLowerCase().replace(/[.#$\[\]\/]/g,"_")}
+function setSched(o){
+  var h=(o&&o.hrs)||{},d=+h.d,n=+h.n;
+  if(!(d>=0&&n>d&&n<1440)){d=360;n=1080}
+  SCHED={hrs:{d:d,n:n},w:(o&&typeof o.w==="object"&&o.w)||{},ov:(o&&typeof o.ov==="object"&&o.ov)||{}};
+}
+/* The shift happening now. A night shift belongs to the day it started on. */
+function curShift(now){
+  var t=new Date(now||Date.now()),m=t.getHours()*60+t.getMinutes(),hr=(SCHED&&SCHED.hrs)||{d:360,n:1080},D=hr.d,N=hr.n;
+  var at=function(off,min){var x=new Date(t.getFullYear(),t.getMonth(),t.getDate()+off);x.setMinutes(min);return x.getTime()};
+  if(m>=D&&m<N)return {s:"D",wd:t.getDay(),start:at(0,D),end:at(0,N)};
+  if(m>=N)return {s:"N",wd:t.getDay(),start:at(0,N),end:at(1,D)};
+  return {s:"N",wd:(t.getDay()+6)%7,start:at(-1,N),end:at(0,D)};
+}
+function patOf(n){var p=SCHED.w[skey(n)];return typeof p==="string"&&/^[DNO]{7}$/.test(p)?p:null}
+function shiftState(n,cs){
+  if(!SCHED)return {on:true,none:true};
+  cs=cs||curShift();var ov=SCHED.ov[skey(n)];
+  if(ov&&+ov.u>Date.now())return {on:!!ov.on,manual:true,u:+ov.u};
+  var p=patOf(n);if(!p)return {on:true,none:true};
+  return {on:p.charAt(cs.wd)===cs.s};
+}
+function onShift(n){return shiftState(n).on}
+function onShiftSig(){var cs=curShift();return cs.start+"|"+ROSTER.filter(function(n){return shiftState(n,cs).on}).join(",")}
+function hm(min){var x=new Date(2000,0,1);x.setMinutes(min);return T(x.getTime())}
+function hhmm(min){return String(Math.floor(min/60)).padStart(2,"0")+":"+String(min%60).padStart(2,"0")}
+function scErr(t){$("sc_err").textContent=t||"";$("sc_err").hidden=!t}
+function saveSched(p){
+  if(!DL||!can()){scErr("Not connected. Schedule changes need a signal.");return false}
+  if(!canManage()){scErr("Only leads can change the schedule.");return false}
+  scErr("");Object.keys(p).forEach(function(k){if(p[k]!=null)SCHED[k]=p[k];else SCHED[k]=k==="hrs"?{d:360,n:1080}:{}});
+  upd(SCHED_ID,p);onShiftChange(true);return true;
+}
+function liveOv(){var o={},now=Date.now();Object.keys(SCHED.ov).forEach(function(k){var v=SCHED.ov[k];if(v&&+v.u>now)o[k]=v});return o}
+function renderSched(){
+  if(curView!=="sched")return;
+  var cs=curShift(),lead=canManage();
+  $("sc_now").innerHTML=(cs.s==="D"?"Day":"Night")+" shift now<small>"+WD[cs.wd]+" "+hm(cs.s==="D"?SCHED.hrs.d:SCHED.hrs.n)+" to "+hm(cs.s==="D"?SCHED.hrs.n:SCHED.hrs.d)+"</small>";
+  $("sc_ro").hidden=lead;$("sc_lh").hidden=!lead;$("sc_hrs").hidden=!lead;
+  var a=document.activeElement;if(!(a&&(a.id==="sc_d"||a.id==="sc_n"))){$("sc_d").value=hhmm(SCHED.hrs.d);$("sc_n").value=hhmm(SCHED.hrs.n)}
+  if(!ROSTER.length){$("sc_list").innerHTML='<p class="gn">No crew names yet. A lead adds them in the Lead Panel.</p>';return}
+  var on=[],off=[];
+  ROSTER.forEach(function(n){var st=shiftState(n,cs);(st.on?on:off).push({n:n,st:st})});
+  var card=function(x){
+    var n=x.n,st=x.st,p=patOf(n)||"OOOOOOO",nm=esc(n);
+    var s='<div class="scp'+(st.on?'':' off')+'" style="--lc:'+colOf(n)+'"><div class="sch1"><b>'+nm+'</b><span class="scs'+(st.on?'':' off')+'">'+(st.on?'On shift':'Off shift')+'</span>';
+    if(st.manual)s+='<span class="scm">Marked '+(st.on?'on':'off')+' by a lead until '+T(st.u)+'</span>';
+    else if(st.none)s+='<span class="scm">No days set, so always shows</span>';
+    s+='</div><div class="scw">';
+    for(var i=0;i<7;i++){var c=p.charAt(i),lab=c==="D"?"Day":c==="N"?"Night":"Off",cl=c+(i===cs.wd&&c===cs.s?' now':'');
+      s+=lead?'<button type="button" class="'+cl+'" data-scd="'+esc(n)+'" data-i="'+i+'" aria-label="'+WD[i]+' for '+nm+': '+lab+'">'+WD[i]+'<i>'+lab+'</i></button>':'<span class="'+cl+'">'+WD[i]+'<i>'+lab+'</i></span>'}
+    s+='</div>';
+    if(lead)s+='<div class="sca">'+(st.manual?'<button type="button" data-scf="'+esc(n)+'">Follow schedule</button>':'')+
+      '<button type="button" data-sco="'+esc(n)+'" data-on="'+(st.on?0:1)+'">'+(st.on?'Mark off shift':'Mark on shift')+'</button></div>';
+    return s+'</div>'};
+  $("sc_list").innerHTML='<h2>On shift now ('+on.length+')</h2>'+(on.length?on.map(card).join(""):'<p class="gn">Nobody is on shift.</p>')+
+    (off.length?'<h2>Off shift ('+off.length+')</h2>'+off.map(card).join(""):'');
+}
+$("sc_list").onclick=function(e){
+  var b=e.target.closest?e.target.closest("button"):null;if(!b)return;
+  if(b.hasAttribute("data-scd")){var n=b.getAttribute("data-scd"),i=+b.getAttribute("data-i"),p=(patOf(n)||"OOOOOOO").split("");
+    p[i]=p[i]==="O"?"D":p[i]==="D"?"N":"O";
+    var w=Object.assign({},SCHED.w),k=skey(n);if(p.join("")==="OOOOOOO")delete w[k];else w[k]=p.join("");
+    saveSched({w:Object.keys(w).length?w:null});return}
+  if(b.hasAttribute("data-sco")){var o=liveOv();o[skey(b.getAttribute("data-sco"))]={on:+b.getAttribute("data-on"),u:curShift().end};saveSched({ov:o});return}
+  if(b.hasAttribute("data-scf")){var o2=liveOv();delete o2[skey(b.getAttribute("data-scf"))];saveSched({ov:Object.keys(o2).length?o2:null});return}
+};
+$("sc_hsave").onclick=function(){
+  var f=function(v){var m=/^(\d\d):(\d\d)/.exec(v||"");return m?+m[1]*60+ +m[2]:NaN},d=f($("sc_d").value),n=f($("sc_n").value);
+  if(!(d>=0)||!(n>=0)){scErr("Enter both start times.");return}
+  if(!(n>d)){scErr("Night shift has to start later in the day than day shift.");return}
+  if(saveSched({hrs:{d:d,n:n}}))toast("Shift hours saved.");
+};
+/* Names come and go from the crew board and loader list as shifts change */
+function onShiftChange(force){
+  var s=onShiftSig();if(!force&&s===shiftSig)return;shiftSig=s;
+  crewList();crewHtml="";crewBoard();renderSched();
+  if(!$("signin").hidden)renderSignIn();
+}
+setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
 
 /* The crew roster lives beside the orders under a fixed key, so the existing
    database rules cover it and older phones ignore it. (The shift note was removed
@@ -1249,8 +1390,9 @@ function canonName(v){
 }
 
 var rsEdit=-1;
+function crewList(){var cs=curShift();$("crewlist").innerHTML=ROSTER.filter(function(n){return shiftState(n,cs).on}).map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("")}
 function renderRoster(){
-  $("crewlist").innerHTML=ROSTER.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("");
+  crewList();
   /* Don't redraw while the lead is typing a PIN; Save or Cancel redraws. */
   var a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.type!=="checkbox"&&$("rs_list").contains(a))return;
   $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var k=n.toLowerCase(),cur=RCOL[k],hp=!!RPIN[k],ld=!!RLEAD[k];
@@ -1360,12 +1502,17 @@ function applyAuth(){
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
+  renderSched();
   renderChat();
 }
 function showSignIn(){$("app").hidden=true;$("signin").hidden=false;renderSignIn()}
-function hideSignIn(){$("signin").hidden=true;siName=null;if($("setup").hidden)$("app").hidden=false}
+function hideSignIn(){$("signin").hidden=true;siName=null;siAll=false;if($("setup").hidden)$("app").hidden=false}
 function renderSignIn(){
-  $("si_list").innerHTML=ROSTER.map(function(n){var k=n.toLowerCase(),hp=!!RPIN[k];
+  /* Off-shift names are tucked behind Show everyone, so someone covering a shift can still sign in */
+  var cs=curShift(),vis=ROSTER.filter(function(n){return siAll||n===siName||shiftState(n,cs).on});
+  if(!vis.length)vis=ROSTER;
+  $("si_all").hidden=vis.length===ROSTER.length;
+  $("si_list").innerHTML=vis.map(function(n){var k=n.toLowerCase(),hp=!!RPIN[k];
     return '<button type="button" data-si="'+esc(n)+'" style="--lc:'+colOf(n)+'"'+(hp?'':' disabled')+' aria-pressed="'+(siName===n)+'"><span>'+esc(n)+'</span><small>'+(hp?(RLEAD[k]?'Lead':''):'No PIN yet')+'</small></button>'}).join("")||'<p class="note">No crew names yet. A lead adds them in the Lead Panel.</p>';
   $("si_pinrow").hidden=!siName;$("si_name").textContent=siName||"";
   $("si_cancel").hidden=!(siSwitching&&ME);
@@ -1384,6 +1531,7 @@ $("si_go").onclick=siGo;
 $("si_h").onclick=function(){var n=Date.now();siTaps=n-siTapT<1500?siTaps+1:1;siTapT=n;if(siTaps>=5){siTaps=0;siName=ADMIN_NAME;$("si_pin").value="";$("si_err").textContent="";renderSignIn();try{$("si_pin").focus()}catch(x){}}};
 $("si_pin").onkeydown=function(e){if(e.key==="Enter")siGo()};
 $("si_back").onclick=function(){siName=null;renderSignIn()};
+$("si_all").onclick=function(){siAll=true;renderSignIn()};
 $("si_cancel").onclick=function(){siSwitching=false;applyAuth()};
 $("si_lead").onclick=function(){askPin("Enter the lead PIN to open the Lead Panel.","Open Lead Panel",function(){leadOpen=true;showView("lead")})};
 $("who_sw").onclick=function(){siSwitching=true;siName=null;showView("log");applyAuth()};
@@ -1589,7 +1737,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -1608,6 +1756,7 @@ function showView(k){
   curView=k;
   if(k==="lead"){leadGate();renderRoster()}
   if(k==="help")$("hp_lead").hidden=!canManage();
+  if(k==="sched")setTimeout(renderSched,0);
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
