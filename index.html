@@ -77,6 +77,14 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .tm2{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:12px}
 .tmr{font:700 24px/1.15 var(--display);letter-spacing:.01em;min-width:0}
 .tm2 button{flex:none;min-width:120px}
+.hold{position:relative;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.hold span{position:relative}
+.srch{display:flex;gap:8px;margin:12px 0 4px}
+.srch input{flex:1;min-width:0}
+.srch button{flex:none}
+.srn{margin:6px 0 0;font-size:13px;color:var(--mute)}
+.hold::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.32);transform:scaleX(0);transform-origin:left}
+.hold.holding::before{transform:scaleX(1);transition:transform .6s linear}
 .acts{display:flex;gap:10px;margin-top:10px}
 .acts button{flex:1;min-height:44px;font-size:15px}
 .empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--mute);margin-top:14px}
@@ -475,6 +483,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <div class="acts"><button id="a_go" class="go" type="button">Save order</button><button id="a_x" type="button">Cancel</button></div>
   </div>
 
+  <div class="srch" id="srchw" hidden><input id="srch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Search trailer, ticket, BOL or loader" aria-label="Search loads"><button id="srchx" type="button" aria-label="Clear search" hidden>Clear</button></div>
   <div id="list"></div>
   <datalist id="crewlist"></datalist>
 
@@ -606,6 +615,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <ol>
       <li>Each order on the Load Log is one row: trailer or customer, loader, gallons and product, and ticket number. The colored bar on the left is the loader's color.</li>
       <li>Tap a row to open it. Tap it again to close it.</li>
+      <li>Looking for one load? Type part of the trailer, ticket, BOL or loader name in the search box above the list. If only one load matches, it opens. Tap <span class="kb">Clear</span> to see them all again.</li>
       <li>When you're signed in, your own loads sit first under <b>Your loads</b>: the one you're loading, any finished ones still missing acid or water, then the ones waiting on you. The top one opens by itself.</li>
       <li>The right side shows the leave-by time, or the time it finished. While a load is going, the row shows a running timer.</li>
     </ol>
@@ -619,9 +629,9 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc loading open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1f8a3a" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 152</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Tony</span><span>5,000 gal 20% HCl</span><span>Ticket 4405</span><span class="rsx">Loading 0:44:10</span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="tm2"><span class="tmr">Loading: 0:44:10</span><button type="button" class="go" tabindex="-1" data-n="1">End load</button></div></div></div><div class="hxa">↓</div><div class="pinb finb"><b>Load weight</b><p class="note" style="margin:2px 0 12px">Trailer 152 · Ticket 4405 · 5,000 gal 20% HCl</p><div class="g2"><div data-n="2"><label class="f">Light weight (in), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="31200" tabindex="-1"></div><div data-n="3"><label class="f">Heavy weight (out), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="76740" tabindex="-1"></div><div class="full"><label class="f">Product loaded</label><select tabindex="-1"><option value="20" selected="">20% HCl</option></select></div></div><div class="finout"><div class="fr"><span>Net product</span><b>45,540 lb</b></div><div class="fr"><span>Gallons loaded</span><b>4,950 gal</b></div><div class="fr"><span>− Water from ticket<small>5,000 gal ticket</small></span><b>−2,350 gal</b></div><div class="fr big"><span>= Acid (the rest)</span><b>2,600 gal</b></div></div><div class="g2" style="margin-top:10px"><div data-n="4"><label class="f">Acid loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2600" tabindex="-1"></div><div data-n="4"><label class="f">Water loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2350" tabindex="-1"></div></div><p class="note">Water is filled in from the ticket. Acid is the rest of the gallons loaded. Change them if your meter shows different. Uses 9.2 lb/gal.</p><div class="pinr"><button type="button" tabindex="-1">Later</button><button class="go" type="button" tabindex="-1" data-n="5">Save amounts</button></div></div></div><ol class="hxl"><li><i>1</i><span>Tap End load</span></li><li><i>2</i><span>Light weight from the scale ticket</span></li><li><i>3</i><span>Heavy weight from the scale ticket</span></li><li><i>4</i><span>Water fills in from the ticket. Acid is the rest of the gallons loaded</span></li><li><i>5</i><span>Tap Save amounts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc loading open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1f8a3a" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 152</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Tony</span><span>5,000 gal 20% HCl</span><span>Ticket 4405</span><span class="rsx">Loading 0:44:10</span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="tm2"><span class="tmr">Loading: 0:44:10</span><button type="button" class="go" tabindex="-1" data-n="1">Hold to end load</button></div></div></div><div class="hxa">↓</div><div class="pinb finb"><b>Load weight</b><p class="note" style="margin:2px 0 12px">Trailer 152 · Ticket 4405 · 5,000 gal 20% HCl</p><div class="g2"><div data-n="2"><label class="f">Light weight (in), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="31200" tabindex="-1"></div><div data-n="3"><label class="f">Heavy weight (out), lb</label><input type="number" inputmode="decimal" min="0" step="any" value="76740" tabindex="-1"></div><div class="full"><label class="f">Product loaded</label><select tabindex="-1"><option value="20" selected="">20% HCl</option></select></div></div><div class="finout"><div class="fr"><span>Net product</span><b>45,540 lb</b></div><div class="fr"><span>Gallons loaded</span><b>4,950 gal</b></div><div class="fr"><span>− Water from ticket<small>5,000 gal ticket</small></span><b>−2,350 gal</b></div><div class="fr big"><span>= Acid (the rest)</span><b>2,600 gal</b></div></div><div class="g2" style="margin-top:10px"><div data-n="4"><label class="f">Acid loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2600" tabindex="-1"></div><div data-n="4"><label class="f">Water loaded (gal)</label><input type="number" inputmode="decimal" min="0" step="any" value="2350" tabindex="-1"></div></div><p class="note">Water is filled in from the ticket. Acid is the rest of the gallons loaded. Change them if your meter shows different. Uses 9.2 lb/gal.</p><div class="pinr"><button type="button" tabindex="-1">Later</button><button class="go" type="button" tabindex="-1" data-n="5">Save amounts</button></div></div></div><ol class="hxl"><li><i>1</i><span>Press and hold End load</span></li><li><i>2</i><span>Light weight from the scale ticket</span></li><li><i>3</i><span>Heavy weight from the scale ticket</span></li><li><i>4</i><span>Water fills in from the ticket. Acid is the rest of the gallons loaded</span></li><li><i>5</i><span>Tap Save amounts</span></li></ol></figure>
     <ol>
-      <li>Tap <span class="kb">End load</span>. The load weight window opens.</li>
+      <li>Press and hold <span class="kb">Hold to end load</span> for about half a second, until the bar fills. The load weight window opens. A quick tap won't end it, so a slip or pocket tap can't end a load early.</li>
       <li>Enter the light weight (scale in) and heavy weight (scale out). Check the product is right.</li>
       <li>The window works out the gallons loaded. Water loaded fills in with the ticket water, since the water meter is right. Acid loaded gets the rest, since the acid tower runs a little short or over. For CableShield, the exact chemicals from the ticket are taken out first.</li>
       <li>Change the acid or water numbers if they don't match what you pulled, then tap <span class="kb">Save amounts</span>.</li>
@@ -857,7 +867,7 @@ function viewCard(o){
   if(w)b+='<div class="amt"><label class="chk"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label></div>';
   else if(o.onSheet===false)b+='<div class="meta"><span>Not on loadout sheet</span></div>';
   var btn="";
-  if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
+  if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go hold" data-act="end" data-id="'+id+'"><span>Hold to end load</span></button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
   if(st==="done"){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
@@ -880,13 +890,18 @@ function editCard(o){
    '<div class="full"><label class="f" for="e_nt'+i+'">Notes</label><textarea id="e_nt'+i+'" data-f="notes" data-id="'+i+'">'+esc(o.notes)+'</textarea></div>'+
    '</div><div class="acts"><button type="button" class="go" data-act="doneedit" data-id="'+i+'">Done editing</button></div></div>';
 }
+var srHits=[];
 function build(){
   pendingBuild=false;
   /* Your loads: the signed-in person's loads (loading, finished but missing amounts, waiting) pinned at the top */
   var me=ME&&!ME.admin&&can()?ME.name.toLowerCase():"";
   function mine(o){if(!me)return false;var n=canonName(o.loader);if(!n||n.toLowerCase()!==me)return false;if(status(o)!=="done")return true;var m=missing(o);return m.acid||m.water}
   function rank(o){var s=status(o);return s==="loading"?0:s==="done"?1:2}
-  var os=ORD,M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||byLbt(a,b)}),rest=os.filter(function(o){return !mine(o)});
+  /* Search: keeps loads whose trailer, ticket, BOL, loader or notes contain what's typed */
+  var q=$("srch").value.trim().toLowerCase();
+  $("srchw").hidden=!ORD.length;$("srchx").hidden=!q;
+  function hit(o){return [o.name,o.ticket,o.bol,canonName(o.loader),o.notes].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})}
+  var os=q?ORD.filter(hit):ORD;srHits=os;var M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||byLbt(a,b)}),rest=os.filter(function(o){return !mine(o)});
   var L=rest.filter(function(o){return status(o)==="loading"}).sort(byLbt),
       W=rest.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
       D=rest.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
@@ -896,7 +911,8 @@ function build(){
     if(g[3]&&!g[1].length)return;
     h+='<section class="grp'+(g[3]?' mine':'')+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
       (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
-  if(!os.length)h='<div class="empty">'+(can()&&canManage()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
+  if(q)h=(os.length?'<p class="srn">'+os.length+' of '+ORD.length+' loads match “'+esc(q)+'”</p>'+h:'<div class="empty">No loads match “'+esc(q)+'”.</div>');
+  else if(!os.length)h='<div class="empty">'+(can()&&canManage()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
   $("list").innerHTML=h;
   var mg=can()&&canManage();
   $("addbtn").hidden=!mg;if(!mg)$("addp").hidden=true;
@@ -1197,7 +1213,32 @@ function buildText(){
   return rows.map(function(r){return r.map(cell).join("\t")}).join("\n");
 }
 
-$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}if(a)doAct(a,id)};
+$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}
+  /* End load fires from the hold below. A keyboard press (no pointer) still works. */
+  if(a==="end"){if(e.detail===0&&!holdDone)doAct(a,id);holdDone=false;return}
+  if(a)doAct(a,id)};
+/* Search box: rebuilds the board as you type. One match opens it. */
+$("srch").oninput=function(){build();if(this.value.trim()&&srHits.length===1)openCard(srHits[0].id,true)};
+$("srch").onkeydown=function(e){if(e.key==="Escape"){this.value="";build()}else if(e.key==="Enter")this.blur()};
+$("srchx").onclick=function(){$("srch").value="";build();$("srch").focus()};
+/* Hold to end: End load needs about half a second of press, so a pocket tap or a slip
+   can't end a load early. Letting go early just shows a reminder. */
+var holdT=null,holdB=null,holdDone=false,HOLD_MS=600;
+function holdStop(hint){
+  clearTimeout(holdT);holdT=null;
+  var b=holdB;holdB=null;if(!b)return;b.classList.remove("holding");
+  if(hint){var s=b.querySelector("span");if(s){s.textContent="Keep holding";setTimeout(function(){if(s.isConnected)s.textContent="Hold to end load"},1400)}}
+}
+$("list").addEventListener("pointerdown",function(e){
+  if(e.button>0)return;var b=e.target.closest?e.target.closest("button.hold"):null;if(!b)return;
+  holdStop(false);holdB=b;holdDone=false;b.classList.add("holding");
+  var id=b.getAttribute("data-id");
+  holdT=setTimeout(function(){holdT=null;holdDone=true;if(holdB)holdB.classList.remove("holding");holdB=null;
+    try{if(navigator.vibrate)navigator.vibrate(30)}catch(x){}
+    var o=find(id);if(o&&status(o)==="loading")doAct("end",id)},HOLD_MS);
+});
+["pointerup","pointercancel","pointerleave"].forEach(function(t){$("list").addEventListener(t,function(e){if(holdB&&(t!=="pointerleave"||e.target===holdB))holdStop(t==="pointerup"&&!holdDone)},true)});
+$("list").addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest("button.hold"))e.preventDefault()});
 function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
   if(f==="state"){setField(eid,f,e.target.value);flushAll(eid);return}
   if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
