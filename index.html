@@ -676,9 +676,10 @@ function build(){
   tick();
 }
 function tick(){
-  var now=Date.now(),c={loading:0,waiting:0,done:0},gal=0;
+  var now=Date.now(),c={loading:0,waiting:0,done:0},gal=0,noAcid=0;
   ORD.forEach(function(o){
-    var st=status(o);c[st]++;if(st==="done")gal+=parseFloat(o.gal)||0;
+    /* Shift total = actual 36% acid pulled (acid loaded on finished loads), not ticket gallons */
+    var st=status(o);c[st]++;if(st==="done"){gal+=parseFloat(o.acidGal)||0;if(missing(o).acid)noAcid++}
     var t=$("t-"+o.id),ch=$("c-"+o.id);
     if(t){
       if(st==="waiting")t.textContent="Not started";
@@ -722,7 +723,7 @@ function tick(){
   });
   crewBoard();
   $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
-  $("gal").textContent=num(gal)+" gal loaded";
+  $("gal").textContent=num(gal)+" gal acid pulled"+(noAcid?" · "+noAcid+" finished load"+(noAcid===1?"":"s")+" missing acid":"");
 }
 
 /* Which loaded amounts a finished load still needs. Uses what is typed in the box
