@@ -289,23 +289,52 @@ h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .rs li.none{color:var(--mute);font-weight:500;padding:12px}
 .rsa{display:flex;gap:10px}.rsa input{flex:1}.rsa button{flex:none}
 @media screen and (min-width:700px){#snote{max-width:640px}}
-/* Finished load missing acid or water loaded: yellow pulse */
-@keyframes tcmiss{0%,100%{box-shadow:0 0 0 0 rgba(245,196,0,0)}50%{box-shadow:0 0 0 5px rgba(245,196,0,.7)}}
+/* Finished load missing acid or water loaded: the empty box pulses yellow when the load is open */
 @keyframes tcmissin{0%,100%{border-color:var(--line);box-shadow:0 0 0 0 rgba(245,196,0,0)}50%{border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
-.ord.miss{animation:tcmiss 1.6s ease-in-out infinite}
 input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .mw{margin:8px 0 0;padding:6px 10px;border-radius:4px;background:#f5c400;color:#1a1400;font-weight:700;font-size:14px}
-.missb{margin:0 0 12px;padding:10px 12px;border-radius:var(--r);background:#fff6cc;border:1px solid #f5c400;border-left:4px solid #f5c400;color:#1a1400}
-.missb p{margin:0 0 8px;font-weight:700;font-size:14px}
-.missb .ml{display:flex;flex-wrap:wrap;gap:8px}
-.missb button{min-height:40px;padding:6px 12px;font-size:14px;background:#f5c400;border-color:#d9ad00;color:#1a1400;text-align:left;line-height:1.2}
-.missb button small{display:block;font-weight:500;font-size:12px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .missb{background:#3a300a;color:#ffe9a3}}
-:root[data-theme="dark"] .missb{background:#3a300a;color:#ffe9a3}
-@media screen and (min-width:700px){#missb{max-width:640px}}
 @keyframes tcfind{0%,100%{outline-color:rgba(245,196,0,0)}30%,70%{outline-color:#f5c400}}
 .ord.found{outline:4px solid transparent;outline-offset:2px;animation:tcfind 1.4s ease-in-out}
-@media (prefers-reduced-motion:reduce){.ord.miss{animation:none;box-shadow:0 0 0 4px rgba(245,196,0,.7)}input.miss{animation:none;border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
+@media (prefers-reduced-motion:reduce){input.miss{animation:none;border-color:#f5c400;box-shadow:0 0 0 3px rgba(245,196,0,.6)}}
+/* Collapsed load rows: tap the row to open the full card */
+.ord.vc{padding:0;overflow:hidden;margin-bottom:8px;scroll-margin-top:12px}
+.orow{display:flex;align-items:stretch;width:100%;min-height:0;padding:0;border:0;border-radius:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.orow .lcb{flex:none;width:6px;background:var(--lc,transparent)}
+.orow .orm{flex:1;min-width:0;padding:10px 4px 10px 12px;display:block}
+.orl1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.orow .oname{font-size:16px;font-weight:700}
+.orl2{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:5px;font-size:13px;color:var(--mute);font-weight:500}
+.lp{display:inline-block;padding:1px 8px;border-radius:4px;background:var(--lc,#8a97a8);color:#fff;font-weight:600;font-size:12px}
+.lp.none{background:var(--hl);color:var(--mute)}
+.nmt{padding:1px 6px;border-radius:3px;background:#f5c400;color:#1a1400;font-weight:700;font-size:12px}
+.rsx{font-weight:700;color:var(--acc)}
+.rsx:empty{display:none}
+.rsx.ms{background:#f5c400;color:#1a1400;padding:1px 8px;border-radius:4px;font-size:12px}
+.chev{flex:none;align-self:center;width:30px;text-align:center;color:var(--mute);font-size:20px;line-height:1;transition:transform .15s}
+.ord.open .chev{transform:rotate(90deg)}
+.ord.vc:not(.open) .obody{display:none}
+.obody{padding:0 14px 12px;border-top:1px solid var(--line)}
+/* Crew board: one tile per loader, tap to jump to their load */
+#crew{margin:0 0 12px}
+#crew>label.f{text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.cg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media screen and (min-width:700px){.cg{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}}
+.ct{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--lc);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.ct button{display:block;width:100%;min-height:0;border:0;border-radius:0;background:transparent;text-align:left;padding:7px 10px;font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+.ct .ctn{font-size:15px;font-weight:700;padding:8px 10px 6px;overflow-wrap:anywhere}
+.ct .ctl{border-top:1px solid var(--line);font-weight:600}
+.ct .ctl.ld{background:var(--hl)}
+.ct .ctl.ld b{color:var(--acc)}
+.ct .ctl.ctx{background:#f5c400;color:#1a1400;border-top-color:#d9ad00}
+.ctm{font-weight:700}
+.cti{margin:0;padding:0 10px 8px;font-size:12px;color:var(--mute)}
+/* Roster color swatches (Lead Panel) */
+.rs li{flex-wrap:wrap}
+.rsn{display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}
+.rsn i{flex:none;width:12px;height:12px;border-radius:50%}
+.rs li .sw{display:flex;flex-wrap:wrap;gap:6px;width:100%;padding:2px 0 6px}
+.rs li .sw button{width:28px;height:28px;min-height:28px;padding:0;border-radius:50%;border:0;background:var(--c)}
+.rs li .sw button[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -331,7 +360,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <textarea id="sn_txt" rows="2" placeholder="Anything the whole crew should know this shift"></textarea>
     <div class="snr" id="sn_row" hidden><button id="sn_clr" class="small" type="button">Clear note</button></div>
   </div>
-  <div id="missb" class="missb" role="status" hidden></div>
+  <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
 
@@ -468,7 +497,7 @@ function tval(ms){if(!ms)return "";var d=new Date(ms);return pad(d.getHours())+"
 function status(o){return o.endAt?"done":o.startAt?"loading":"waiting"}
 function byLbt(a,b){return (a.lbtAt||9e15)-(b.lbtAt||9e15)}
 
-var ORD=[],editing={},rmId=null,clrArm=false,timers={},deb={},q={},pendingBuild=false;
+var ORD=[],OPEN={},editing={},rmId=null,clrArm=false,timers={},deb={},q={},pendingBuild=false;
 var DL=null,canWrite=true,ro=false,loadTimer=null,msgT=null,gotData=false,online=false;
 function can(){return !ro&&canWrite!==false}
 
@@ -528,9 +557,12 @@ function nmUpdate(id){
 /* Redo every open NM card's numbers, e.g. after a weight per gallon is changed. */
 function nmRefreshAll(){ORD.forEach(function(o){if(o.state==="NM"&&status(o)!=="done")nmUpdate(o.id)})}
 function viewCard(o){
-  var st=status(o),b="",id=esc(o.id),w=can();
-  b+='<div class="oh"><div class="oname">'+esc(o.name||"Unnamed order")+'</div><span class="chip" id="c-'+id+'"></span></div>';
-  b+='<p class="od">'+(o.gal?num(o.gal)+" gal total, ":"")+esc(pname(o.prod))+(o.state==="NM"?" \u00b7 NM":" \u00b7 TX")+'</p>';
+  var st=status(o),b="",id=esc(o.id),w=can(),ld=canonName(o.loader),op=!!OPEN[o.id];
+  var row='<button type="button" class="orow" data-act="toggle" data-id="'+id+'" aria-expanded="'+op+'" style="--lc:'+(ld?colOf(ld):'transparent')+'"><span class="lcb"></span><span class="orm">'+
+    '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
+    '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
+    '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(pname(o.prod))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
+    (o.state==="NM"?'<span class="nmt">NM</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">\u203a</span></button>';
   b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs");
   var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
   if(m)b+='<div class="meta">'+m+'</div>';
@@ -560,7 +592,7 @@ function viewCard(o){
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
   if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+'>Remove</button></div>';
-  return '<div class="ord '+st+(o.state==="NM"?' nm':'')+'" id="o-'+id+'">'+b+'</div>';
+  return '<div class="ord vc '+st+(o.state==="NM"?' nm':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
 function editCard(o){
   var i=esc(o.id);
@@ -606,8 +638,12 @@ function tick(){
     }
     var at=$("at-"+o.id),card=$("o-"+o.id);
     if(card){
-      var ms=st==="done"?missing(o):{acid:false,water:false};
-      card.classList.toggle("miss",ms.acid||ms.water);
+      var ms=st==="done"?missing(o):{acid:false,water:false},rs=$("rs-"+o.id);
+      if(rs){
+        var need=ms.acid&&ms.water?"Needs acid + water":ms.acid?"Needs acid":ms.water?"Needs water":"";
+        rs.className="rsx"+(need?" ms":"");
+        rs.textContent=st==="loading"?"Loading "+hms(now-o.startAt):need;
+      }
       var ai=$("ac-"+o.id),wi=$("wa-"+o.id);
       if(ai)ai.classList.toggle("miss",ms.acid);
       if(wi)wi.classList.toggle("miss",ms.water);
@@ -618,7 +654,7 @@ function tick(){
         at.textContent=mt||((a1||w1)?"Total "+num(a1+w1)+" gal":"Optional. Enter what was actually loaded.");
       }else{
         var mp=$("mw-"+o.id);
-        if(mt&&!mp){mp=document.createElement("p");mp.id="mw-"+o.id;mp.className="mw";card.appendChild(mp)}
+        if(mt&&!mp){mp=document.createElement("p");mp.id="mw-"+o.id;mp.className="mw";($("ob-"+o.id)||card).appendChild(mp)}
         if(mp){mp.hidden=!mt;mp.textContent=mt}
       }
     }
@@ -635,7 +671,7 @@ function tick(){
       ch.className=cls;ch.textContent=tx;
     }
   });
-  missBanner();
+  crewBoard();
   $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
   $("gal").textContent=num(gal)+" gal loaded";
 }
@@ -647,28 +683,57 @@ function missing(o){
   var p=o.prod,mix=!!(DIL[p]||CSB[p]);
   return {acid:(p==="acid"||mix)&&blankAmt(o,"acidGal",$("ac-"+o.id)),water:mix&&blankAmt(o,"waterGal",$("wa-"+o.id))};
 }
-/* Banner at the top listing finished loads still missing acid or water loaded.
-   Tapping one scrolls to that load and puts the cursor in the first empty box. */
-var missHtml="";
-function missBanner(){
-  var L=ORD.filter(function(o){return status(o)==="done"}).sort(function(a,b){return a.endAt-b.endAt}).map(function(o){var m=missing(o);return {o:o,m:m}}).filter(function(x){return x.m.acid||x.m.water});
-  var h="";
-  if(L.length){
-    h='<p>'+L.length+' finished load'+(L.length===1?' is':'s are')+' missing amounts loaded. Tap one to go to it.</p><div class="ml">'+
-      L.map(function(x){var o=x.o,lab=o.ticket?"Ticket "+o.ticket:o.name?o.name:"Unnamed load",what=x.m.acid&&x.m.water?"Acid and water":x.m.acid?"Acid":"Water";
-        return '<button type="button" data-goto="'+esc(o.id)+'">'+esc(lab)+'<small>'+what+' missing'+(o.ticket&&o.name?' · '+esc(o.name):'')+'</small></button>'}).join("")+'</div>';
-  }
-  if(h!==missHtml){missHtml=h;$("missb").innerHTML=h;$("missb").hidden=!h}
+/* Loader colors. The lead picks one per roster name in the Lead Panel. */
+var LCOL=[["blue","#1d64d8","Blue"],["green","#1f8a3a","Green"],["orange","#d9600f","Orange"],["purple","#7b3fe4","Purple"],["red","#cf2e2e","Red"],["teal","#0f8287","Teal"],["pink","#c92a75","Pink"],["brown","#8b5a2b","Brown"],["slate","#4b5a6b","Slate"]];
+var DEFCOL="#8a97a8",RCOL={};
+function colOf(name){var t=RCOL[String(name||"").trim().toLowerCase()];for(var i=0;i<LCOL.length;i++)if(LCOL[i][0]===t)return LCOL[i][1];return DEFCOL}
+
+/* Crew board: a tile per roster name (plus anyone else with a load going) showing
+   what they are loading and any finished load still missing acid or water.
+   Tapping goes to that load and opens it. */
+var crewHtml="";
+function crewBoard(){
+  var E={},ros=[],extra=[],none=null;
+  ROSTER.forEach(function(n){var k=n.toLowerCase();if(!E[k]){E[k]={name:n,ld:[],ms:[]};ros.push(E[k])}});
+  ORD.forEach(function(o){
+    var st=status(o);if(st==="waiting")return;
+    var m=null;if(st==="done"){m=missing(o);if(!(m.acid||m.water))return}
+    var n=canonName(o.loader),e;
+    if(!n){e=none||(none={name:"No loader named",ld:[],ms:[],nobody:true})}
+    else{var k=n.toLowerCase();e=E[k];if(!e){e=E[k]={name:n,ld:[],ms:[]};extra.push(e)}}
+    if(st==="loading")e.ld.push(o);else e.ms.push({o:o,m:m});
+  });
+  extra.sort(function(a,b){return a.name.localeCompare(b.name,undefined,{sensitivity:"base"})});
+  var all=ros.concat(extra);if(none)all.push(none);
+  var h=all.map(function(e){
+    e.ld.sort(function(a,b){return a.startAt-b.startAt});e.ms.sort(function(a,b){return a.o.endAt-b.o.endAt});
+    var col=e.nobody?DEFCOL:colOf(e.name),first=e.ld[0]?[e.ld[0].id,0]:e.ms[0]?[e.ms[0].o.id,1]:null,s='<div class="ct" style="--lc:'+col+'">';
+    s+=first?'<button type="button" class="ctn" data-goto="'+esc(first[0])+'"'+(first[1]?' data-fix="1"':'')+'>'+esc(e.name)+'</button>':'<div class="ctn">'+esc(e.name)+'</div>';
+    e.ld.forEach(function(o){s+='<button type="button" class="ctl ld" data-goto="'+esc(o.id)+'"><b>Loading</b> '+esc(o.name||"Unnamed order")+' · <span class="ctm" data-tid="'+esc(o.id)+'"></span></button>'});
+    e.ms.forEach(function(x){var what=x.m.acid&&x.m.water?"acid + water":x.m.acid?"acid":"water";
+      s+='<button type="button" class="ctl ctx" data-goto="'+esc(x.o.id)+'" data-fix="1">Needs '+what+' · '+esc(x.o.ticket?"Ticket "+x.o.ticket:(x.o.name||"Unnamed order"))+'</button>'});
+    if(!first)s+='<p class="cti">Not loading</p>';
+    return s+'</div>';
+  }).join("");
+  if(h!==crewHtml){crewHtml=h;$("crewg").innerHTML=h;$("crew").hidden=!h}
+  var tm=$("crewg").querySelectorAll(".ctm"),now=Date.now();
+  for(var i=0;i<tm.length;i++){var o=find(tm[i].getAttribute("data-tid"));tm[i].textContent=o&&o.startAt?hms(now-o.startAt):""}
 }
-function gotoLoad(id){
-  var c=$("o-"+id);if(!c)return;
-  var m=missing(find(id)||{}),inp=m.acid?$("ac-"+id):m.water?$("wa-"+id):null;
-  (inp||c).scrollIntoView({behavior:"smooth",block:"center"});
+function openCard(id,open){
+  OPEN[id]=open;var c=$("o-"+id);if(!c)return null;
+  c.classList.toggle("open",open);
+  var r=c.querySelector(".orow");if(r)r.setAttribute("aria-expanded",String(open));
+  return c;
+}
+function gotoLoad(id,fix){
+  var c=openCard(id,true);if(!c)return;
+  var m=fix?missing(find(id)||{}):{},inp=m.acid?$("ac-"+id):m.water?$("wa-"+id):null;
+  if(inp)inp.scrollIntoView({behavior:"smooth",block:"center"});else c.scrollIntoView({behavior:"smooth",block:"start"});
   c.classList.remove("found");void c.offsetWidth;c.classList.add("found");
   setTimeout(function(){c.classList.remove("found")},1500);
   if(inp)setTimeout(function(){try{inp.focus({preventScroll:true})}catch(e){}},450);
 }
-$("missb").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-goto]"):null;if(b)gotoLoad(b.getAttribute("data-goto"))};
+$("crewg").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-goto]"):null;if(b)gotoLoad(b.getAttribute("data-goto"),b.hasAttribute("data-fix"))};
 function find(id){for(var i=0;i<ORD.length;i++)if(ORD[i].id===id)return ORD[i];return null}
 function isEditingNow(){var a=document.activeElement;if(a&&(a.type==="checkbox"||a.tagName==="SELECT"))return false;return !!(a&&$("list").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))}
 function hasDeb(){for(var k in deb)return true;return false}
@@ -728,7 +793,7 @@ function doAct(a,id){
   else if(a==="end")upd(id,{endAt:Date.now()});
   else if(a==="undo")upd(id,{startAt:null,endAt:null});
   else if(a==="reopen")upd(id,{endAt:null});
-  else if(a==="edit"){editing[id]=true;build()}
+  else if(a==="edit"){editing[id]=true;OPEN[id]=true;build()}
   else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
 }
 function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
@@ -759,7 +824,7 @@ function buildText(){
   return rows.map(function(r){return r.map(cell).join("\t")}).join("\n");
 }
 
-$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act");if(a)doAct(a,b.getAttribute("data-id"))};
+$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}if(a)doAct(a,id)};
 function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
   if(f==="state"){setField(eid,f,e.target.value);flushAll(eid);return}
   if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
@@ -797,7 +862,8 @@ function onData(list){
   list.forEach(function(o){if(o.id===NOTE_ID)nt=o;else if(o.id===ROSTER_ID)rs=o});
   ORD=list.filter(function(o){return o.prod!==undefined});
   NOTE=nt||{};
-  ROSTER=rs&&rs.names?Object.keys(rs.names).map(function(k){return String(rs.names[k]||"").trim()}).filter(Boolean):[];
+  ROSTER=[];RCOL={};
+  if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var c=rs.colors&&rs.colors[k];if(c)RCOL[n.toLowerCase()]=String(c)});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
   gotData=true;syncState();renderNote();renderRoster();refresh();
 }
@@ -848,13 +914,18 @@ $("sn_clr").onclick=function(){$("sn_txt").value="";noteDirty=true;saveNote()};
 
 function renderRoster(){
   $("crewlist").innerHTML=ROSTER.map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("");
-  $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){return '<li><span>'+esc(n)+'</span><button type="button" data-rsi="'+i+'">Remove</button></li>'}).join(""):'<li class="none">No names yet. Add your crew below.</li>';
+  $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var cur=RCOL[n.toLowerCase()];
+    return '<li><span class="rsn"><i style="background:'+colOf(n)+'"></i>'+esc(n)+'</span><button type="button" data-rsi="'+i+'">Remove</button>'+
+      '<div class="sw" role="group" aria-label="Color for '+esc(n)+'">'+LCOL.map(function(c){return '<button type="button" data-rsc="'+i+'" data-col="'+c[0]+'" aria-label="'+c[2]+'" aria-pressed="'+(cur===c[0])+'" style="--c:'+c[1]+'"></button>'}).join("")+'</div></li>'}).join(""):'<li class="none">No names yet. Add your crew below.</li>';
 }
+/* Saved as {names:{n0:"Sam"}, colors:{n0:"blue"}}. Phones on v20 or older read names only. */
 function saveRoster(names){
   if(!DL||!can()){rsErr("Not connected. Open the Load Log with a signal first.");return false}
-  var obj={};names.forEach(function(n,i){obj["n"+i]=n});
-  ROSTER=names.slice();renderRoster();
-  enqueue(ROSTER_ID,function(){return names.length?DL.set(ROSTER_ID,{names:obj}):DL.remove(ROSTER_ID)});
+  var obj={},cols={},hasCol=false;
+  names.forEach(function(n,i){obj["n"+i]=n;var c=RCOL[n.toLowerCase()];if(c){cols["n"+i]=c;hasCol=true}});
+  var data={names:obj};if(hasCol)data.colors=cols;
+  ROSTER=names.slice();renderRoster();refresh();
+  enqueue(ROSTER_ID,function(){return names.length?DL.set(ROSTER_ID,data):DL.remove(ROSTER_ID)});
   return true;
 }
 function rsErr(t){$("rs_err").textContent=t||"";$("rs_err").hidden=!t}
@@ -868,6 +939,8 @@ function addRoster(){
 $("rs_add").onclick=addRoster;
 $("rs_in").onkeydown=function(e){if(e.key==="Enter")addRoster()};
 $("rs_list").onclick=function(e){
+  var sw=e.target.closest?e.target.closest("button[data-rsc]"):null;
+  if(sw){var nm2=ROSTER[+sw.getAttribute("data-rsc")];if(nm2==null)return;rsErr("");RCOL[nm2.toLowerCase()]=sw.getAttribute("data-col");saveRoster(ROSTER);return}
   var b=e.target.closest?e.target.closest("button[data-rsi]"):null;if(!b)return;
   var i=+b.getAttribute("data-rsi"),nm=ROSTER[i];if(nm==null)return;
   if(b.getAttribute("data-arm")!=="1"){b.setAttribute("data-arm","1");b.className="arm";b.textContent="Tap to confirm";setTimeout(function(){if(b.isConnected){b.removeAttribute("data-arm");b.className="";b.textContent="Remove"}},4000);return}
