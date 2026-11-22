@@ -335,6 +335,17 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .rs li .sw{display:flex;flex-wrap:wrap;gap:6px;width:100%;padding:2px 0 6px}
 .rs li .sw button{width:28px;height:28px;min-height:28px;padding:0;border-radius:50%;border:0;background:var(--c)}
 .rs li .sw button[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
+/* Load weight window that opens on End load. Sits near the top on phones so the keyboard doesn't cover it. */
+.pinm.fin{align-items:start;padding-top:max(16px,calc(env(safe-area-inset-top,0px) + 12px));overflow:auto}
+.finb{width:min(480px,100%);max-height:calc(100vh - 32px);overflow:auto}
+@media screen and (min-width:700px){.pinm.fin{align-items:center}}
+.finout{margin-top:12px}
+.finout .fr{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.finout .fr b{font-variant-numeric:tabular-nums}
+.finout .fr.big{font-size:17px;border-bottom:0}
+.finout .fr.big b{color:var(--acc)}
+.finout .er{margin:0;font-size:14px;color:var(--mute);font-weight:600}
+.wbtn{margin-top:8px;width:100%}
 </style>
 </head>
 <body>
@@ -424,6 +435,23 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <input id="pinm_in" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN">
   <p id="pinm_e" class="note" style="color:var(--bad);margin:8px 0 0" hidden>Wrong PIN.</p>
   <div class="pinr"><button id="pinm_c" type="button">Cancel</button><button id="pinm_ok" class="go" type="button">Remove load</button></div>
+</div></div>
+<div id="fin" class="pinm fin" hidden><div class="pinb finb" role="dialog" aria-modal="true" aria-labelledby="fin_t">
+  <b id="fin_t">Load weight</b>
+  <p id="fin_s" class="note" style="margin:2px 0 12px"></p>
+  <div class="g2">
+    <div><label class="f" for="fin_lt">Light weight (in), lb</label><input id="fin_lt" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div><label class="f" for="fin_hv">Heavy weight (out), lb</label><input id="fin_hv" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div class="full"><label class="f" for="fin_pr">Product loaded</label><select id="fin_pr"></select></div>
+    <div class="full" id="fin_wrow" hidden><label class="f" for="fin_w">Product weight, lb per gallon</label><input id="fin_w" type="number" inputmode="decimal" min="0" step="any"></div>
+  </div>
+  <div id="fin_out" class="finout"></div>
+  <div class="g2" style="margin-top:10px">
+    <div><label class="f" for="fin_ac">Acid loaded (gal)</label><input id="fin_ac" type="number" inputmode="decimal" min="0" step="any"></div>
+    <div id="fin_wab"><label class="f" for="fin_wa">Water loaded (gal)</label><input id="fin_wa" type="number" inputmode="decimal" min="0" step="any"></div>
+  </div>
+  <p id="fin_n" class="note"></p>
+  <div class="pinr"><button id="fin_x" type="button">Later</button><button id="fin_ok" class="go" type="button">Save amounts</button></div>
 </div></div>
 <div id="msg" class="msg" role="alert" hidden></div>
 
@@ -588,7 +616,7 @@ function viewCard(o){
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go" data-act="end" data-id="'+id+'">End load</button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
   if(st==="done"){
-    if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p></div>';
+    if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
   if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button><button type="button" data-act="rm" data-id="'+id+'"'+'>Remove</button></div>';
@@ -790,12 +818,63 @@ function doAct(a,id){
     askPin("Enter the lead PIN to remove this load.","Remove load",function(){enqueue(id,function(){return DL.remove(id)});build()});return}
   rmId=null;
   if(a==="start")upd(id,{startAt:Date.now(),endAt:null});
-  else if(a==="end")upd(id,{endAt:Date.now()});
+  else if(a==="end"){upd(id,{endAt:Date.now()});openFin(id)}
+  else if(a==="weigh"){flushAll(id);openFin(id)}
   else if(a==="undo")upd(id,{startAt:null,endAt:null});
   else if(a==="reopen")upd(id,{endAt:null});
   else if(a==="edit"){editing[id]=true;OPEN[id]=true;build()}
   else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
 }
+/* Load weight window: light and heavy scale weights -> gallons loaded -> acid and water
+   from the dilution ratios. The loader can change the amounts before saving. */
+var finId=null;
+$("fin_pr").innerHTML=PRODUCTS.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join("");
+function finSplit(prod,gal){
+  if(prod==="acid")return {acid:gal,water:null};
+  if(DIL[prod])return {acid:gal*DIL[prod][0],water:gal*DIL[prod][1]};
+  if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d=DIL[b.hcl];return {acid:hg*d[0],water:hg*d[1]}}
+  return null;
+}
+function finCalc(){
+  var prod=$("fin_pr").value,L=parseFloat($("fin_lt").value),H=parseFloat($("fin_hv").value);
+  $("fin_wrow").hidden=prod!=="other";
+  $("fin_wab").hidden=prod==="acid";
+  var wi=wtFor(prod,{wtPerGal:$("fin_w").value}),out=$("fin_out"),note="";
+  var put=function(el,v){if(el.getAttribute("data-touched")!=="1")el.value=v==null?"":Math.round(v)};
+  if(!(L>0)||!(H>0)){out.innerHTML='<p class="er">Enter the light and heavy weights from the scale ticket.</p>';$("fin_n").textContent="";return}
+  if(H<=L){out.innerHTML='<p class="er">Heavy weight must be more than light weight.</p>';$("fin_n").textContent="";return}
+  if(!wi){out.innerHTML='<p class="er">Enter the product weight per gallon.</p>';$("fin_n").textContent="";return}
+  var net=H-L,gal=net/wi.w,s=finSplit(prod,gal);
+  out.innerHTML='<div class="fr"><span>Net product</span><b>'+num(net)+' lb</b></div><div class="fr big"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>';
+  if(s){put($("fin_ac"),s.acid);if(prod!=="acid")put($("fin_wa"),s.water)}
+  note=s?"Acid and water are worked out from the gallons and the dilution chart. Change them if your meter shows different.":"Other product: enter acid and water by hand if they apply.";
+  if(wi.est)note+=" CableShield uses the "+wi.est+" weight as an estimate.";
+  $("fin_n").textContent=note+" Uses "+wi.w+" lb/gal.";
+}
+function openFin(id){
+  var o=find(id);if(!o)return;finId=id;
+  $("fin_s").textContent=(o.name||"Unnamed order")+(o.ticket?" · Ticket "+o.ticket:"")+" · "+(o.gal?num(o.gal)+" gal ":"")+pname(o.prod);
+  $("fin_lt").value=o.lightWt||"";$("fin_hv").value=o.heavyWt||"";$("fin_w").value=o.wtPerGal||"";
+  $("fin_pr").value=o.prod||"acid";
+  [["fin_ac","acidGal"],["fin_wa","waterGal"]].forEach(function(x){var v=o[x[1]],has=v!=null&&String(v).trim()!=="";$(x[0]).value=has?v:"";if(has)$(x[0]).setAttribute("data-touched","1");else $(x[0]).removeAttribute("data-touched")});
+  $("fin").hidden=false;finCalc();
+  try{(o.lightWt?$("fin_hv"):$("fin_lt")).focus()}catch(e){}
+}
+function closeFin(){$("fin").hidden=true;finId=null}
+function saveFin(){
+  var id=finId,o=find(id);if(!o||!can()){closeFin();return}
+  var n=function(i){var v=parseFloat($(i).value);return String($(i).value).trim()===""||!(v>=0)?null:v};
+  var L=n("fin_lt"),H=n("fin_hv"),p={acidGal:n("fin_ac")};
+  if($("fin_pr").value!=="acid")p.waterGal=n("fin_wa");
+  if(L>0)p.lightWt=L;if(H>0)p.heavyWt=H;
+  if($("fin_pr").value==="other"&&n("fin_w")>0)p.wtPerGal=n("fin_w");
+  upd(id,p);closeFin();
+}
+["fin_lt","fin_hv","fin_w"].forEach(function(i){$(i).oninput=finCalc});
+$("fin_pr").onchange=finCalc;
+["fin_ac","fin_wa"].forEach(function(i){$(i).oninput=function(){this.setAttribute("data-touched","1")}});
+$("fin_ok").onclick=saveFin;$("fin_x").onclick=closeFin;
+$("fin").addEventListener("keydown",function(e){if(e.key==="Escape")closeFin()});
 function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
 $("a_state").onchange=updState;
 function updSplit(){$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs")}
