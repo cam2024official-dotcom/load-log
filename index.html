@@ -230,6 +230,45 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .sca button{min-height:36px;font-size:14px}
 .silall{margin-top:8px}
+.ho{max-width:760px}
+.ho h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:18px 0 8px}
+.hof{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:var(--r);padding:4px 14px 14px;margin-top:16px}
+.hof h3{font-size:15px;margin:16px 0 8px}
+.hof textarea{width:100%;min-height:80px}
+.hor{display:grid;grid-template-columns:1fr 1fr 36px;gap:6px 8px;align-items:end;margin-bottom:8px;padding:8px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg)}
+.hor .wide{grid-column:1/3}
+.hor label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mute);min-width:0}
+.hor .hox{min-height:36px;width:36px;padding:0;font-size:18px;line-height:1}
+
+.hor input,.hor select{min-width:0;width:100%}
+.hoadd{min-height:36px;font-size:13px;padding:4px 10px}
+
+
+.hocs{display:grid;grid-template-columns:70px 1fr 1fr;gap:6px;align-items:center}
+.hocs span{font-size:12px;color:var(--mute)}
+.hocs input{min-width:0;width:100%}
+.hofl{display:flex;gap:8px;margin-top:6px}
+.hofl input{flex:1;min-width:0}.hofl button{flex:none}
+.hoi{display:flex;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.hoi:last-child{border-bottom:0}
+.hoi small{color:var(--mute);flex:none}
+.hoi p{margin:0;flex:1;min-width:0;overflow-wrap:anywhere}
+.hoi button{min-height:0;border:0;background:transparent;color:var(--mute);font-size:12px;text-decoration:underline;padding:0}
+.hop{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:var(--r);padding:12px 14px}
+.hop>b{display:block;font-size:17px}
+.hop>small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
+.hop h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:14px 0 4px}
+.hop table{width:100%;border-collapse:collapse;font-size:14px}
+.hop td,.hop th{text-align:left;padding:4px 6px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.hop th{font-size:12px;color:var(--mute);font-weight:600}
+.hop ul{margin:0;padding-left:18px;font-size:14px}
+.hop li{margin:2px 0}
+.hop .hon{white-space:pre-wrap;font-size:14px;margin:0}
+.hop .none{color:var(--mute);font-size:14px;margin:0}
+.hopast details{margin-bottom:8px}
+.hopast summary{cursor:pointer;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);font-weight:600;font-size:14px}
+.hopast details[open] summary{border-radius:var(--r) var(--r) 0 0}
+.hopast details .hop{border-radius:0 0 var(--r) var(--r);border-top:0}
 .chat{max-width:760px}
 .chl{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .cday{align-self:center;font-size:11px;font-weight:600;color:var(--mute);margin:6px 0 0;text-transform:uppercase;letter-spacing:.08em}
@@ -604,6 +643,39 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <div class="acts"><button id="sc_hsave" class="go" type="button">Save hours</button></div>
   </details>
 </div></main>
+<main id="v-ho" hidden><div class="wrap ho">
+  <div id="ho_latest"></div>
+  <section id="ho_form" class="hof" hidden>
+    <h2>This shift</h2>
+    <p class="note">Fill this in as the shift goes. It saves as you type. At shift change, tap <span class="kb">Post handoff</span>.</p>
+    <h3>Tank levels</h3>
+    <div id="ho_tk"></div>
+    <button type="button" class="hoadd" data-hoadd="tk">Add tank</button>
+    <h3>Acid totes in temp storage</h3>
+    <div class="g2"><div><label class="f" for="ho_atc">Totes</label><input id="ho_atc" data-ho="at.c" type="number" inputmode="numeric" min="0" step="1"></div>
+      <div><label class="f" for="ho_atn">Note</label><input id="ho_atn" data-ho="at.n" type="text" autocomplete="off" placeholder="Strength, which trailer"></div></div>
+    <h3>CableShield totes</h3>
+    <div class="hocs"><span></span><span>Full totes</span><span>Gal left in partials</span>
+      <b>Y007</b><input data-ho="cs.y7.f" type="number" inputmode="numeric" min="0" step="1" aria-label="Y007 full totes"><input data-ho="cs.y7.g" type="number" inputmode="decimal" min="0" step="any" aria-label="Y007 gallons left in partial totes">
+      <b>Y007A</b><input data-ho="cs.y7a.f" type="number" inputmode="numeric" min="0" step="1" aria-label="Y007A full totes"><input data-ho="cs.y7a.g" type="number" inputmode="decimal" min="0" step="any" aria-label="Y007A gallons left in partial totes">
+      <b>A272</b><input data-ho="cs.a272.f" type="number" inputmode="numeric" min="0" step="1" aria-label="A272 full totes"><input data-ho="cs.a272.g" type="number" inputmode="decimal" min="0" step="any" aria-label="A272 gallons left in partial totes">
+    </div>
+    <h3>Railcars</h3>
+    <div id="ho_rc"></div>
+    <button type="button" class="hoadd" data-hoadd="rc">Add railcar</button>
+    <h3>Mechanical and equipment failures</h3>
+    <div id="ho_fl"></div>
+    <div class="hofl"><input id="ho_fin" type="text" autocomplete="off" maxlength="300" placeholder="What failed and what was done" aria-label="Failure to log"><button id="ho_flog" type="button">Log it</button></div>
+    <h3>Notes for the next shift</h3>
+    <textarea id="ho_nt" data-ho="nt" maxlength="1500" placeholder="Anything else the next shift should know"></textarea>
+    <h3>Loads right now</h3>
+    <p class="note">These fill in by themselves from the Load Log when you post.</p>
+    <div id="ho_lds"></div>
+    <p id="ho_err" class="note" style="color:var(--bad)" hidden></p>
+    <div class="acts"><button id="ho_post" class="go" type="button">Post handoff</button></div>
+  </section>
+  <div id="ho_past"></div>
+</div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
   <h2>Loaders</h2>
@@ -696,6 +768,13 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Covering a shift and your name isn't on the sign-in screen? Tap <span class="kb">Show everyone</span>, or ask a lead to mark you on shift.</li>
     </ol>
   </details>
+  <details><summary>Shift handoff</summary>
+    <ol>
+      <li>Open the menu and tap <span class="kb">Shift Handoff</span> to read what the last shift left you: loads going and waiting, tank levels and straps, acid totes in temp storage, CableShield totes, railcars, equipment failures and notes.</li>
+      <li>When a lead posts a handoff, a message also goes in Crew Chat.</li>
+      <li>Handoffs from the last 7 days are kept under <b>Earlier handoffs</b>.</li>
+    </ol>
+  </details>
   <div id="hp_lead" hidden>
   <h2>Leads</h2>
   <details><summary>Adding and removing orders</summary>
@@ -712,6 +791,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>To give someone a new PIN, tap <span class="kb">Set PIN</span> or <span class="kb">Change PIN</span> next to their name.</li>
       <li>Leads get into the Lead Panel and can remove loads without typing the lead PIN.</li>
       <li>Removing someone from the roster signs them out on their phone.</li>
+    </ol>
+  </details>
+  <details><summary>Filling out the shift handoff</summary>
+    <ol>
+      <li>Open <span class="kb">Shift Handoff</span>. Under <b>This shift</b>, fill in tank levels (percent and strap in inches), acid totes in temp storage, CableShield full totes and gallons left in partials, and each railcar with its status. It saves as you type.</li>
+      <li>Log any mechanical or equipment failure when it happens: type it and tap <span class="kb">Log it</span>. The time and your name go on it.</li>
+      <li>The loads part fills in by itself from the Load Log.</li>
+      <li>At shift change, tap <span class="kb">Post handoff</span> twice. Tanks, totes and railcars carry over for the next shift to update. Failures and notes start fresh.</li>
     </ol>
   </details>
   <details><summary>Setting the schedule</summary>
@@ -749,6 +836,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <button type="button" data-view="lw">Load Weight</button>
   <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
   <button type="button" data-view="sched">Schedule</button>
+  <button type="button" data-view="ho">Shift Handoff</button>
   <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
@@ -1279,11 +1367,12 @@ function syncState(){
 }
 function onData(list){
   var rs=null,ch=null,sc=null;
-  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o});
-  setSched(sc);
+  var ho=null;
+  list.forEach(function(o){if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  setSched(sc);setHO(ho);
   setChat(ch);
   /* A new chat message alone doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID}));
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -1293,7 +1382,7 @@ function onData(list){
     var p=rs.pins&&rs.pins[k];if(p)RPIN[lk]=String(p);
     if(rs.leads&&rs.leads[k])RLEAD[lk]=true});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
-  gotData=true;syncState();renderRoster();applyAuth();refresh();renderSched();shiftSig=onShiftSig();
+  gotData=true;syncState();renderRoster();applyAuth();refresh();renderSched();renderHO();shiftSig=onShiftSig();
 }
 
 /* Shift schedule, beside the orders under a fixed key:
@@ -1383,6 +1472,144 @@ function onShiftChange(force){
   if(!$("signin").hidden)renderSignIn();
 }
 setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
+
+/* Shift handoff, beside the orders under a fixed key:
+   {d:<this shift's draft>, p:{hID:<posted handoff>}}
+   draft = {tk:[{n,p,s}] tanks (name, %, strap inches), at:{c,n} acid totes in temp storage,
+            cs:{y7|y7a|a272:{f,g}} CableShield full totes and gallons left in partials,
+            rc:[{c,s,o}] railcars (car, status, other/note), fl:{fID:{t,by,tx}} failures, nt notes}
+   A post is {at,by,sh,d:<draft copy>,ld:<loads summary>}. Leads fill it in; everyone can read it.
+   Posts older than 7 days are dropped when the next one is posted. */
+var HO_ID="_handoff",HO_KEEP=7*864e5,HO={d:null,p:{}},hoSaveT=null,hoArm=false;
+var RC_ST=["Running","Rigged Up","Rigged Down","Staged","Other"];
+function arr(x){return Array.isArray(x)?x.filter(function(v){return v!=null}):x&&typeof x==="object"?Object.keys(x).sort(function(a,b){return a-b}).map(function(k){return x[k]}).filter(function(v){return v!=null}):[]}
+function hoBlank(){return {tk:[{n:"Acid tank",p:"",s:""},{n:"Water tank",p:"",s:""}],at:{c:"",n:""},cs:{y7:{f:"",g:""},y7a:{f:"",g:""},a272:{f:"",g:""}},rc:[{c:"",s:"",o:""}],fl:{},nt:""}}
+function hoNorm(d){
+  var b=hoBlank();if(!d||typeof d!=="object")return b;
+  var tk=arr(d.tk).map(function(t){return {n:String(t.n||""),p:t.p==null?"":String(t.p),s:t.s==null?"":String(t.s)}});
+  var rc=arr(d.rc).map(function(r){return {c:String(r.c||""),s:String(r.s||""),o:String(r.o||"")}});
+  var cs={};["y7","y7a","a272"].forEach(function(k){var v=(d.cs&&d.cs[k])||{};cs[k]={f:v.f==null?"":String(v.f),g:v.g==null?"":String(v.g)}});
+  return {tk:tk.length?tk:b.tk,at:{c:d.at&&d.at.c!=null?String(d.at.c):"",n:d.at&&d.at.n?String(d.at.n):""},cs:cs,rc:rc.length?rc:b.rc,fl:(d.fl&&typeof d.fl==="object")?d.fl:{},nt:String(d.nt||"")};
+}
+function setHO(o){
+  var s=JSON.stringify(o||null);if(s===setHO.sig)return;setHO.sig=s;
+  /* Don't overwrite what this lead is typing; their save goes out shortly */
+  if(!hoSaveT)HO.d=hoNorm(o&&o.d);
+  HO.p=(o&&o.p&&typeof o.p==="object")?o.p:{};
+  renderHO();
+}
+function hoErr(t){$("ho_err").textContent=t||"";$("ho_err").hidden=!t}
+function hoCanEdit(){return canManage()&&!!DL&&can()}
+function hoSave(now){
+  clearTimeout(hoSaveT);hoSaveT=null;
+  if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the handoff.");return}
+  hoErr("");var d=JSON.parse(JSON.stringify(HO.d));d.u=Date.now();d.ub=ME?ME.name:"";
+  upd(HO_ID,{d:d});
+}
+function hoSoon(){clearTimeout(hoSaveT);hoSaveT=setTimeout(function(){hoSave()},700)}
+function shiftLabel(cs){return (cs.s==="D"?"Day":"Night")+" shift · "+new Date(cs.start).toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}
+function hoLoads(){
+  var cs=curShift(),run=[],wait=[],miss=[],dn=0,acid=0;
+  ORD.forEach(function(o){var st=status(o),b={n:o.name||"Unnamed order",l:canonName(o.loader)||"",p:pname(o.prod),g:parseFloat(o.gal)||0,tk:o.ticket||""};
+    if(st==="loading"){b.st=o.startAt;run.push(b)}
+    else if(st==="waiting"){b.lbt=o.lbtAt||null;wait.push(b)}
+    else{var m=missing(o);if(m.acid||m.water){b.w=m.acid&&m.water?"acid + water":m.acid?"acid":"water";miss.push(b)}
+      if(o.endAt>=cs.start){dn++;acid+=parseFloat(o.acidGal)||0}}});
+  wait.sort(function(a,b){return (a.lbt||9e15)-(b.lbt||9e15)});
+  return {run:run,wait:wait,miss:miss,dn:dn,acid:Math.round(acid)};
+}
+function hoLoadsHtml(ld,at){
+  var li=function(b,extra){return '<li><b>'+esc(b.n)+'</b> · '+(b.g?num(b.g)+' gal ':'')+esc(b.p)+(b.l?' · '+esc(b.l):'')+(extra||'')+'</li>'};
+  var h='<h4>Loading</h4>'+(ld.run.length?'<ul>'+ld.run.map(function(b){return li(b,b.st?' · started '+T(b.st):'')}).join("")+'</ul>':'<p class="none">Nothing loading.</p>');
+  h+='<h4>Waiting</h4>'+(ld.wait.length?'<ul>'+ld.wait.map(function(b){return li(b,b.lbt?' · LBT '+T(b.lbt):'')}).join("")+'</ul>':'<p class="none">Nothing waiting.</p>');
+  if(ld.miss.length)h+='<h4>Finished, missing amounts</h4><ul>'+ld.miss.map(function(b){return li(b,' · needs '+b.w+(b.tk?' · ticket '+esc(b.tk):''))}).join("")+'</ul>';
+  h+='<h4>Done this shift</h4><p class="none" style="color:var(--ink)">'+ld.dn+' load'+(ld.dn===1?'':'s')+' · '+num(ld.acid)+' gal acid pulled</p>';
+  return h;
+}
+function hoPostHtml(p){
+  var d=hoNorm(p.d),h='<div class="hop"><b>'+esc(p.sh||"Shift handoff")+'</b><small>Posted '+new Date(p.at).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})+(p.by?' by '+esc(p.by):'')+'</small>';
+  if(p.ld)h+=hoLoadsHtml(p.ld);
+  var tk=d.tk.filter(function(t){return t.n||t.p||t.s});
+  h+='<h4>Tank levels</h4>'+(tk.length?'<table><tr><th>Tank</th><th>Level</th><th>Strap</th></tr>'+tk.map(function(t){return '<tr><td>'+esc(t.n||"Tank")+'</td><td>'+(t.p!==""?esc(t.p)+'%':'–')+'</td><td>'+(t.s!==""?esc(t.s)+' in':'–')+'</td></tr>'}).join("")+'</table>':'<p class="none">Not filled in.</p>');
+  h+='<h4>Acid totes in temp storage</h4><p class="none" style="color:var(--ink)">'+(d.at.c!==""?esc(d.at.c)+' tote'+(+d.at.c===1?'':'s'):'Not filled in')+(d.at.n?' · '+esc(d.at.n):'')+'</p>';
+  var cn={y7:"Y007",y7a:"Y007A",a272:"A272"};
+  h+='<h4>CableShield totes</h4><table><tr><th></th><th>Full totes</th><th>Gal in partials</th></tr>'+["y7","y7a","a272"].map(function(k){var v=d.cs[k];return '<tr><td>'+cn[k]+'</td><td>'+(v.f!==""?esc(v.f):'–')+'</td><td>'+(v.g!==""?esc(v.g)+' gal':'–')+'</td></tr>'}).join("")+'</table>';
+  var rc=d.rc.filter(function(r){return r.c||r.s||r.o});
+  h+='<h4>Railcars</h4>'+(rc.length?'<table><tr><th>Railcar</th><th>Status</th></tr>'+rc.map(function(r){var st=r.s==="Other"?(r.o||"Other"):r.s;return '<tr><td>'+esc(r.c||"–")+'</td><td>'+esc(st||"–")+(r.s!=="Other"&&r.o?' · '+esc(r.o):'')+'</td></tr>'}).join("")+'</table>':'<p class="none">Not filled in.</p>');
+  var fl=hoFails(d);
+  h+='<h4>Mechanical and equipment failures</h4>'+(fl.length?'<ul>'+fl.map(function(f){return '<li>'+T(f.t)+(f.by?' · '+esc(f.by):'')+': '+esc(f.tx)+'</li>'}).join("")+'</ul>':'<p class="none">None logged.</p>');
+  if(d.nt)h+='<h4>Notes</h4><p class="hon">'+esc(d.nt)+'</p>';
+  return h+'</div>';
+}
+function hoFails(d){return Object.keys(d.fl||{}).map(function(k){var f=d.fl[k]||{};return {id:k,t:+f.t||0,by:String(f.by||""),tx:String(f.tx||"")}}).filter(function(f){return f.tx}).sort(function(a,b){return a.t-b.t})}
+function hoPosts(){var now=Date.now();return Object.keys(HO.p).map(function(k){var p=HO.p[k]||{};return {id:k,at:+p.at||0,by:p.by,sh:p.sh,d:p.d,ld:p.ld}}).filter(function(p){return now-p.at<HO_KEEP}).sort(function(a,b){return b.at-a.at})}
+function renderHO(){
+  if(curView!=="ho")return;
+  var ps=hoPosts(),lead=canManage();
+  $("ho_latest").innerHTML='<h2>Latest handoff</h2>'+(ps.length?hoPostHtml(ps[0]):'<p class="gn">No handoff posted yet.'+(lead?' Fill in this shift below and post it at shift change.':'')+'</p>');
+  $("ho_past").innerHTML=ps.length>1?'<h2>Earlier handoffs (last 7 days)</h2><div class="hopast">'+ps.slice(1).map(function(p){return '<details><summary>'+esc(p.sh||"Shift handoff")+(p.by?' · '+esc(p.by):'')+'</summary>'+hoPostHtml(p)+'</details>'}).join("")+'</div>':'';
+  $("ho_form").hidden=!lead;if(!lead)return;
+  $("ho_form").querySelector("h2").textContent="This shift · "+shiftLabel(curShift());
+  $("ho_lds").innerHTML='<div class="hop" style="border-left-color:var(--line)">'+hoLoadsHtml(hoLoads())+'</div>';
+  hoFailList();
+  /* Leave the fields alone while someone is typing in them */
+  var a=document.activeElement;if(a&&$("ho_form").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;
+  hoFill();
+}
+function hoFill(){
+  var d=HO.d||(HO.d=hoBlank());
+  $("ho_tk").innerHTML=d.tk.map(function(t,i){
+    return '<div class="hor"><label class="wide">Tank<input data-ho="tk.'+i+'.n" type="text" autocomplete="off" value="'+esc(t.n)+'" placeholder="Tank name"></label><button type="button" class="hox" data-hodel="tk.'+i+'" aria-label="Remove '+esc(t.n||"tank")+'">×</button>'+
+      '<label>Level %<input data-ho="tk.'+i+'.p" type="number" inputmode="decimal" min="0" max="100" step="any" value="'+esc(t.p)+'"></label><label>Strap (inches)<input data-ho="tk.'+i+'.s" type="number" inputmode="decimal" min="0" step="any" value="'+esc(t.s)+'"></label></div>'}).join("");
+  $("ho_rc").innerHTML=d.rc.map(function(r,i){
+    return '<div class="hor"><label class="wide">Railcar<input data-ho="rc.'+i+'.c" type="text" autocomplete="off" value="'+esc(r.c)+'" placeholder="Car number"></label><button type="button" class="hox" data-hodel="rc.'+i+'" aria-label="Remove railcar '+esc(r.c)+'">×</button>'+
+      '<label>Status<select data-ho="rc.'+i+'.s"><option value="">Pick one</option>'+RC_ST.map(function(s){return '<option'+(r.s===s?' selected':'')+'>'+s+'</option>'}).join("")+'</select></label><label>'+(r.s==="Other"?"Status (type it)":"Note")+'<input data-ho="rc.'+i+'.o" type="text" autocomplete="off" value="'+esc(r.o)+'" placeholder="'+(r.s==="Other"?"Type the status":"Optional")+'"></label></div>'}).join("");
+  var q=$("ho_form").querySelectorAll("[data-ho]");
+  for(var i=0;i<q.length;i++){var path=q[i].getAttribute("data-ho");if(/^(tk|rc)\./.test(path))continue;q[i].value=hoGet(path)}
+}
+function hoGet(path){var p=path.split("."),o=HO.d;for(var i=0;i<p.length;i++){if(o==null)return "";o=o[p[i]]}return o==null?"":o}
+function hoSet(path,v){var p=path.split("."),o=HO.d;for(var i=0;i<p.length-1;i++){if(o[p[i]]==null)o[p[i]]={};o=o[p[i]]}o[p[p.length-1]]=v}
+function hoFailList(){
+  var fl=hoFails(HO.d||{}),lead=canManage();
+  $("ho_fl").innerHTML=fl.length?fl.map(function(f){return '<div class="hoi"><small>'+T(f.t)+'</small><p>'+esc(f.tx)+(f.by?' <small>· '+esc(f.by)+'</small>':'')+'</p>'+(lead?'<button type="button" data-hofdel="'+esc(f.id)+'">Delete</button>':'')+'</div>'}).join(""):'<p class="gn" style="margin:0">None logged this shift.</p>';
+}
+$("ho_form").addEventListener("input",function(e){var t=e.target,path=t.getAttribute&&t.getAttribute("data-ho");if(!path||!HO.d)return;
+  hoSet(path,t.value);
+  if(/^rc\.\d+\.s$/.test(path)){var o=t.closest(".hor").querySelector('[data-ho$=".o"]');if(o){o.placeholder=t.value==="Other"?"Type the status":"Optional";o.parentNode.firstChild.textContent=t.value==="Other"?"Status (type it)":"Note"}}
+  hoSoon()});
+$("ho_form").addEventListener("change",function(e){if(e.target.getAttribute&&e.target.getAttribute("data-ho")&&hoSaveT)hoSave()});
+$("ho_form").addEventListener("click",function(e){
+  var b=e.target.closest?e.target.closest("button"):null;if(!b||!HO.d)return;
+  var add=b.getAttribute("data-hoadd"),del=b.getAttribute("data-hodel"),fd=b.getAttribute("data-hofdel");
+  if(add){HO.d[add].push(add==="tk"?{n:"",p:"",s:""}:{c:"",s:"",o:""});hoFill();hoSave();var ins=$("ho_"+add).querySelectorAll(".hor");if(ins.length)try{ins[ins.length-1].querySelector("input").focus()}catch(x){}return}
+  if(del){var p=del.split(".");HO.d[p[0]].splice(+p[1],1);hoFill();hoSave();return}
+  if(fd){askPin("Delete this failure from the log?","Delete",function(){delete HO.d.fl[fd];hoFailList();hoSave()},true);return}
+});
+function hoLog(){
+  var tx=$("ho_fin").value.trim();if(!tx||!HO.d)return;
+  if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the handoff.");return}
+  var id="f"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  HO.d.fl[id]={t:Date.now(),by:ME?ME.name:"",tx:tx.slice(0,300)};
+  $("ho_fin").value="";hoFailList();hoSave();
+}
+$("ho_flog").onclick=hoLog;
+$("ho_fin").onkeydown=function(e){if(e.key==="Enter")hoLog()};
+$("ho_post").onclick=function(){
+  if(!hoCanEdit()){hoErr(!can()?"Not connected. Posting needs a signal.":"Only leads can post the handoff.");return}
+  var b=this;
+  if(!hoArm){hoArm=true;b.textContent="Tap again to post";b.className="arm";setTimeout(function(){hoArm=false;b.textContent="Post handoff";b.className="go"},4000);return}
+  hoArm=false;b.textContent="Post handoff";b.className="go";
+  var now=Date.now(),cs=curShift(),id="h"+now.toString(36);
+  var post={at:now,by:ME?ME.name:"",sh:shiftLabel(cs)+" handoff",d:JSON.parse(JSON.stringify(HO.d)),ld:hoLoads()};
+  var p={};hoPosts().forEach(function(x){p[x.id]=HO.p[x.id]});p[id]=post;
+  /* Next shift starts with the same tanks, totes and railcars to update; failures and notes start fresh */
+  var nd=JSON.parse(JSON.stringify(HO.d));nd.fl={};nd.nt="";
+  clearTimeout(hoSaveT);hoSaveT=null;HO.p=p;HO.d=nd;
+  upd(HO_ID,{p:p,d:nd});
+  var mid="m"+now.toString(36)+Math.random().toString(36).slice(2,6),m={t:now,by:ME?ME.name:"Lead",tx:post.sh+" posted. Open Shift Handoff in the menu to read it."},cp={};
+  cp[mid]=m;CHAT[mid]=m;upd(CHAT_ID,cp);
+  hoErr("");renderHO();window.scrollTo(0,0);
+};
 
 /* The crew roster lives beside the orders under a fixed key, so the existing
    database rules cover it and older phones ignore it. (The shift note was removed
@@ -1549,7 +1776,7 @@ function applyAuth(){
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
-  renderSched();
+  renderSched();renderHO();
   renderChat();
 }
 function showSignIn(){$("app").hidden=true;$("signin").hidden=false;renderSignIn()}
@@ -1784,7 +2011,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -1804,6 +2031,7 @@ function showView(k){
   if(k==="lead"){leadGate();renderRoster()}
   if(k==="help")$("hp_lead").hidden=!canManage();
   if(k==="sched")setTimeout(renderSched,0);
+  if(k==="ho")setTimeout(renderHO,0);
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
