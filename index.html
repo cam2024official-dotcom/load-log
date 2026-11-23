@@ -261,6 +261,18 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .sca button{min-height:36px;font-size:14px}
 .silall{margin-top:8px}
+.ask{max-width:760px}
+.askf{display:flex;gap:8px;margin-top:4px}.askf input{flex:1;min-width:0}.askf button{flex:none;min-width:84px}
+.askx{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.askx button{min-height:32px;padding:3px 10px;font-size:13px;font-weight:600;border-radius:14px;color:var(--mute)}
+.asa{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:var(--r);padding:12px 14px;margin-top:12px}
+.asa>.asq{margin:0 0 6px;font-size:13px;color:var(--mute);font-weight:600}
+.asa>.ash{margin:0;font:700 26px/1.15 var(--display)}.asa>.ash small{font:600 14px var(--body);color:var(--mute)}
+.asa .sg{margin-top:4px}.asa table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.asa td,.asa th{text-align:left;padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}.asa th{font-size:12px;color:var(--mute);font-weight:600}
+.asa .asw{margin:8px 0 0;font-size:13px;color:var(--mute)}.asa .asn{margin:6px 0 0;font-size:14px}
+.asa.miss{border-left-color:var(--warn)}.asa ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+.asa .acts{margin-top:8px}
 .ho{max-width:760px}
 .tvh{margin:16px -14px 8px;padding:7px 14px;background:#1b2f4d;color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .tvh button{margin-left:auto;min-height:28px;padding:2px 10px;font-size:12px;text-transform:none;letter-spacing:0;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
@@ -763,6 +775,12 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </section>
   <div id="ho_past"></div>
 </div></main>
+<main id="v-ask" hidden><div class="wrap ask">
+  <form id="ask_f" class="askf" autocomplete="off"><input id="ask_in" type="search" enterkeyhint="go" placeholder="Ask about gallons, weights, splits or loads" aria-label="Your question"><button class="go" type="submit">Ask</button></form>
+  <div id="ask_ex" class="askx"></div>
+  <div id="ask_out"></div>
+  <p class="note">Works offline. Answers use the same charts and weights as the rest of the app. Always check against your chart and scale.</p>
+</div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
   <h2>Loaders</h2>
@@ -856,6 +874,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Covering a shift and your name isn't on the sign-in screen? Tap <span class="kb">Show everyone</span>, or ask a lead to mark you on shift.</li>
     </ol>
   </details>
+  <details><summary>Ask</summary>
+    <ol>
+      <li>Open the menu and tap <span class="kb">Ask</span>. Type a question and tap <span class="kb">Ask</span>, or tap one of the examples.</li>
+      <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas or NM, what gallons weigh, and lb per gallon.</li>
+      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. "How do I…" questions are answered from this Help page.</li>
+      <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
+    </ol>
+  </details>
   <details><summary>Shift handoff</summary>
     <ol>
       <li>Open the menu and tap <span class="kb">Shift Handoff</span> to read the last Loader Shift Turnover: trailers being loaded, loaders on shift, rail cars, transloader, blend station and tank battery levels, tote counts, maintenance concerns and notes.</li>
@@ -924,6 +950,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 <nav id="drawer" aria-label="Sections" aria-hidden="true">
   <div class="dh"><b>Tarquin Coolpro</b><span>Loader hub</span></div>
   <button type="button" data-view="log">Load Log</button>
+  <button type="button" data-view="ask">Ask</button>
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
   <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
@@ -2423,7 +2450,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],ask:["v-ask","Ask","Quick answers from the app's charts and the board"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -2444,6 +2471,7 @@ function showView(k){
   if(k==="help")$("hp_lead").hidden=!canManage();
   if(k==="sched")setTimeout(renderSched,0);
   if(k==="ho")setTimeout(renderHO,0);
+  if(k==="ask")setTimeout(function(){askEx();try{$("ask_in").focus()}catch(e){}},0);
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
@@ -2452,6 +2480,143 @@ function showView(k){
   for(var i=0;i<bs.length;i++){if(bs[i].getAttribute("data-view")===k)bs[i].setAttribute("aria-current","page");else bs[i].removeAttribute("aria-current")}
   setDrawer(false);window.scrollTo(0,0);
 }
+/* Ask box: answers typed questions with the app's own charts, weights and board data.
+   No AI and no network: it picks the numbers and product out of the question and runs the
+   same functions the rest of the app uses (splitOf, wtFor, wtLim, heelOf...). */
+var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","What's loading right now","Acid pulled this shift","Find trailer 707"];
+var ASK_PRODS={"36":"acid","32":"32","28":"28","20":"20","15":"15","10":"10","7.5":"7.5","5":"5"};
+function askEx(){$("ask_ex").innerHTML=ASK_EX.map(function(t){return '<button type="button" data-ask="'+esc(t)+'">'+esc(t)+'</button>'}).join("")}
+/* Product named in the question: a saved recipe, CableShield, or an HCl strength */
+function askProd(q){
+  var k=null;Object.keys(RCP).forEach(function(id){var r=RCP[id];if(!k&&r.n&&q.indexOf(r.n.toLowerCase())>=0)k={key:cxKey(r.b,r.f),name:r.n}});if(k)return k;
+  if(/cable ?shield|\bcs ?(100|33)\b|\bcs\b/.test(q))return /33/.test(q)?{key:"cs33"}:{key:"cs100"};
+  var m,re=/(\d+(?:\.\d+)?)\s*(?:%|percent|pct)/g;while((m=re.exec(q))){var v=String(parseFloat(m[1]));if(ASK_PRODS[v])return {key:ASK_PRODS[v]}}
+  if(/\b(straight|raw|full strength|concentrated)\b|\b36\b/.test(q))return {key:"acid"};
+  return null;
+}
+/* Every number in the question, with what it most likely is (light/heavy/system weight, gallons...) */
+function askNums(q){
+  var out=[],re=/(\d[\d,]*(?:\.\d+)?)\s*(k\b)?/g,m,last=0;
+  while((m=re.exec(q))){
+    var v=parseFloat(m[1].replace(/,/g,""));if(m[2])v*=1000;
+    var after=q.slice(m.index+m[0].length,m.index+m[0].length+10),before=q.slice(Math.max(last,m.index-40),m.index);last=m.index+m[0].length;
+    if(/^\s*(%|percent|pct)/.test(after))continue;
+    var tag="";
+    if(/^\s*(gal|gallon)/.test(after))tag="gal";
+    else{
+      var best=-1,K=[["sys",/(system|book|normal|usual|empty|should be|supposed|tare on file|on file|registered)/g],["hw",/(\bhw\b|heavy|gross|scale ?out|out weight|loaded weight|weighs out)/g],["lw",/(\blw\b|light|tare|scale ?in|in weight|weighs in)/g]];
+      K.forEach(function(x){var mm,r=x[1];r.lastIndex=0;while((mm=r.exec(before))){if(mm.index>best||(mm.index===best&&x[0]==="sys")){best=mm.index;tag=x[0]}}});
+    }
+    out.push({v:v,tag:tag});
+  }
+  return out;
+}
+function askWt(k){return wtFor(k,{})}
+function askPn(p){return p.name||pname(p.key)}
+function askSplit(k,gal,lbl){var h=splitHtml(k,gal,lbl||"Mix");return h}
+/* Board lookups */
+function askBoard(q){
+  var mt=/(?:trailer|truck|ticket|bol)\s*#?\s*([a-z0-9-]+)/.exec(q);
+  if(mt&&!/(acid|water)\s+for/.test(q)){var t=mt[1].toLowerCase(),hits=ORD.filter(function(o){return [o.name,o.ticket,o.bol].some(function(v){v=String(v||"").toLowerCase();return v===t||v.replace(/^trailer\s*/,"")===t})});
+    if(!hits.length)hits=ORD.filter(function(o){return [o.name,o.ticket,o.bol].some(function(v){return String(v||"").toLowerCase().indexOf(t)>=0})});
+    if(!hits.length)return {h:"Not on the board",d:'<p class="asn">No load matches "'+esc(mt[1])+'".</p>'};
+    return {h:hits.length+" match"+(hits.length===1?"":"es"),d:'<ul>'+hits.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul><div class="acts"><button type="button" data-askgo="'+esc(hits[0].id)+'">Open on the Load Log</button></div>'}}
+  var cs=curShift(),ld=hoLoads();
+  if(/\b(pulled|acid used|acid this shift|used this shift|how much acid.*(shift|today))\b/.test(q))return {h:num(ld.acid)+' <small>gal of 36% acid pulled</small>',d:'<p class="asn">From '+ld.dn+' finished load'+(ld.dn===1?'':'s')+' this '+(cs.s==="D"?"day":"night")+' shift (acid loaded amounts).'+(ld.miss.length?' '+ld.miss.length+' finished load'+(ld.miss.length===1?' is':'s are')+' still missing amounts.':'')+'</p>'};
+  if(/\b(done|finished|completed)\b/.test(q)&&/\b(how many|loads|shift|today)\b/.test(q))return {h:ld.dn+' <small>load'+(ld.dn===1?'':'s')+' finished this shift</small>',d:'<p class="asn">'+num(ld.acid)+' gal of acid pulled.</p>'};
+  if(/\b(loading|in progress|going)\b/.test(q)&&!/\bgallons? loaded\b/.test(q)){var run=ORD.filter(function(o){return status(o)==="loading"});return {h:run.length+' <small>loading now</small>',d:run.length?'<ul>'+run.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul>':'<p class="asn">Nothing is loading.</p>'}}
+  if(/\b(waiting|next|queue|up next|lined up|to load)\b/.test(q)){var w=ORD.filter(function(o){return status(o)==="waiting"}).sort(function(a,b){return (a.lbtAt||9e15)-(b.lbtAt||9e15)});return {h:w.length+' <small>waiting</small>',d:w.length?'<ul>'+w.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul>':'<p class="asn">Nothing waiting.</p>'}}
+  if(/\b(missing|need amounts|needs acid|needs water)\b/.test(q)){return {h:ld.miss.length+' <small>finished, missing amounts</small>',d:ld.miss.length?'<ul>'+ld.miss.map(function(b){return '<li><b>'+esc(b.n)+'</b> · needs '+b.w+(b.tk?' · ticket '+esc(b.tk):'')+'</li>'}).join("")+'</ul>':'<p class="asn">All finished loads have amounts.</p>'}}
+  if(/\b(who|on shift|working)\b/.test(q)&&/\b(shift|working|on)\b/.test(q)){var on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});return {h:on.length+' <small>on '+(cs.s==="D"?"day":"night")+' shift</small>',d:'<p class="asn">'+(on.length?on.map(esc).join(", "):"No one on the schedule.")+'</p>'}}
+  return null;
+}
+function askLoadLine(o){var st=status(o);return '<b>'+esc(o.name||"Unnamed order")+'</b> · '+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+(o.loader?' · '+esc(canonName(o.loader)):'')+' · '+(st==="loading"?'loading since '+T(o.startAt):st==="done"?'done '+T(o.endAt):(o.lbtAt?'LBT '+T(o.lbtAt):'waiting'))+(o.ticket?' · ticket '+esc(o.ticket):'')}
+/* Help page fallback: the best-matching steps */
+var ASK_STOP={the:1,a:1,an:1,i:1,my:1,do:1,how:1,to:1,is:1,it:1,of:1,on:1,in:1,for:1,and:1,what:1,whats:1,can:1,you:1,me:1,where:1,when:1,does:1,with:1,that:1,this:1,are:1,be:1,or:1,if:1,at:1,get:1};
+function askHelp(q){
+  var w=q.replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(function(x){return x.length>2&&!ASK_STOP[x]});if(!w.length)return null;
+  var best=[];document.querySelectorAll("#v-help details").forEach(function(d){var sm=d.querySelector("summary");if(!sm)return;var sec=sm.textContent;
+    d.querySelectorAll("li").forEach(function(li){if(li.closest("figure"))return;var t=(sec+" "+li.textContent).toLowerCase(),sc=0;w.forEach(function(x){if(t.indexOf(x)>=0)sc+=x.length>4?2:1});if(sc)best.push({sc:sc,sec:sec,li:li.innerHTML})})});
+  best.sort(function(a,b){return b.sc-a.sc});if(!best.length||best[0].sc<2)return null;
+  var top=best.slice(0,3).filter(function(b){return b.sc>=best[0].sc-1});
+  return {h:'From the Help page',d:'<ul>'+top.map(function(b){return '<li><b>'+esc(b.sec)+':</b> '+b.li+'</li>'}).join("")+'</ul><div class="acts"><button type="button" data-askview="help">Open Help</button></div>'};
+}
+function askAnswer(raw){
+  var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
+  var p=askProd(q),N=askNums(q);
+  /* "5000 gal of 15" with no % sign: a bare strength number nothing else claims */
+  if(!p)N.forEach(function(n){if(!p&&!n.tag&&ASK_PRODS[String(n.v)]){p={key:ASK_PRODS[String(n.v)]};n.tag="pct"}});
+  var pick=function(t){for(var i=0;i<N.length;i++)if(N[i].tag===t)return N[i].v;return null};
+  var lw=pick("lw"),hw=pick("hw"),sys=pick("sys"),gal=pick("gal"),bigs=N.filter(function(n){return n.v>=5000&&n.tag!=="gal"}).map(function(n){return n.v});
+  var st=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;
+  var needP=function(what){return {miss:1,h:"Which product?",d:'<p class="asn">Add the product to the question, like "'+what+' of 20%" or "of CableShield 100%".</p>'}};
+  /* "How do I…" with no numbers is a how-to question: answer from the Help page */
+  if(!N.length&&/^(how (do|can|to|would|should)|where|can i|what does|why)\b/.test(q)){var hp0=askHelp(q);if(hp0)return hp0}
+  /* Board and lookups first when they're clearly about loads */
+  if(/(trailer|truck|ticket|bol)\s*#?\s*[a-z0-9]/.test(q)&&!gal&&!lw&&!hw||/\b(loading|waiting|pulled|on shift|missing|queue|up next|how many loads|loads (done|finished))\b/.test(q)&&!gal&&!lw&&!hw){var b=askBoard(q);if(b)return b}
+  /* Heel: scale light weight minus the trailer's light weight on file */
+  if(/\bheel\b|left (in|over)|leftover|product in (the )?trailer/.test(q)){
+    var cur=lw,emp=sys;if((cur==null||emp==null)&&bigs.length>=2){cur=Math.max.apply(null,bigs);emp=Math.min.apply(null,bigs)}
+    if(cur!=null&&emp!=null&&cur<emp){var t=cur;cur=emp;emp=t}
+    if(cur==null||emp==null)return {miss:1,h:"I need two weights",d:'<p class="asn">Give the scale light weight and the system (empty) light weight, like "heel if LW is 35800 but system light weight is 32800, 20%".</p>'};
+    var dl=cur-emp;if(!(dl>0))return {h:"No heel",d:'<p class="asn">The scale light weight ('+num(cur)+' lb) isn\'t more than the system light weight ('+num(emp)+' lb).</p>'};
+    if(!p){var rows=["acid","32","28","20","15","10","7.5","5"].map(function(k){var w=askWt(k);return '<tr><td>'+pname(k)+'</td><td>'+gf(dl/w.w)+' gal</td></tr>'}).join("");
+      return {h:num(dl)+' <small>lb of heel</small>',d:'<p class="asn">'+num(cur)+' − '+num(emp)+' lb. In gallons, by product:</p><table><tr><th>If the heel is</th><th>Heel</th></tr>'+rows+'</table><p class="asw">Add the product to the question to see its acid and water.</p>'}}
+    var w=askWt(p.key);if(!w)return needP("heel");var hgal=dl/w.w;
+    return {h:gf(hgal)+' <small>gal of '+esc(askPn(p))+' heel</small>',d:askSplit(p.key,hgal,"In the heel")+'<p class="asw">'+num(cur)+' − '+num(emp)+' = '+num(dl)+' lb, ÷ '+w.w+' lb/gal'+(w.est?' ('+w.est+' weight, an estimate)':'')+'. Tick Heel? on the order to take it off what the load needs.</p>'};
+  }
+  /* Gallons loaded from light and heavy weights */
+  if(lw!=null&&hw!=null||/\bloaded\b/.test(q)&&bigs.length>=2&&!/fit/.test(q)){
+    var L=lw,H=hw;if(L==null||H==null){L=Math.min.apply(null,bigs);H=Math.max.apply(null,bigs)}
+    if(H<L){var t2=L;L=H;H=t2}
+    if(!p)return needP("gallons loaded from LW "+num(L)+" to HW "+num(H));
+    var w2=askWt(p.key);if(!w2)return needP("gallons loaded");var net=H-L,g2=net/w2.w,ch=chemsOf(p.key,g2,0);
+    return {h:gf(g2)+' <small>gal of '+esc(askPn(p))+' loaded</small>',d:askSplit(p.key,g2,"By the chart")+'<p class="asw">'+num(H)+' − '+num(L)+' = '+num(net)+' lb net, ÷ '+w2.w+' lb/gal'+(w2.est?' ('+w2.est+' weight, an estimate)':'')+'. With a ticket, the load weight window fills water from the ticket and gives the rest to acid.</p>'};
+  }
+  /* How much fits under the weight limit */
+  if(/\bfit|\bmax\b|how (much|many).*(can|could|will)|room|under (the )?(limit|weight)|over ?weight|too heavy|cut (it|back)/.test(q)&&(lw!=null||bigs.length)){
+    var L2=lw!=null?lw:Math.min.apply(null,bigs);if(!p)return needP("how much fits with a light weight of "+num(L2));
+    var w3=askWt(p.key);if(!w3)return needP("how much fits");
+    var sts=st?[st]:["TX","NM"];
+    var h3="",d3="";sts.forEach(function(s2,i){var lim=wtLim({state:s2}),g3=Math.floor((lim.t-L2)/w3.w);
+      if(i===0)h3=(g3>0?gf(g3)+' <small>gal of '+esc(askPn(p))+' fits'+(st?'':' (Texas)')+'</small>':'Nothing fits');
+      d3+='<tr><td>'+(s2==="NM"?"New Mexico":"Texas")+'</td><td>'+(g3>0?gf(g3)+' gal':'none')+'</td><td>'+(g3>0?num(L2+g3*w3.w)+' lb':'–')+'</td><td>aim '+num(lim.t)+', max '+num(lim.m)+'</td></tr>'});
+    var tg=gal;if(tg){var lim2=wtLim({state:st||"TX"}),pw=L2+tg*w3.w;d3='<p class="asn">'+gf(tg)+' gal would weigh '+num(pw)+' lb'+(pw>lim2.m?', OVER '+num(lim2.m):pw>lim2.t?', over the '+num(lim2.t)+' target':', under the target')+'.</p>'+'<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>'}
+    else d3='<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>';
+    return {h:h3,d:d3+'<p class="asw">Light weight '+num(L2)+' lb, '+w3.w+' lb/gal. Halliburton chems or a heel change this, so use Weight check on the load for the exact cut.</p>'};
+  }
+  /* Weight of a number of gallons */
+  if(gal&&/\b(weigh|weight|heavy|pounds|lbs?)\b/.test(q)&&!/acid and water|split|mix/.test(q)){
+    if(!p)return needP("how much does "+num(gal)+" gal weigh");var w4=askWt(p.key);if(!w4)return needP("weight");
+    var pl=gal*w4.w,L4=lw;return {h:num(pl)+' <small>lb for '+gf(gal)+' gal of '+esc(askPn(p))+'</small>',d:(L4?'<p class="asn">With a '+num(L4)+' lb light weight, gross is '+num(L4+pl)+' lb.</p>':'')+'<p class="asw">'+gf(gal)+' × '+w4.w+' lb/gal'+(w4.est?' ('+w4.est+' weight, an estimate)':'')+'.</p>'};
+  }
+  /* Weight per gallon */
+  if(/(lb|pound)s?\s*(\/|per|a)\s*gal|per gallon|density/.test(q)){
+    if(!p){var rows2=["acid","32","28","20","15","10","7.5","5"].map(function(k){return '<tr><td>'+pname(k)+'</td><td>'+askWt(k).w+' lb/gal</td></tr>'}).join("");return {h:'Product weights',d:'<table>'+rows2+'<tr><td>Water</td><td>'+(wtFor("water",{})?wtFor("water",{}).w:8.34)+' lb/gal</td></tr></table><p class="asw">Change them on the Load Weight page.</p>'}}
+    var w5=askWt(p.key);return {h:w5.w+' <small>lb/gal for '+esc(askPn(p))+'</small>',d:w5.est?'<p class="asw">Uses the '+w5.est+' weight as an estimate.</p>':'<p class="asw">Change it on the Load Weight page.</p>'};
+  }
+  /* Acid and water for a number of gallons */
+  if(gal&&(p||/acid|water|split|mix|make|blend|need/.test(q))){
+    if(!p)return needP("acid and water for "+num(gal)+" gal");
+    var sp=splitOf(p.key,gal);if(!sp)return needP("acid and water");
+    return {h:gf(gal)+' <small>gal of '+esc(askPn(p))+'</small>',d:askSplit(p.key,gal,p.key==="acid"?"All 36% acid":"Needs")+'<p class="asw">From the dilution chart'+(cxOf(p.key)||CSB[p.key]?' and the CableShield blend factors':'')+'.</p>'};
+  }
+  var b2=askBoard(q);if(b2)return b2;
+  var hp=askHelp(q);if(hp)return hp;
+  return {miss:1,h:"Not sure what you mean",d:'<p class="asn">Try one of these:</p><ul>'+ASK_EX.slice(0,5).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>'};
+}
+var ASK_LOG=[];
+function askRun(qv){
+  var a=askAnswer(qv);if(!a)return;
+  ASK_LOG.unshift({q:qv,a:a});ASK_LOG=ASK_LOG.slice(0,8);
+  $("ask_out").innerHTML=ASK_LOG.map(function(x,i){return '<div class="asa'+(x.a.miss?' miss':'')+'"'+(i?' style="opacity:.75"':'')+'><p class="asq">'+esc(x.q)+'</p><p class="ash">'+x.a.h+'</p>'+x.a.d+'</div>'}).join("");
+}
+$("ask_f").onsubmit=function(e){e.preventDefault();var v=$("ask_in").value.trim();if(!v)return;askRun(v);$("ask_in").value="";try{$("ask_in").blur()}catch(x){}};
+$("ask_ex").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-ask]"):null;if(b)askRun(b.getAttribute("data-ask"))};
+$("ask_out").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var g=b.getAttribute("data-askgo"),v=b.getAttribute("data-askview");
+  if(g){showView("log");setTimeout(function(){try{openCard(g,true);var el=$("o-"+g);if(el)el.scrollIntoView({block:"center"})}catch(x){}},50)}
+  if(v)showView(v)};
+
 /* Demo Board (Christian and Admin only): swaps the shared database for one kept in this
    phone's memory, so the real board can be shown with made-up loads. Live data keeps
    arriving in the background but is held back until the demo ends. Nothing is written
