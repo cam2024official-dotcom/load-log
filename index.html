@@ -69,6 +69,7 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .oh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .oname{font-weight:700;font-size:20px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
 .od{margin:4px 0 0;font-weight:600}
+.halw{display:grid;grid-template-columns:1fr 7.5em;gap:6px 8px;align-items:end}.halw .f{margin:0}
 .meta{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:15px;color:var(--mute);margin-top:4px}
 .nt{margin:8px 0 0;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
 .chip{flex:none;font-weight:700;font-size:14px;border-radius:999px;padding:4px 10px;background:var(--okbg);color:var(--ok);text-align:center}
@@ -514,6 +515,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div><label class="f" for="a_gal">Total gallons (ticket)</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
       <div class="full" id="a_split"></div>
+      <div class="full"><label class="chk"><input id="a_hal" type="checkbox"> Halliburton chems</label></div>
+      <div class="full halw" id="a_halw" hidden></div>
       <div><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"></div>
       <div><label class="f" for="a_st">Start time</label><input id="a_st" type="time"></div>
       <div><label class="f" for="a_en">End time</label><input id="a_en" type="time"></div>
@@ -741,7 +744,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   <details><summary>Fixing a mistake</summary>
     <ol>
-      <li><span class="kb">Edit</span> changes the trailer, product, gallons, times, ticket and BOL.</li>
+      <li><span class="kb">Edit</span> changes the trailer, product, gallons, times, ticket, BOL and Halliburton chems.</li>
       <li><span class="kb">Reopen</span> puts a finished load back to loading.</li>
     </ol>
   </details>
@@ -780,6 +783,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <details><summary>Adding and removing orders</summary>
     <ol>
       <li>Tap <span class="kb">Add an order</span> on the Load Log. Fill in the trailer or customer, product, ticket gallons, ticket number and anything else you have, then tap <span class="kb">Save order</span>.</li>
+      <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico under Delivering to for NM loads.</li>
       <li>To remove one, open it and tap <span class="kb">Remove</span>. Only leads see these buttons.</li>
     </ol>
@@ -942,6 +946,7 @@ function viewCard(o){
   b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs");
   var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
   if(m)b+='<div class="meta">'+m+'</div>';
+  if(halHas(o))b+='<div class="meta"><span>Halliburton: '+esc(halText(o))+'</span></div>';
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
   if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
   if(o.state==="NM"){
@@ -979,6 +984,8 @@ function editCard(o){
    '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
    '<div><label class="f" for="e_st'+i+'">Start time</label><input id="e_st'+i+'" data-f="startT" data-id="'+i+'" type="time" value="'+tval(o.startAt)+'"></div>'+
    '<div><label class="f" for="e_en'+i+'">End time</label><input id="e_en'+i+'" data-f="endT" data-id="'+i+'" type="time" value="'+tval(o.endAt)+'"></div>'+
+   '<div class="full"><label class="chk"><input type="checkbox" data-hal="'+i+'"'+(halHas(o)?' checked':'')+'> Halliburton chems</label></div>'+
+   '<div class="full halw" id="e_halw'+i+'"'+(halHas(o)?'':' hidden')+'>'+halRows(o,"e_h"+i,i)+'</div>'+
    '<div><label class="f" for="e_tk'+i+'">Ticket #</label><input id="e_tk'+i+'" data-f="ticket" data-id="'+i+'" type="text" value="'+esc(o.ticket)+'"></div>'+
    '<div><label class="f" for="e_bl'+i+'">BOL #</label><input id="e_bl'+i+'" data-f="bol" data-id="'+i+'" type="text" value="'+esc(o.bol)+'"></div>'+
    '<div class="full"><label class="f" for="e_nt'+i+'">Notes</label><textarea id="e_nt'+i+'" data-f="notes" data-id="'+i+'">'+esc(o.notes)+'</textarea></div>'+
@@ -994,7 +1001,7 @@ function build(){
   /* Search: keeps loads whose trailer, ticket, BOL, loader or notes contain what's typed */
   var q=$("srch").value.trim().toLowerCase();
   $("srchw").hidden=!ORD.length;$("srchx").hidden=!q;
-  function hit(o){return [o.name,o.ticket,o.bol,canonName(o.loader),o.notes].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})}
+  function hit(o){return [o.name,o.ticket,o.bol,canonName(o.loader),o.notes,halText(o)].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})}
   var os=q?ORD.filter(hit):ORD;srHits=os;var M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||byLbt(a,b)}),rest=os.filter(function(o){return !mine(o)});
   var L=rest.filter(function(o){return status(o)==="loading"}).sort(byLbt),
       W=rest.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
@@ -1162,6 +1169,7 @@ function flushKey(k){
     }
   }
   else if(f==="lightWt"||f==="wtPerGal"){var n9=parseFloat(v),nv9=(String(v).trim()===""||!(n9>0))?null:n9;var cu9=(o[f]==null)?null:parseFloat(o[f]);if(cu9===nv9)return 0;patch[f]=nv9}
+  else if(/^ha[123]$/.test(f)){var ha=parseFloat(v),hv=ha>0?ha:null,hc=o[f]==null||o[f]===""?null:parseFloat(o[f]);if(hc===hv)return 0;patch[f]=hv}
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
   else{var s=String(v).trim();if(f==="loader")s=canonName(s);if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
@@ -1283,10 +1291,27 @@ function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
 $("a_state").onchange=updState;
 function updSplit(){$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs")}
 $("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;updSplit();
+/* Halliburton chems: up to 3 rows of chem name + amount (gal), stored flat on the order as
+   hn1/ha1..hn3/ha3. A record only; it does not change the acid/water math. */
+var HAL_N=[1,2,3];
+function halHas(o){return HAL_N.some(function(k){return String(o["hn"+k]||"").trim()||String(o["ha"+k]||"").trim()})}
+function halRows(o,pre,id){
+  return HAL_N.map(function(k){
+    var dn=id!=null?' data-f="hn'+k+'" data-id="'+id+'"':'',da=id!=null?' data-f="ha'+k+'" data-id="'+id+'"':'';
+    return '<div><label class="f" for="'+pre+'n'+k+'">Chem '+k+'</label><input id="'+pre+'n'+k+'"'+dn+' type="text" autocomplete="off" placeholder="Chem name" value="'+esc(o["hn"+k]||"")+'"></div>'+
+      '<div><label class="f" for="'+pre+'a'+k+'">Amount (gal)</label><input id="'+pre+'a'+k+'"'+da+' type="number" inputmode="decimal" min="0" step="any" value="'+esc(o["ha"+k]||"")+'"></div>';
+  }).join("");
+}
+function halText(o){
+  return HAL_N.map(function(k){var n=String(o["hn"+k]||"").trim(),a=String(o["ha"+k]||"").trim();return n||a?(n||"Chem "+k)+(a?" "+gf(parseFloat(a)||0)+" gal":""):""}).filter(Boolean).join(" · ");
+}
+$("a_halw").innerHTML=halRows({},"a_h");
+$("a_hal").onchange=function(){$("a_halw").hidden=!this.checked;if(this.checked)try{$("a_hn1").focus()}catch(e){}};
 function addOrder(){
   if(!DL||!can()||!canManage())return;
   var gal=parseFloat($("a_gal").value);
   var data={loader:canonName($("a_ld").value),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  if($("a_hal").checked)HAL_N.forEach(function(k){var n=$("a_hn"+k).value.trim(),a=parseFloat($("a_ha"+k).value);if(n)data["hn"+k]=n;if(a>0)data["ha"+k]=a});
   var st=$("a_st").value,en=$("a_en").value;
   if(en&&!st){toast("Add a start time too, or clear the end time.");return}
   if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
@@ -1295,6 +1320,7 @@ function addOrder(){
   rememberLoader(data.loader);$("a_ld").value=ME&&!ME.admin?ME.name:data.loader;
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";updState();
+  HAL_N.forEach(function(k){$("a_hn"+k).value="";$("a_ha"+k).value=""});$("a_hal").checked=false;$("a_halw").hidden=true;
   $("addp").hidden=true;
 }
 function buildText(){
@@ -1333,7 +1359,10 @@ $("list").addEventListener("pointerdown",function(e){
 });
 ["pointerup","pointercancel","pointerleave"].forEach(function(t){$("list").addEventListener(t,function(e){if(holdB&&(t!=="pointerleave"||e.target===holdB))holdStop(t==="pointerup"&&!holdDone)},true)});
 $("list").addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest("button.hold"))e.preventDefault()});
-function onEdit(e){var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
+function onEdit(e){var hk=e.target.getAttribute("data-hal");if(hk!=null){if(e.type!=="change")return;var hw=$("e_halw"+hk),hon=e.target.checked;if(hw)hw.hidden=!hon;
+    /* Unticking clears the chems from the order */
+    if(!hon){var hp={};HAL_N.forEach(function(k){hp["hn"+k]=null;hp["ha"+k]=null;Object.keys(deb).forEach(function(d){if(deb[d].id===hk&&(deb[d].f==="hn"+k||deb[d].f==="ha"+k)){clearTimeout(deb[d].t);delete deb[d]}})});if(hw)hw.querySelectorAll("input").forEach(function(x){x.value=""});if(halHas(find(hk)||{}))upd(hk,hp)}
+    return}var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
   if(f==="state"){setField(eid,f,e.target.value);flushAll(eid);return}
   if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
   if(f)setField(eid,f,e.target.value)}
