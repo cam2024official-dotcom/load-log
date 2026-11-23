@@ -135,6 +135,7 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .amt p{margin:8px 0 0;font-size:14px;color:var(--mute);font-weight:600}
 .small{min-height:40px;font-size:15px;padding:4px 12px}
 @page{size:letter landscape;margin:.4in}
+@page tov{size:letter portrait;margin:.45in}
 #sheetview{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;padding-bottom:40px}
 .sv-bar{background:var(--card);border-bottom:1px solid var(--line);padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:max(12px,env(safe-area-inset-top,0px))}
 .sv-bar .wrap{max-width:none}
@@ -156,7 +157,12 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .sh .pg{float:right;font-style:normal}
 .circ{display:inline-block;border:1.5px solid #000;border-radius:50%;padding:0 6px;margin:0 1px}
 @media print{
- body>*:not(#sheetview){display:none!important}
+ body:not(.ptov)>*:not(#sheetview){display:none!important}
+ body.ptov>*:not(#tovview){display:none!important}
+ #tovview{position:static!important;overflow:visible!important;background:#fff!important}
+ #tov_wrap{margin:0!important;height:auto!important;overflow:visible!important}
+ #tov_sheet{transform:none!important;width:100%!important}
+ .tvs{border:0!important;margin:0!important;padding:0!important;box-shadow:none!important}
  body::before{display:none!important}
  body{background:#fff!important}
  #sheetview{position:static!important;overflow:visible!important;background:#fff!important;padding:0!important}
@@ -256,6 +262,33 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .sca button{min-height:36px;font-size:14px}
 .silall{margin-top:8px}
 .ho{max-width:760px}
+.tvh{margin:16px -14px 8px;padding:7px 14px;background:#1b2f4d;color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.tvh button{margin-left:auto;min-height:28px;padding:2px 10px;font-size:12px;text-transform:none;letter-spacing:0;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.tvg{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}.tvg3{grid-template-columns:1fr 1fr 1fr}
+.tvg label,.tvr label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mute);font-weight:600;min-width:0}
+.tvg input,.tvg select,.tvr input,.tvr select{min-width:0;width:100%}
+.tvg .full{grid-column:1/-1}
+.tvr{display:grid;grid-template-columns:1fr 1fr 36px;gap:6px 8px;align-items:end;margin-bottom:6px;padding:8px;border:1px solid var(--line);border-radius:4px}
+.tvr .wide{grid-column:1/3}.tvr .hox{min-height:36px;width:36px;padding:0;font-size:18px;line-height:1;grid-row:1;grid-column:3}
+.tvt{width:100%;border-collapse:collapse}.tvt th{font-size:12px;color:var(--mute);text-align:left;font-weight:600;padding:2px 4px}.tvt td{padding:3px 4px}.tvt td:first-child{font-weight:600;font-size:14px;white-space:nowrap}.tvt input{width:100%;min-width:0}
+.tvck{display:flex;flex-direction:column;gap:8px}
+.tvsig{font-size:14px;margin:6px 0 0}.tvsig b{font-weight:700}
+#tovview{position:fixed;inset:0;z-index:31;background:var(--bg);overflow:auto;padding-bottom:40px}
+#tov_wrap{margin:14px 16px 0;overflow:hidden}#tov_sheet{width:816px;transform-origin:top left}
+.tvs{page:tov;-webkit-print-color-adjust:exact;print-color-adjust:exact;width:100%;background:#fff;color:#000;font-family:Arial,Helvetica,sans-serif;font-size:11px;padding:24px 28px;margin-bottom:16px;box-shadow:0 0 0 1px #bbb}
+.tvs+.tvs{break-before:page;page-break-before:always}
+.tvs .tbar{display:flex;justify-content:space-between;align-items:center;background:#0f1f3a;color:#fff;padding:8px 10px;margin-bottom:6px}
+.tvs .tbar b{font-size:19px}.tvs .tbar span{color:#eca03f;font-weight:700;font-size:12px}
+.tvs table{width:100%;border-collapse:collapse;margin-bottom:8px;table-layout:fixed}
+.tvs td,.tvs th{border:1px solid #b7bcc6;padding:3px 5px;height:20px;text-align:left;vertical-align:middle;overflow:hidden;color:#000}
+.tvs th{background:#0f1f3a;color:#fff;font-weight:700}
+.tvs .sec th{background:#0f1f3a}.tvs .sub th{background:#1b2f4d}
+.tvs td.l{background:#f1f3f6;font-weight:700}
+.tvs .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.tvs .nt{border:1px solid #b7bcc6;min-height:620px;padding:8px;white-space:pre-wrap;font-size:12px}
+.tvs .sg{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;font-weight:700}
+.tvs .sg div{border-bottom:1px solid #000;padding-bottom:3px;min-height:34px;display:flex;align-items:flex-end;justify-content:space-between}
+.tvs .sg small{font-weight:400}
 .ho h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);margin:18px 0 8px}
 .hof{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--brand);border-radius:var(--r);padding:4px 14px 14px;margin-top:16px}
 .hof h3{font-size:15px;margin:16px 0 8px}
@@ -707,32 +740,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div id="ho_latest"></div>
   <section id="ho_form" class="hof" hidden>
     <h2>This shift</h2>
-    <p class="note">Fill this in as the shift goes. It saves as you type. At shift change, tap <span class="kb">Post handoff</span>.</p>
-    <h3>Tank levels</h3>
-    <div id="ho_tk"></div>
-    <button type="button" class="hoadd" data-hoadd="tk">Add tank</button>
-    <h3>Acid totes in temp storage</h3>
-    <div class="g2"><div><label class="f" for="ho_atc">Totes</label><input id="ho_atc" data-ho="at.c" type="number" inputmode="numeric" min="0" step="1"></div>
-      <div><label class="f" for="ho_atn">Note</label><input id="ho_atn" data-ho="at.n" type="text" autocomplete="off" placeholder="Strength, which trailer"></div></div>
-    <h3>CableShield totes</h3>
-    <div class="hocs"><span></span><span>Full totes</span><span>Gal left in partials</span>
-      <b>Y007</b><input data-ho="cs.y7.f" type="number" inputmode="numeric" min="0" step="1" aria-label="Y007 full totes"><input data-ho="cs.y7.g" type="number" inputmode="decimal" min="0" step="any" aria-label="Y007 gallons left in partial totes">
-      <b>Y007A</b><input data-ho="cs.y7a.f" type="number" inputmode="numeric" min="0" step="1" aria-label="Y007A full totes"><input data-ho="cs.y7a.g" type="number" inputmode="decimal" min="0" step="any" aria-label="Y007A gallons left in partial totes">
-      <b>A272</b><input data-ho="cs.a272.f" type="number" inputmode="numeric" min="0" step="1" aria-label="A272 full totes"><input data-ho="cs.a272.g" type="number" inputmode="decimal" min="0" step="any" aria-label="A272 gallons left in partial totes">
-    </div>
-    <h3>Railcars</h3>
-    <div id="ho_rc"></div>
-    <button type="button" class="hoadd" data-hoadd="rc">Add railcar</button>
-    <h3>Mechanical and equipment failures</h3>
-    <div id="ho_fl"></div>
-    <div class="hofl"><input id="ho_fin" type="text" autocomplete="off" maxlength="300" placeholder="What failed and what was done" aria-label="Failure to log"><button id="ho_flog" type="button">Log it</button></div>
-    <h3>Notes for the next shift</h3>
-    <textarea id="ho_nt" data-ho="nt" maxlength="1500" placeholder="Anything else the next shift should know"></textarea>
-    <h3>Loads right now</h3>
-    <p class="note">These fill in by themselves from the Load Log when you post.</p>
-    <div id="ho_lds"></div>
+    <p class="note">Loader Shift Turnover. Fill it in as the shift goes. It saves as you type. At shift change, tap <span class="kb">Post turnover</span>, which signs it as the outgoing supervisor.</p>
+    <div id="ho_body"></div>
+    <datalist id="tv_rcst"><option>Running</option><option>Venting</option><option>Rigged Up</option><option>Rigged Down</option><option>Staged</option><option>Empty</option></datalist>
     <p id="ho_err" class="note" style="color:var(--bad)" hidden></p>
-    <div class="acts"><button id="ho_post" class="go" type="button">Post handoff</button></div>
+    <div class="acts"><button id="ho_post" class="go" type="button">Post turnover</button></div>
   </section>
   <div id="ho_past"></div>
 </div></main>
@@ -831,9 +843,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   <details><summary>Shift handoff</summary>
     <ol>
-      <li>Open the menu and tap <span class="kb">Shift Handoff</span> to read what the last shift left you: loads going and waiting, tank levels and straps, acid totes in temp storage, CableShield totes, railcars, equipment failures and notes.</li>
-      <li>When a lead posts a handoff, a message also goes in Crew Chat.</li>
-      <li>Handoffs from the last 7 days are kept under <b>Earlier handoffs</b>.</li>
+      <li>Open the menu and tap <span class="kb">Shift Handoff</span> to read the last Loader Shift Turnover: trailers being loaded, loaders on shift, rail cars, transloader, blend station and tank battery levels, tote counts, maintenance concerns and notes.</li>
+      <li>When a lead posts a turnover, a message also goes in Crew Chat.</li>
+      <li>Tap <span class="kb">Print or save PDF</span> on a turnover for a copy laid out like the paper sheet.</li>
+      <li>Turnovers from the last 7 days are kept under <b>Earlier turnovers</b>.</li>
     </ol>
   </details>
   <div id="hp_lead" hidden>
@@ -859,10 +872,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   <details><summary>Filling out the shift handoff</summary>
     <ol>
-      <li>Open <span class="kb">Shift Handoff</span>. Under <b>This shift</b>, fill in tank levels (percent and strap in inches), acid totes in temp storage, CableShield full totes and gallons left in partials, and each railcar with its status. It saves as you type.</li>
-      <li>Log any mechanical or equipment failure when it happens: type it and tap <span class="kb">Log it</span>. The time and your name go on it.</li>
-      <li>The loads part fills in by itself from the Load Log.</li>
-      <li>At shift change, tap <span class="kb">Post handoff</span> twice. Tanks, totes and railcars carry over for the next shift to update. Failures and notes start fresh.</li>
+      <li>Open <span class="kb">Shift Handoff</span>. Under <b>This shift</b> is the Loader Shift Turnover sheet. Fill it in as the shift goes. It saves as you type.</li>
+      <li><span class="kb">Fill from Load Log</span> puts in the trailers loading now, or the number of trailers finished this shift. <span class="kb">Fill from Schedule</span> puts in who is on shift. You can change anything after.</li>
+      <li>At shift change, tap <span class="kb">Post turnover</span> twice. That signs it as the outgoing supervisor. The next lead opens it and taps <span class="kb">Sign as incoming</span>.</li>
+      <li>South rail cars, transloader, levels, tote counts and maintenance concerns not yet reported carry over for the next shift to update. The rest starts fresh.</li>
     </ol>
   </details>
   <details><summary>Setting the schedule</summary>
@@ -909,6 +922,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div class="navsep">Theme on this device</div>
   <div class="thm" id="thm" role="group" aria-label="Theme"><button type="button" data-thm="auto">Auto</button><button type="button" data-thm="light">Light</button><button type="button" data-thm="dark">Dark</button></div>
 </nav>
+<div id="tovview" hidden>
+  <div class="sv-bar"><div class="wrap"><p class="note" style="margin:0 0 10px">Print it, or pick Save as PDF in the print window.</p>
+    <div class="acts"><button id="tov_print" class="go" type="button">Print or save PDF</button><button id="tov_close" type="button">Close</button></div></div></div>
+  <div id="tov_wrap"><div id="tov_sheet"></div></div>
+</div>
 <div id="sheetview" hidden>
   <div class="sv-bar"><div class="wrap">
     <div class="sv-row">
@@ -1741,23 +1759,34 @@ function onShiftChange(force){
 }
 setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
 
-/* Shift handoff, beside the orders under a fixed key:
-   {d:<this shift's draft>, p:{hID:<posted handoff>}}
-   draft = {tk:[{n,p,s}] tanks (name, %, strap inches), at:{c,n} acid totes in temp storage,
-            cs:{y7|y7a|a272:{f,g}} CableShield full totes and gallons left in partials,
-            rc:[{c,s,o}] railcars (car, status, other/note), fl:{fID:{t,by,tx}} failures, nt notes}
-   A post is {at,by,sh,d:<draft copy>,ld:<loads summary>}. Leads fill it in; everyone can read it.
-   Posts older than 7 days are dropped when the next one is posted. */
+/* Shift handoff = the Loader Shift Turnover sheet, beside the orders under a fixed key:
+   {d:<this shift's draft>, p:{hID:<posted turnover>}}
+   draft (v:2) = {sup, dt (yyyy-mm-dd), sh (D|N), tr:[{t,p,l,s}] trailers being loaded,
+     lo:[names] loaders on shift, src:[{c,s}] south rail car status, mv:[{c,t}] rail cars
+     moved to empty line, rem:{rt,ll} end of shift reminders, tl transloader notes,
+     bl:{a1,a2,w} blend station levels, tb:{w|e:{s,n}} tank battery strap/sonar, tot trailers
+     loaded, cs:{fp|fs|pc|pg:{y7,y7a}} CableShield totes, rin, soak, tmp tote counts,
+     eq:[{e,c,r}] maintenance concerns, nt notes, sg:{o:{n,t},i:{n,t}} signatures}
+   A post is {at,by,sh,d:<draft copy>}. Posting signs it as outgoing; the next lead signs as incoming.
+   Posts from before the turnover sheet (no d.v) still show with the old layout. Kept 7 days. */
 var HO_ID="_handoff",HO_KEEP=7*864e5,HO={d:null,p:{}},hoSaveT=null,hoArm=false;
-var RC_ST=["Running","Rigged Up","Rigged Down","Staged","Other"];
-function arr(x){return Array.isArray(x)?x.filter(function(v){return v!=null}):x&&typeof x==="object"?Object.keys(x).sort(function(a,b){return a-b}).map(function(k){return x[k]}).filter(function(v){return v!=null}):[]}
-function hoBlank(){return {tk:[{n:"Acid tank",p:"",s:""},{n:"Water tank",p:"",s:""}],at:{c:"",n:""},cs:{y7:{f:"",g:""},y7a:{f:"",g:""},a272:{f:"",g:""}},rc:[{c:"",s:"",o:""}],fl:{},nt:""}}
+var TV_ROW={tr:{t:"",p:"",l:"",s:""},src:{c:"",s:""},mv:{c:"",t:""},eq:{e:"",c:"",r:""}},TV_N={tr:4,src:2,mv:3,eq:5};
+var TV_CS=[["fp","Full – Plastic"],["fs","Full – Steel"],["pc","Partial (count)"],["pg","Partial – Gal Remaining"]];
+function ymd(ms){var d=new Date(ms);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function tvRows(k,n){var a=[];for(var i=0;i<n;i++)a.push(Object.assign({},TV_ROW[k]));return a}
+function hoBlank(){var c2={};TV_CS.forEach(function(x){c2[x[0]]={y7:"",y7a:""}});
+  return {v:2,sup:"",dt:"",sh:"",tr:tvRows("tr",TV_N.tr),lo:["","","","",""],src:tvRows("src",TV_N.src),mv:tvRows("mv",TV_N.mv),rem:{rt:false,ll:false},tl:"",bl:{a1:"",a2:"",w:""},tb:{w:{s:"",n:""},e:{s:"",n:""}},tot:"",cs:c2,rin:"",soak:"",tmp:"",eq:tvRows("eq",TV_N.eq),nt:"",sg:{}}}
+function tvMerge(b,d){
+  if(Array.isArray(b)){var a=arr(d).map(function(x){return tvMerge(b[0],x)});return a.length?a:b}
+  if(typeof b==="boolean")return !!d;
+  if(b&&typeof b==="object"){var o={};Object.keys(b).forEach(function(k){o[k]=tvMerge(b[k],d&&d[k])});return o}
+  return d==null?"":String(d);
+}
 function hoNorm(d){
-  var b=hoBlank();if(!d||typeof d!=="object")return b;
-  var tk=arr(d.tk).map(function(t){return {n:String(t.n||""),p:t.p==null?"":String(t.p),s:t.s==null?"":String(t.s)}});
-  var rc=arr(d.rc).map(function(r){return {c:String(r.c||""),s:String(r.s||""),o:String(r.o||"")}});
-  var cs={};["y7","y7a","a272"].forEach(function(k){var v=(d.cs&&d.cs[k])||{};cs[k]={f:v.f==null?"":String(v.f),g:v.g==null?"":String(v.g)}});
-  return {tk:tk.length?tk:b.tk,at:{c:d.at&&d.at.c!=null?String(d.at.c):"",n:d.at&&d.at.n?String(d.at.n):""},cs:cs,rc:rc.length?rc:b.rc,fl:(d.fl&&typeof d.fl==="object")?d.fl:{},nt:String(d.nt||"")};
+  var b=hoBlank();if(!d||typeof d!=="object"||d.v!==2)return b;
+  var o=tvMerge(b,d);o.v=2;while(o.lo.length<5)o.lo.push("");
+  o.sg={};["o","i"].forEach(function(k){var g=d.sg&&d.sg[k];if(g&&g.n)o.sg[k]={n:String(g.n),t:+g.t||0}});
+  return o;
 }
 function setHO(o){
   var s=JSON.stringify(o||null);if(s===setHO.sig)return;setHO.sig=s;
@@ -1768,13 +1797,172 @@ function setHO(o){
 }
 function hoErr(t){$("ho_err").textContent=t||"";$("ho_err").hidden=!t}
 function hoCanEdit(){return canManage()&&!!DL&&can()}
-function hoSave(now){
+function hoSave(){
   clearTimeout(hoSaveT);hoSaveT=null;
-  if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the handoff.");return}
+  if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the turnover.");return}
   hoErr("");var d=JSON.parse(JSON.stringify(HO.d));d.u=Date.now();d.ub=ME?ME.name:"";
   upd(HO_ID,{d:d});
 }
-function hoSoon(){clearTimeout(hoSaveT);hoSaveT=setTimeout(function(){hoSave()},700)}
+function hoSoon(){clearTimeout(hoSaveT);hoSaveT=setTimeout(hoSave,700)}
+function hoPosts(){var now=Date.now();return Object.keys(HO.p).map(function(k){var p=HO.p[k]||{};return {id:k,at:+p.at||0,by:p.by,sh:p.sh,d:p.d,ld:p.ld}}).filter(function(p){return now-p.at<HO_KEEP}).sort(function(a,b){return b.at-a.at})}
+function tvDate(v){if(!v)return "";var p=v.split("-");return p.length===3?p[1]+"/"+p[2]+"/"+p[0]:v}
+function tvShift(v){return v==="D"?"Day":v==="N"?"Night":""}
+function tvSigTxt(g){return g&&g.n?esc(g.n)+' · '+new Date(g.t).toLocaleString([],{month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"}):''}
+/* ---- Posted turnover, on screen */
+function tvPostHtml(p){
+  var d=hoNorm(p.d),v=function(x,u){return x!==""&&x!=null?esc(x)+(u||""):'–'},h='<div class="hop"><b>'+esc(p.sh||"Shift turnover")+'</b><small>Posted '+new Date(p.at).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})+(p.by?' by '+esc(p.by):'')+'</small>';
+  h+='<p class="none" style="color:var(--ink);margin-top:8px">Supervisor <b>'+v(d.sup)+'</b> · '+v(tvDate(d.dt))+' · '+v(tvShift(d.sh))+' shift</p>';
+  var tr=d.tr.filter(function(r){return r.t||r.p||r.l||r.s});
+  h+='<h4>Trailers being loaded</h4>'+(tr.length?'<table><tr><th>Trailer #</th><th>Product</th><th>Location</th><th>Status</th></tr>'+tr.map(function(r){return '<tr><td>'+v(r.t)+'</td><td>'+v(r.p)+'</td><td>'+v(r.l)+'</td><td>'+v(r.s)+'</td></tr>'}).join("")+'</table>':'<p class="none">None.</p>');
+  var lo=d.lo.filter(Boolean);h+='<h4>Loaders on shift</h4><p class="none" style="color:var(--ink)">'+(lo.length?lo.map(esc).join(", "):'–')+'</p>';
+  var src=d.src.filter(function(r){return r.c||r.s});
+  h+='<h4>South rail car status</h4>'+(src.length?'<table><tr><th>Car #</th><th>Status</th></tr>'+src.map(function(r){return '<tr><td>'+v(r.c)+'</td><td>'+v(r.s)+'</td></tr>'}).join("")+'</table>':'<p class="none">None.</p>');
+  var mv=d.mv.filter(function(r){return r.c||r.t});
+  h+='<h4>Rail cars moved to empty line</h4>'+(mv.length?'<table><tr><th>Car #</th><th>Time</th></tr>'+mv.map(function(r){return '<tr><td>'+v(r.c)+'</td><td>'+v(r.t?T(atTime(r.t,Date.now())):"")+'</td></tr>'}).join("")+'</table>':'<p class="none">None.</p>');
+  h+='<h4>Transloader status</h4><p class="hon">'+v(d.tl)+'</p>';
+  h+='<h4>Blend station levels (acid)</h4><table><tr><td>Acid Tank 1</td><td>'+v(d.bl.a1)+'</td></tr><tr><td>Acid Tank 2</td><td>'+v(d.bl.a2)+'</td></tr><tr><td>Water Tank</td><td>'+v(d.bl.w)+'</td></tr></table>';
+  h+='<h4>Tank battery levels</h4><table><tr><th>Battery</th><th>Strap (in)</th><th>Sonar %</th></tr><tr><td>West Tanks</td><td>'+v(d.tb.w.s)+'</td><td>'+v(d.tb.w.n)+'</td></tr><tr><td>East Tanks</td><td>'+v(d.tb.e.s)+'</td><td>'+v(d.tb.e.n)+'</td></tr></table>';
+  h+='<h4>End of shift reminders</h4><p class="none" style="color:var(--ink)">'+(d.rem.rt?'☑':'☐')+' Empty rail tickets gathered · '+(d.rem.ll?'☑':'☐')+' Loading logs gathered</p>';
+  h+='<h4>Production and tote counts</h4><p class="none" style="color:var(--ink)">Trailers loaded this shift: <b>'+v(d.tot)+'</b></p>';
+  h+='<table><tr><th>CableShield totes</th><th>Y007</th><th>Y007A</th></tr>'+TV_CS.map(function(x){var c=d.cs[x[0]];return '<tr><td>'+x[1]+'</td><td>'+v(c.y7)+'</td><td>'+v(c.y7a)+'</td></tr>'}).join("")+'</table>';
+  h+='<table style="margin-top:6px"><tr><td>Empty totes needing rinse</td><td>'+v(d.rin)+'</td></tr><tr><td>Soaking totes needing drain</td><td>'+v(d.soak)+'</td></tr><tr><td>Temp acid tote storage</td><td>'+v(d.tmp)+'</td></tr></table>';
+  var eq=d.eq.filter(function(r){return r.e||r.c});
+  h+='<h4>Facility equipment, maintenance concerns</h4>'+(eq.length?'<table><tr><th>Equipment</th><th>Concern</th><th>Reported?</th></tr>'+eq.map(function(r){return '<tr><td>'+v(r.e)+'</td><td>'+v(r.c)+'</td><td>'+v(r.r)+'</td></tr>'}).join("")+'</table>':'<p class="none">None.</p>');
+  if(d.nt)h+='<h4>Notes</h4><p class="hon">'+esc(d.nt)+'</p>';
+  h+='<h4>Signatures</h4><p class="tvsig">Outgoing: <b>'+(tvSigTxt(d.sg.o)||'–')+'</b></p><p class="tvsig">Incoming: <b>'+(tvSigTxt(d.sg.i)||'Not signed yet')+'</b></p>';
+  h+='<div class="acts" style="margin-top:10px">'+(!d.sg.i&&canManage()&&ME?'<button type="button" class="go" data-hosigni="'+esc(p.id)+'">Sign as incoming</button>':'')+'<button type="button" data-hoprint="'+esc(p.id)+'">Print or save PDF</button></div>';
+  return h+'</div>';
+}
+function hoPostHtml(p){return p.d&&p.d.v===2?tvPostHtml(p):hoPostHtmlOld(p)}
+/* ---- Printable copy that matches the paper sheet */
+function tvSheet(p){
+  var d=hoNorm(p.d),e=function(x){return esc(x==null?"":x)},rows=function(a,n,f){var h="";for(var i=0;i<Math.max(n,a.length);i++)h+=f(a[i]||{});return h};
+  var g1='<div class="tvs"><div class="tbar"><b>LOADER SHIFT TURNOVER</b><span>WTX Odessa Terminal</span></div>'+
+   '<table><tr><td style="width:47%"><b>Supervisor</b> '+e(d.sup)+'</td><td style="width:25%"><b>Date</b> '+e(tvDate(d.dt))+'</td><td>Shift: '+(d.sh==="D"?'[X]':'[ ]')+' Day '+(d.sh==="N"?'[X]':'[ ]')+' Night</td></tr></table>'+
+   '<table><tr class="sec"><th colspan="4">TRAILERS CURRENTLY BEING LOADED</th></tr><tr class="sub"><th>Trailer #</th><th>Product</th><th>Location</th><th>Status</th></tr>'+rows(d.tr,4,function(r){return '<tr><td>'+e(r.t)+'</td><td>'+e(r.p)+'</td><td>'+e(r.l)+'</td><td>'+e(r.s)+'</td></tr>'})+'</table>';
+  var lo=d.lo.slice();while(lo.length%5||!lo.length)lo.push("");
+  g1+='<table><tr class="sec"><th colspan="5">LOADERS ON SHIFT</th></tr>';for(var i=0;i<lo.length;i+=5)g1+='<tr>'+lo.slice(i,i+5).map(function(n){return '<td>'+e(n)+'</td>'}).join("")+'</tr>';g1+='</table>';
+  g1+='<div class="cols"><div>'+
+   '<table><tr class="sec"><th colspan="2">SOUTH RAIL CAR STATUS</th></tr><tr class="sub"><th>Car #</th><th>Status (Running, Venting, etc.)</th></tr>'+rows(d.src,1,function(r){return '<tr><td>'+e(r.c)+'</td><td>'+e(r.s)+'</td></tr>'})+'</table>'+
+   '<table><tr class="sec"><th colspan="2">RAIL CARS MOVED TO EMPTY LINE</th></tr><tr class="sub"><th>Car #</th><th>Time</th></tr>'+rows(d.mv,3,function(r){return '<tr><td>'+e(r.c)+'</td><td>'+(r.t?e(T(atTime(r.t,Date.now()))):'')+'</td></tr>'})+'</table>'+
+   '<table><tr class="sec"><th>END OF SHIFT REMINDERS</th></tr><tr><td>'+(d.rem.rt?'[X]':'[ ]')+' Empty rail tickets gathered with turnover</td></tr><tr><td>'+(d.rem.ll?'[X]':'[ ]')+' Loading logs gathered with turnover</td></tr></table>'+
+   '</div><div>'+
+   '<table><tr class="sec"><th>TRANSLOADER STATUS</th></tr><tr><td style="height:34px;vertical-align:top">Status / Notes: '+e(d.tl)+'</td></tr></table>'+
+   '<table><tr class="sec"><th colspan="2">BLEND STATION LEVELS (ACID)</th></tr><tr class="sub"><th>Tank / Station</th><th>Level</th></tr><tr><td class="l">Acid Tank 1</td><td>'+e(d.bl.a1)+'</td></tr><tr><td class="l">Acid Tank 2</td><td>'+e(d.bl.a2)+'</td></tr><tr><td class="l">Water Tank</td><td>'+e(d.bl.w)+'</td></tr></table>'+
+   '<table><tr class="sec"><th colspan="3">TANK BATTERY LEVELS</th></tr><tr class="sub"><th>Battery</th><th>Strap (in)</th><th>Sonar %</th></tr><tr><td class="l">West Tanks</td><td>'+e(d.tb.w.s)+'</td><td>'+e(d.tb.w.n)+'</td></tr><tr><td class="l">East Tanks</td><td>'+e(d.tb.e.s)+'</td><td>'+e(d.tb.e.n)+'</td></tr></table>'+
+   '</div></div>';
+  g1+='<table><tr class="sec"><th>SHIFT PRODUCTION &amp; TOTE COUNTS</th></tr></table><div class="cols"><table><tr><td class="l" style="height:92px">Total Trailers Loaded This Shift<br><small>(exclude in-progress)</small></td><td style="width:38%;font-size:18px;text-align:center">'+e(d.tot)+'</td></tr></table>'+
+   '<table><tr class="sub"><th>CableShield Totes</th><th>Y007</th><th>Y007A</th></tr>'+TV_CS.map(function(x){var c=d.cs[x[0]];return '<tr><td class="l">'+x[1]+'</td><td>'+e(c.y7)+'</td><td>'+e(c.y7a)+'</td></tr>'}).join("")+'</table></div>';
+  g1+='<table><tr><td class="l">Empty Totes Needing Rinse</td><td style="width:9%">'+e(d.rin)+'</td><td class="l">Soaking Totes Needing Drain</td><td style="width:9%">'+e(d.soak)+'</td><td class="l">Temp Acid Tote Storage Count</td><td style="width:9%">'+e(d.tmp)+'</td></tr></table>';
+  g1+='<table><tr class="sec"><th colspan="3">FACILITY EQUIPMENT — MAINTENANCE CONCERNS</th></tr><tr class="sub"><th style="width:28%">Equipment</th><th>Concern / Description</th><th style="width:20%">Reported?</th></tr>'+rows(d.eq,5,function(r){return '<tr><td>'+e(r.e)+'</td><td>'+e(r.c)+'</td><td>'+e(r.r)+'</td></tr>'})+'</table></div>';
+  var g2='<div class="tvs"><table><tr class="sec"><th>NOTES</th></tr></table><div class="nt">'+e(d.nt)+'</div>'+
+   '<div class="sg"><div>Outgoing Supervisor Signature <small>'+tvSigTxt(d.sg.o)+'</small></div><div>Incoming Supervisor Signature <small>'+tvSigTxt(d.sg.i)+'</small></div></div></div>';
+  return g1+g2;
+}
+function tvFit(){var w=$("tov_wrap"),sh=$("tov_sheet"),k=Math.min(1,(w.clientWidth||816)/816);sh.style.transform="scale("+k+")";w.style.height=(sh.offsetHeight*k)+"px"}
+function tvPrint(id){var p=HO.p[id];if(!p)return;$("tov_sheet").innerHTML=tvSheet(Object.assign({id:id},p));$("tovview").hidden=false;document.body.classList.add("ptov");tvFit()}
+$("tov_close").onclick=function(){$("tovview").hidden=true;document.body.classList.remove("ptov")};
+$("tov_print").onclick=function(){window.print()};
+window.addEventListener("resize",function(){if(!$("tovview").hidden)tvFit()});
+/* ---- The form */
+function renderHO(){
+  if(curView!=="ho")return;
+  var ps=hoPosts(),lead=canManage();
+  $("ho_latest").innerHTML='<h2>Latest turnover</h2>'+(ps.length?hoPostHtml(ps[0]):'<p class="gn">No turnover posted yet.'+(lead?' Fill in this shift below and post it at shift change.':'')+'</p>');
+  $("ho_past").innerHTML=ps.length>1?'<h2>Earlier turnovers (last 7 days)</h2><div class="hopast">'+ps.slice(1).map(function(p){return '<details><summary>'+esc(p.sh||"Shift turnover")+(p.by?' · '+esc(p.by):'')+'</summary>'+hoPostHtml(p)+'</details>'}).join("")+'</div>':'';
+  $("ho_form").hidden=!lead;if(!lead)return;
+  $("ho_form").querySelector("h2").textContent="This shift · "+shiftLabel(curShift());
+  /* Leave the fields alone while someone is typing in them */
+  var a=document.activeElement;if(a&&$("ho_form").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;
+  hoFill();
+}
+function tvIn(path,type,ph,extra){var v=hoGet(path);return '<input data-ho="'+path+'" type="'+(type||"text")+'"'+(type==="number"?' inputmode="decimal" min="0" step="any"':' autocomplete="off"')+' value="'+esc(v)+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+(extra||'')+'>'}
+function tvL(lbl,inner,cls){return '<label'+(cls?' class="'+cls+'"':'')+'>'+lbl+inner+'</label>'}
+function tvRowsHtml(k,f,lbl){var d=HO.d;return d[k].map(function(r,i){return '<div class="tvr">'+f(i)+'<button type="button" class="hox" data-hodel="'+k+'.'+i+'" aria-label="Remove '+lbl+'">×</button></div>'}).join("")+'<button type="button" class="hoadd" data-hoadd="'+k+'">Add '+lbl+'</button>'}
+function hoFill(){
+  var d=HO.d||(HO.d=hoBlank()),cs=curShift(),h="";
+  if(!d.dt)d.dt=ymd(cs.start);if(!d.sh)d.sh=cs.s;if(!d.sup&&ME&&!ME.admin)d.sup=ME.name;
+  h+='<div class="tvg">'+tvL("Supervisor",tvIn("sup","text","Name"),"full")+tvL("Date",tvIn("dt","date"))+
+     tvL("Shift",'<select data-ho="sh"><option value="D"'+(d.sh==="D"?' selected':'')+'>Day</option><option value="N"'+(d.sh==="N"?' selected':'')+'>Night</option></select>')+'</div>';
+  h+='<div class="tvh">Trailers currently being loaded<button type="button" data-hofill="tr">Fill from Load Log</button></div>';
+  h+=tvRowsHtml("tr",function(i){return tvL("Trailer #",tvIn("tr."+i+".t"))+tvL("Product",tvIn("tr."+i+".p"))+tvL("Location",tvIn("tr."+i+".l"))+tvL("Status",tvIn("tr."+i+".s"))},"trailer");
+  h+='<div class="tvh">Loaders on shift<button type="button" data-hofill="lo">Fill from Schedule</button></div><div class="tvg">'+d.lo.map(function(n,i){return tvIn("lo."+i,"text","Name",' list="crewlist" aria-label="Loader '+(i+1)+'"')}).join("")+'</div>';
+  h+='<div class="tvh">South rail car status</div>';
+  h+=tvRowsHtml("src",function(i){return tvL("Car #",tvIn("src."+i+".c"))+tvL("Status",tvIn("src."+i+".s","text","Running, Venting…",' list="tv_rcst"'))},"rail car");
+  h+='<div class="tvh">Rail cars moved to empty line</div>';
+  h+=tvRowsHtml("mv",function(i){return tvL("Car #",tvIn("mv."+i+".c"))+tvL("Time",tvIn("mv."+i+".t","time"))},"rail car");
+  h+='<div class="tvh">Transloader status</div><textarea data-ho="tl" maxlength="600" placeholder="Status / notes">'+esc(d.tl)+'</textarea>';
+  h+='<div class="tvh">Blend station levels (acid)</div><table class="tvt"><tr><th></th><th>Level</th></tr>'+
+     [["a1","Acid Tank 1"],["a2","Acid Tank 2"],["w","Water Tank"]].map(function(x){return '<tr><td>'+x[1]+'</td><td>'+tvIn("bl."+x[0],"text","",' aria-label="'+x[1]+' level"')+'</td></tr>'}).join("")+'</table>';
+  h+='<div class="tvh">Tank battery levels</div><table class="tvt"><tr><th>Battery</th><th>Strap (in)</th><th>Sonar %</th></tr>'+
+     [["w","West Tanks"],["e","East Tanks"]].map(function(x){return '<tr><td>'+x[1]+'</td><td>'+tvIn("tb."+x[0]+".s","number","",' aria-label="'+x[1]+' strap"')+'</td><td>'+tvIn("tb."+x[0]+".n","number","",' aria-label="'+x[1]+' sonar"')+'</td></tr>'}).join("")+'</table>';
+  h+='<div class="tvh">End of shift reminders</div><div class="tvck"><label class="chk"><input type="checkbox" data-ho="rem.rt"'+(d.rem.rt?' checked':'')+'> Empty rail tickets gathered with turnover</label><label class="chk"><input type="checkbox" data-ho="rem.ll"'+(d.rem.ll?' checked':'')+'> Loading logs gathered with turnover</label></div>';
+  h+='<div class="tvh">Shift production &amp; tote counts<button type="button" data-hofill="tot">Fill from Load Log</button></div>';
+  h+='<div class="tvg">'+tvL("Total trailers loaded this shift (exclude in-progress)",tvIn("tot","number"),"full")+'</div>';
+  h+='<table class="tvt" style="margin-top:8px"><tr><th>CableShield totes</th><th>Y007</th><th>Y007A</th></tr>'+TV_CS.map(function(x){return '<tr><td>'+x[1]+'</td><td>'+tvIn("cs."+x[0]+".y7","number","",' aria-label="'+x[1]+' Y007"')+'</td><td>'+tvIn("cs."+x[0]+".y7a","number","",' aria-label="'+x[1]+' Y007A"')+'</td></tr>'}).join("")+'</table>';
+  h+='<div class="tvg tvg3" style="margin-top:8px">'+tvL("Empty totes needing rinse",tvIn("rin","number"))+tvL("Soaking totes needing drain",tvIn("soak","number"))+tvL("Temp acid tote storage",tvIn("tmp","number"))+'</div>';
+  h+='<div class="tvh">Facility equipment, maintenance concerns</div>';
+  h+=tvRowsHtml("eq",function(i){var r=d.eq[i];return tvL("Equipment",tvIn("eq."+i+".e"))+tvL("Reported?",'<select data-ho="eq.'+i+'.r"><option value=""></option><option'+(r.r==="Yes"?' selected':'')+'>Yes</option><option'+(r.r==="No"?' selected':'')+'>No</option></select>')+tvL("Concern / description",tvIn("eq."+i+".c"),"wide")},"concern");
+  h+='<div class="tvh">Notes</div><textarea data-ho="nt" maxlength="3000" placeholder="Anything else the next shift should know">'+esc(d.nt)+'</textarea>';
+  $("ho_body").innerHTML=h;
+}
+function hoGet(path){var p=path.split("."),o=HO.d;for(var i=0;i<p.length;i++){if(o==null)return "";o=o[p[i]]}return o==null?"":o}
+function hoSet(path,v){var p=path.split("."),o=HO.d;for(var i=0;i<p.length-1;i++){if(o[p[i]]==null)o[p[i]]={};o=o[p[i]]}o[p[p.length-1]]=v}
+$("ho_form").addEventListener("input",function(e){var t=e.target,path=t.getAttribute&&t.getAttribute("data-ho");if(!path||!HO.d)return;
+  hoSet(path,t.type==="checkbox"?t.checked:t.value);hoSoon()});
+$("ho_form").addEventListener("change",function(e){var t=e.target;if(t.getAttribute&&t.getAttribute("data-ho")){if(t.type==="checkbox"||t.tagName==="SELECT")hoSet(t.getAttribute("data-ho"),t.type==="checkbox"?t.checked:t.value);if(hoSaveT||t.type==="checkbox"||t.tagName==="SELECT")hoSave()}});
+$("ho_form").addEventListener("click",function(e){
+  var b=e.target.closest?e.target.closest("button"):null;if(!b||!HO.d)return;
+  var add=b.getAttribute("data-hoadd"),del=b.getAttribute("data-hodel"),fill=b.getAttribute("data-hofill");
+  if(add){HO.d[add].push(Object.assign({},TV_ROW[add]));hoFill();hoSave();var rs=$("ho_body").querySelectorAll('[data-hodel^="'+add+'."]');if(rs.length)try{rs[rs.length-1].parentNode.querySelector("input").focus()}catch(x){}return}
+  if(del){var p=del.split(".");HO.d[p[0]].splice(+p[1],1);if(!HO.d[p[0]].length)HO.d[p[0]].push(Object.assign({},TV_ROW[p[0]]));hoFill();hoSave();return}
+  if(fill==="tr"){var run=ORD.filter(function(o){return status(o)==="loading"});if(!run.length){toast("Nothing is loading on the Load Log right now.");return}
+    var keep=HO.d.tr.filter(function(r){return r.t||r.p||r.l||r.s}),have={};keep.forEach(function(r){have[String(r.t).toLowerCase()]=1});
+    run.forEach(function(o){var t=o.name||"";if(have[t.toLowerCase()])return;keep.push({t:t,p:(o.gal?num(o.gal)+" gal ":"")+prodName(o),l:"",s:"Loading since "+T(o.startAt)+(o.loader?" ("+canonName(o.loader)+")":"")})});
+    while(keep.length<TV_N.tr)keep.push(Object.assign({},TV_ROW.tr));HO.d.tr=keep;hoFill();hoSave();return}
+  if(fill==="lo"){var cs=curShift(),on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});if(!on.length){toast("No one is on the schedule for this shift.");return}
+    while(on.length<5)on.push("");HO.d.lo=on;hoFill();hoSave();return}
+  if(fill==="tot"){HO.d.tot=String(hoLoads().dn);hoFill();hoSave();return}
+});
+$("ho_latest").addEventListener("click",tvPostClick);$("ho_past").addEventListener("click",tvPostClick);
+function tvPostClick(e){
+  var b=e.target.closest?e.target.closest("button"):null;if(!b)return;
+  var pr=b.getAttribute("data-hoprint"),si=b.getAttribute("data-hosigni");
+  if(pr){tvPrint(pr);return}
+  if(si){if(!hoCanEdit()||!HO.p[si])return;
+    askPin("Sign this turnover as the incoming supervisor ("+ME.name+")?","Sign",function(){
+      var p={};hoPosts().forEach(function(x){p[x.id]=HO.p[x.id]});var c=JSON.parse(JSON.stringify(p[si]));c.d.sg=c.d.sg||{};c.d.sg.i={n:ME.name,t:Date.now()};p[si]=c;HO.p=p;
+      upd(HO_ID,{p:p});renderHO()},true)}
+}
+$("ho_post").onclick=function(){
+  if(!hoCanEdit()){hoErr(!can()?"Not connected. Posting needs a signal.":"Only leads can post the turnover.");return}
+  var b=this;
+  if(!hoArm){hoArm=true;b.textContent="Tap again to post and sign";b.className="arm";setTimeout(function(){hoArm=false;b.textContent="Post turnover";b.className="go"},4000);return}
+  hoArm=false;b.textContent="Post turnover";b.className="go";
+  var now=Date.now(),cs=curShift(),id="h"+now.toString(36),d=JSON.parse(JSON.stringify(HO.d));
+  if(!d.dt)d.dt=ymd(cs.start);if(!d.sh)d.sh=cs.s;if(!d.sup)d.sup=ME?ME.name:"";
+  d.v=2;d.sg={o:{n:ME?ME.name:"",t:now}};
+  var post={at:now,by:ME?ME.name:"",sh:(d.sh==="D"?"Day":"Night")+" shift · "+tvDate(d.dt)+" turnover",d:d};
+  var p={};hoPosts().forEach(function(x){p[x.id]=HO.p[x.id]});p[id]=post;
+  /* Next shift starts with rail cars, levels, tote counts and open concerns to update; the rest starts fresh */
+  var nd=hoNorm(JSON.parse(JSON.stringify(d))),bl=hoBlank();
+  ["sup","dt","sh","tr","lo","mv","rem","tot","nt"].forEach(function(k){nd[k]=bl[k]});nd.sg={};
+  nd.eq=nd.eq.filter(function(r){return (r.e||r.c)&&r.r!=="Yes"});while(nd.eq.length<TV_N.eq)nd.eq.push(Object.assign({},TV_ROW.eq));
+  clearTimeout(hoSaveT);hoSaveT=null;HO.p=p;HO.d=nd;
+  upd(HO_ID,{p:p,d:nd});
+  var mid="m"+now.toString(36)+Math.random().toString(36).slice(2,6),m={t:now,by:ME?ME.name:"Lead",tx:post.sh+" posted. Open Shift Handoff in the menu to read and sign it."},cp={};
+  cp[mid]=m;CHAT[mid]=m;upd(CHAT_ID,cp);
+  hoErr("");renderHO();window.scrollTo(0,0);
+};
+function arr(x){return Array.isArray(x)?x.filter(function(v){return v!=null}):x&&typeof x==="object"?Object.keys(x).sort(function(a,b){return a-b}).map(function(k){return x[k]}).filter(function(v){return v!=null}):[]}
+function hoBlankOld(){return {tk:[{n:"Acid tank",p:"",s:""},{n:"Water tank",p:"",s:""}],at:{c:"",n:""},cs:{y7:{f:"",g:""},y7a:{f:"",g:""},a272:{f:"",g:""}},rc:[{c:"",s:"",o:""}],fl:{},nt:""}}
+function hoNormOld(d){
+  var b=hoBlankOld();if(!d||typeof d!=="object")return b;
+  var tk=arr(d.tk).map(function(t){return {n:String(t.n||""),p:t.p==null?"":String(t.p),s:t.s==null?"":String(t.s)}});
+  var rc=arr(d.rc).map(function(r){return {c:String(r.c||""),s:String(r.s||""),o:String(r.o||"")}});
+  var cs={};["y7","y7a","a272"].forEach(function(k){var v=(d.cs&&d.cs[k])||{};cs[k]={f:v.f==null?"":String(v.f),g:v.g==null?"":String(v.g)}});
+  return {tk:tk.length?tk:b.tk,at:{c:d.at&&d.at.c!=null?String(d.at.c):"",n:d.at&&d.at.n?String(d.at.n):""},cs:cs,rc:rc.length?rc:b.rc,fl:(d.fl&&typeof d.fl==="object")?d.fl:{},nt:String(d.nt||"")};
+}
 function shiftLabel(cs){return (cs.s==="D"?"Day":"Night")+" shift · "+new Date(cs.start).toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}
 function hoLoads(){
   var cs=curShift(),run=[],wait=[],miss=[],dn=0,acid=0;
@@ -1794,8 +1982,8 @@ function hoLoadsHtml(ld,at){
   h+='<h4>Done this shift</h4><p class="none" style="color:var(--ink)">'+ld.dn+' load'+(ld.dn===1?'':'s')+' · '+num(ld.acid)+' gal acid pulled</p>';
   return h;
 }
-function hoPostHtml(p){
-  var d=hoNorm(p.d),h='<div class="hop"><b>'+esc(p.sh||"Shift handoff")+'</b><small>Posted '+new Date(p.at).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})+(p.by?' by '+esc(p.by):'')+'</small>';
+function hoPostHtmlOld(p){
+  var d=hoNormOld(p.d),h='<div class="hop"><b>'+esc(p.sh||"Shift handoff")+'</b><small>Posted '+new Date(p.at).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})+(p.by?' by '+esc(p.by):'')+'</small>';
   if(p.ld)h+=hoLoadsHtml(p.ld);
   var tk=d.tk.filter(function(t){return t.n||t.p||t.s});
   h+='<h4>Tank levels</h4>'+(tk.length?'<table><tr><th>Tank</th><th>Level</th><th>Strap</th></tr>'+tk.map(function(t){return '<tr><td>'+esc(t.n||"Tank")+'</td><td>'+(t.p!==""?esc(t.p)+'%':'–')+'</td><td>'+(t.s!==""?esc(t.s)+' in':'–')+'</td></tr>'}).join("")+'</table>':'<p class="none">Not filled in.</p>');
@@ -1810,74 +1998,6 @@ function hoPostHtml(p){
   return h+'</div>';
 }
 function hoFails(d){return Object.keys(d.fl||{}).map(function(k){var f=d.fl[k]||{};return {id:k,t:+f.t||0,by:String(f.by||""),tx:String(f.tx||"")}}).filter(function(f){return f.tx}).sort(function(a,b){return a.t-b.t})}
-function hoPosts(){var now=Date.now();return Object.keys(HO.p).map(function(k){var p=HO.p[k]||{};return {id:k,at:+p.at||0,by:p.by,sh:p.sh,d:p.d,ld:p.ld}}).filter(function(p){return now-p.at<HO_KEEP}).sort(function(a,b){return b.at-a.at})}
-function renderHO(){
-  if(curView!=="ho")return;
-  var ps=hoPosts(),lead=canManage();
-  $("ho_latest").innerHTML='<h2>Latest handoff</h2>'+(ps.length?hoPostHtml(ps[0]):'<p class="gn">No handoff posted yet.'+(lead?' Fill in this shift below and post it at shift change.':'')+'</p>');
-  $("ho_past").innerHTML=ps.length>1?'<h2>Earlier handoffs (last 7 days)</h2><div class="hopast">'+ps.slice(1).map(function(p){return '<details><summary>'+esc(p.sh||"Shift handoff")+(p.by?' · '+esc(p.by):'')+'</summary>'+hoPostHtml(p)+'</details>'}).join("")+'</div>':'';
-  $("ho_form").hidden=!lead;if(!lead)return;
-  $("ho_form").querySelector("h2").textContent="This shift · "+shiftLabel(curShift());
-  $("ho_lds").innerHTML='<div class="hop" style="border-left-color:var(--line)">'+hoLoadsHtml(hoLoads())+'</div>';
-  hoFailList();
-  /* Leave the fields alone while someone is typing in them */
-  var a=document.activeElement;if(a&&$("ho_form").contains(a)&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;
-  hoFill();
-}
-function hoFill(){
-  var d=HO.d||(HO.d=hoBlank());
-  $("ho_tk").innerHTML=d.tk.map(function(t,i){
-    return '<div class="hor"><label class="wide">Tank<input data-ho="tk.'+i+'.n" type="text" autocomplete="off" value="'+esc(t.n)+'" placeholder="Tank name"></label><button type="button" class="hox" data-hodel="tk.'+i+'" aria-label="Remove '+esc(t.n||"tank")+'">×</button>'+
-      '<label>Level %<input data-ho="tk.'+i+'.p" type="number" inputmode="decimal" min="0" max="100" step="any" value="'+esc(t.p)+'"></label><label>Strap (inches)<input data-ho="tk.'+i+'.s" type="number" inputmode="decimal" min="0" step="any" value="'+esc(t.s)+'"></label></div>'}).join("");
-  $("ho_rc").innerHTML=d.rc.map(function(r,i){
-    return '<div class="hor"><label class="wide">Railcar<input data-ho="rc.'+i+'.c" type="text" autocomplete="off" value="'+esc(r.c)+'" placeholder="Car number"></label><button type="button" class="hox" data-hodel="rc.'+i+'" aria-label="Remove railcar '+esc(r.c)+'">×</button>'+
-      '<label>Status<select data-ho="rc.'+i+'.s"><option value="">Pick one</option>'+RC_ST.map(function(s){return '<option'+(r.s===s?' selected':'')+'>'+s+'</option>'}).join("")+'</select></label><label>'+(r.s==="Other"?"Status (type it)":"Note")+'<input data-ho="rc.'+i+'.o" type="text" autocomplete="off" value="'+esc(r.o)+'" placeholder="'+(r.s==="Other"?"Type the status":"Optional")+'"></label></div>'}).join("");
-  var q=$("ho_form").querySelectorAll("[data-ho]");
-  for(var i=0;i<q.length;i++){var path=q[i].getAttribute("data-ho");if(/^(tk|rc)\./.test(path))continue;q[i].value=hoGet(path)}
-}
-function hoGet(path){var p=path.split("."),o=HO.d;for(var i=0;i<p.length;i++){if(o==null)return "";o=o[p[i]]}return o==null?"":o}
-function hoSet(path,v){var p=path.split("."),o=HO.d;for(var i=0;i<p.length-1;i++){if(o[p[i]]==null)o[p[i]]={};o=o[p[i]]}o[p[p.length-1]]=v}
-function hoFailList(){
-  var fl=hoFails(HO.d||{}),lead=canManage();
-  $("ho_fl").innerHTML=fl.length?fl.map(function(f){return '<div class="hoi"><small>'+T(f.t)+'</small><p>'+esc(f.tx)+(f.by?' <small>· '+esc(f.by)+'</small>':'')+'</p>'+(lead?'<button type="button" data-hofdel="'+esc(f.id)+'">Delete</button>':'')+'</div>'}).join(""):'<p class="gn" style="margin:0">None logged this shift.</p>';
-}
-$("ho_form").addEventListener("input",function(e){var t=e.target,path=t.getAttribute&&t.getAttribute("data-ho");if(!path||!HO.d)return;
-  hoSet(path,t.value);
-  if(/^rc\.\d+\.s$/.test(path)){var o=t.closest(".hor").querySelector('[data-ho$=".o"]');if(o){o.placeholder=t.value==="Other"?"Type the status":"Optional";o.parentNode.firstChild.textContent=t.value==="Other"?"Status (type it)":"Note"}}
-  hoSoon()});
-$("ho_form").addEventListener("change",function(e){if(e.target.getAttribute&&e.target.getAttribute("data-ho")&&hoSaveT)hoSave()});
-$("ho_form").addEventListener("click",function(e){
-  var b=e.target.closest?e.target.closest("button"):null;if(!b||!HO.d)return;
-  var add=b.getAttribute("data-hoadd"),del=b.getAttribute("data-hodel"),fd=b.getAttribute("data-hofdel");
-  if(add){HO.d[add].push(add==="tk"?{n:"",p:"",s:""}:{c:"",s:"",o:""});hoFill();hoSave();var ins=$("ho_"+add).querySelectorAll(".hor");if(ins.length)try{ins[ins.length-1].querySelector("input").focus()}catch(x){}return}
-  if(del){var p=del.split(".");HO.d[p[0]].splice(+p[1],1);hoFill();hoSave();return}
-  if(fd){askPin("Delete this failure from the log?","Delete",function(){delete HO.d.fl[fd];hoFailList();hoSave()},true);return}
-});
-function hoLog(){
-  var tx=$("ho_fin").value.trim();if(!tx||!HO.d)return;
-  if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the handoff.");return}
-  var id="f"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-  HO.d.fl[id]={t:Date.now(),by:ME?ME.name:"",tx:tx.slice(0,300)};
-  $("ho_fin").value="";hoFailList();hoSave();
-}
-$("ho_flog").onclick=hoLog;
-$("ho_fin").onkeydown=function(e){if(e.key==="Enter")hoLog()};
-$("ho_post").onclick=function(){
-  if(!hoCanEdit()){hoErr(!can()?"Not connected. Posting needs a signal.":"Only leads can post the handoff.");return}
-  var b=this;
-  if(!hoArm){hoArm=true;b.textContent="Tap again to post";b.className="arm";setTimeout(function(){hoArm=false;b.textContent="Post handoff";b.className="go"},4000);return}
-  hoArm=false;b.textContent="Post handoff";b.className="go";
-  var now=Date.now(),cs=curShift(),id="h"+now.toString(36);
-  var post={at:now,by:ME?ME.name:"",sh:shiftLabel(cs)+" handoff",d:JSON.parse(JSON.stringify(HO.d)),ld:hoLoads()};
-  var p={};hoPosts().forEach(function(x){p[x.id]=HO.p[x.id]});p[id]=post;
-  /* Next shift starts with the same tanks, totes and railcars to update; failures and notes start fresh */
-  var nd=JSON.parse(JSON.stringify(HO.d));nd.fl={};nd.nt="";
-  clearTimeout(hoSaveT);hoSaveT=null;HO.p=p;HO.d=nd;
-  upd(HO_ID,{p:p,d:nd});
-  var mid="m"+now.toString(36)+Math.random().toString(36).slice(2,6),m={t:now,by:ME?ME.name:"Lead",tx:post.sh+" posted. Open Shift Handoff in the menu to read it."},cp={};
-  cp[mid]=m;CHAT[mid]=m;upd(CHAT_ID,cp);
-  hoErr("");renderHO();window.scrollTo(0,0);
-};
 
 /* The crew roster lives beside the orders under a fixed key, so the existing
    database rules cover it and older phones ignore it. (The shift note was removed

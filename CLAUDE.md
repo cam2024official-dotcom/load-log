@@ -50,7 +50,7 @@ Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have
 - `_roster`: the crew list.
 - `_chat`: Crew Chat. Messages expire after 24 h.
 - `_sched`: Schedule. `{hrs:{d,n}, w:{name:"DNO×7, Sun first"}, ov:{name:{on,u}}}`. Day shift starts at 6 AM and night shift at 6 PM. A night shift counts toward the day it started.
-- `_handoff`: Shift Handoff. `{d: draft, p: {id: post}}`. Leads edit; posts are kept 7 days.
+- `_handoff`: Shift Handoff, laid out as the Loader Shift Turnover sheet. `{d: draft, p: {id: post}}`. A draft with `v:2` is the turnover sheet (fields listed in the comment above `HO_ID` in index.html); posts without `v` use the old layout. Posting signs as outgoing (`sg.o`); the next lead signs as incoming (`sg.i`). Leads edit; posts are kept 7 days.
 - `_recipes`: saved Custom blend recipes. `{id: {n: name, b: base product, f: base share of the total}}`. A custom blend order stores `prod` as `x:<base>:<share>` (e.g. `x:cs100:0.25`) plus `cname`, so every calculation scales from the key.
 
 Changes to `_chat` and `_handoff` skip the board rebuild. `update` with `null` deletes a key.
