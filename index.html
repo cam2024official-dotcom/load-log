@@ -168,7 +168,7 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .nmr b{font:700 30px/1.1 var(--display);letter-spacing:.01em}
 .nmr small{font:600 13px var(--body);color:var(--mute)}
 .nmn{margin:8px 0 0;font-size:14px;color:var(--mute);font-weight:600}
-.nmn.bad{color:var(--bad)}.nmn.warn{color:var(--warn)}
+.nmn.bad,.nmr b.bad{color:var(--bad)}.nmn.warn,.nmr b.warn{color:var(--warn)}
 .split{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:var(--hl);border-left:4px solid var(--acc)}
 .split .sl{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .split .sg{display:flex;flex-wrap:wrap;gap:6px 14px}
@@ -734,12 +734,13 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>The line under the counts shows the total acid pulled this shift and how many finished loads are still missing acid.</li>
     </ol>
   </details>
-  <details><summary>New Mexico loads</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="nmc"><label class="f" data-n="2">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><div class="split"><p class="sl">Updated mix for 5,444 gal</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div><p class="nmn bad">Ordered 6,000 gal would weigh 84,000 lb. OVER 80,000 LB.</p></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Enter the scale-in light weight. It shows the most product that fits and warns when the order is over</span></li></ol></figure>
+  <details><summary>Weight check (Texas and NM)</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="nmc"><label class="f" data-n="2">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><div class="split"><p class="sl">Updated mix for 5,444 gal</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
     <ol>
-      <li>NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
-      <li>Before loading, open the load and enter the scale-in light weight. It shows how many gallons fit.</li>
+      <li>Texas loads can't go over 84,000 lb, and the target is 83,000. NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
+      <li>Before loading, open the load and enter the scale-in light weight. It shows the projected weight of the order and how many gallons fit.</li>
       <li>If the whole order fits, it says so. Load the amounts in Needs. The Updated mix only shows when the order is too heavy and has to be cut back.</li>
+      <li>Halliburton chems are counted in the weight at the product's weight, and they are never cut. Only the product gallons come down.</li>
     </ol>
   </details>
   <details><summary>Fixing a mistake</summary>
@@ -910,21 +911,33 @@ function wtFor(prod,o){
   if(prod==="cs33")return {w:W[5],est:"5% HCl"};
   var c=parseFloat(o&&o.wtPerGal);return c>0?{w:c,est:""}:null;
 }
+/* Weight limits by state: NM 80,000 max (aim 79,000), Texas 84,000 max (aim 83,000). */
+var TX_TARGET=83000,TX_MAX=84000;
+function wtLim(o){return o.state==="NM"?{t:NM_TARGET,m:NM_MAX}:{t:TX_TARGET,m:TX_MAX}}
+/* Halliburton chem gallons ride on top of the ticket and are never cut. With no separate
+   chem weight, they are counted at the product's weight. */
+function halGal(o){return HAL_N.reduce(function(t,k){var a=parseFloat(o["ha"+k]);return t+(a>0?a:0)},0)}
+/* Scale-in weight for any load: projected weight of the order, and when it's too heavy,
+   the most product that fits under the target with the Halliburton chems left as they are. */
 function nmOut(o,L){
-  L=parseFloat(L);
-  if(!(L>0))return '<p class="nmn">Enter the scale-in light weight to see how much product fits.</p>';
+  L=parseFloat(L);var lim=wtLim(o);
+  if(!(L>0))return '<p class="nmn">Enter the scale-in light weight to see the projected weight and how much product fits.</p>';
   var wi=wtFor(o.prod,o);
   if(!wi)return '<p class="nmn">Enter the product weight per gallon above.</p>';
-  var net=NM_TARGET-L;
-  if(net<=0)return '<p class="nmn bad">The light weight is already at or over the '+num(NM_TARGET)+' lb target.</p>';
-  var gal=Math.floor(net/wi.w),gross=L+gal*wi.w,h='';
-  h+='<div class="nmr"><div><span>Max product at '+num(NM_TARGET)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(gross)+' <small>lb</small></b></div></div>';
-  var og=parseFloat(o.gal)||0;
-  /* When the whole order fits, only the Needs box above applies: no second mix to confuse it with */
-  if(og>0&&gal>=og){h+='<p class="nmn">The full '+gf(og)+' gal order fits ('+num(L+og*wi.w)+' lb). Load the amounts in Needs above.</p>';og=0}
-  else h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
-  if(og>0){var ow=L+og*wi.w,cls=ow>NM_MAX?"nmn bad":ow>NM_TARGET?"nmn warn":"nmn";
-    h+='<p class="'+cls+'">Ordered '+gf(og)+' gal would weigh '+num(ow)+' lb'+(ow>NM_MAX?'. OVER '+num(NM_MAX)+' LB.':ow>NM_TARGET?'. Over the '+num(NM_TARGET)+' lb target.':'.')+'</p>'}
+  var hg=halGal(o),og=parseFloat(o.gal)||0,h='';
+  var gal=Math.floor((lim.t-L)/wi.w-hg);
+  var pw=og>0?L+(og+hg)*wi.w:0,cls=pw>lim.m?"bad":pw>lim.t?"warn":"";
+  if(og>0)h+='<div class="nmr"><div><span>Projected weight'+(hg>0?' (with chems)':'')+'</span><b class="'+cls+'">'+num(pw)+' <small>lb</small></b></div></div>';
+  if(og>0&&gal>=og){
+    h+='<p class="nmn">The full '+gf(og)+' gal order fits under the '+num(lim.t)+' lb target. Load the amounts in Needs above.</p>';
+  }else if(gal<=0){
+    h+='<p class="nmn bad">'+(hg>0?'The light weight plus the Halliburton chems is':'The light weight is')+' already at or over the '+num(lim.t)+' lb target.</p>';
+  }else{
+    if(og>0)h+='<p class="nmn '+cls+'">'+(pw>lim.m?'OVER '+num(lim.m)+' LB. Cut the order back.':'Over the '+num(lim.t)+' lb target. Cut the order back.')+'</p>';
+    h+='<div class="nmr"><div><span>Max product at '+num(lim.t)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(L+(gal+hg)*wi.w)+' <small>lb</small></b></div></div>';
+    h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
+  }
+  if(hg>0)h+='<p class="nmn">Includes '+gf(hg)+' gal of Halliburton chems at the product weight. Chem amounts stay the same.</p>';
   if(wi.est)h+='<p class="nmn">CableShield weight is not on file. This uses the '+wi.est+' weight as an estimate, so confirm on the scale.</p>';
   return h;
 }
@@ -935,7 +948,7 @@ function nmUpdate(id){
   out.innerHTML=nmOut(t,l?l.value:o.lightWt);
 }
 /* Redo every open NM card's numbers, e.g. after a weight per gallon is changed. */
-function nmRefreshAll(){ORD.forEach(function(o){if(o.state==="NM"&&status(o)!=="done")nmUpdate(o.id)})}
+function nmRefreshAll(){ORD.forEach(function(o){if(status(o)!=="done")nmUpdate(o.id)})}
 function viewCard(o){
   var st=status(o),b="",id=esc(o.id),w=can(),ld=canonName(o.loader),op=!!OPEN[o.id];
   var row='<button type="button" class="orow" data-act="toggle" data-id="'+id+'" aria-expanded="'+op+'" style="--lc:'+(ld?colOf(ld):'transparent')+'"><span class="lcb"></span><span class="orm">'+
@@ -949,16 +962,15 @@ function viewCard(o){
   if(halHas(o))b+='<div class="meta"><span>Halliburton: '+esc(halText(o))+'</span></div>';
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
   if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
-  if(o.state==="NM"){
-    b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
-    if(st!=="done"){
+  if(o.state==="NM")b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
+  if(st!=="done"){
       b+='<div class="nmc">';
+      if(o.state!=="NM")b+='<p class="nmn" style="margin:0 0 6px">Texas. Do not exceed '+num(TX_MAX)+' lb. Aim for '+num(TX_TARGET)+'.</p>';
       if(w){
         b+='<label class="f" for="nml-'+id+'">Scale-in light weight (lb)</label><input id="nml-'+id+'" data-f="lightWt" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.lightWt)+'">';
         if(o.prod==="other")b+='<label class="f" for="nmw-'+id+'" style="margin-top:8px">Product weight (lb per gallon)</label><input id="nmw-'+id+'" data-f="wtPerGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.wtPerGal)+'">';
       }
       b+='<div id="nmo-'+id+'">'+nmOut(o,o.lightWt)+'</div></div>';
-    }
   }
   var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
   if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div></div>';
