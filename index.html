@@ -72,7 +72,8 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .cutw .split{border-left-color:var(--warn)}.cutw .nmn{margin-top:6px}
 .split.hal{border-left-color:#eca03f;background:rgba(236,160,63,.13)}
 .hln{margin:6px 0 0;font-size:13px;color:var(--mute);font-weight:600}.hln.bad{color:var(--bad)}
-.halt{padding:1px 6px;border-radius:3px;background:#eca03f;color:#1a1000;font-weight:700;font-size:12px}
+.halt,.cst{padding:1px 6px;border-radius:3px;background:#eca03f;color:#fff;font-weight:700;font-size:12px}
+.cst{background:#c62828}
 .heelt{padding:0 5px;border-radius:3px;border:1px solid var(--line);color:var(--mute);font-weight:700;font-size:12px}
 .wck{margin-top:10px;border:1px solid var(--line);border-radius:6px}
 .wck summary{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;list-style:none;font-weight:700;font-size:15px}
@@ -1025,7 +1026,7 @@ function viewCard(o){
     '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(pname(o.prod))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
+    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(CSB[o.prod]?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
   /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
   b+='<div id="nd-'+id+'">'+needsHtml(o,o.lightWt)+'</div>';
