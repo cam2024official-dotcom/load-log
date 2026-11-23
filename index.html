@@ -73,6 +73,11 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .cxw{padding:10px;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:4px}.cxw .g2{margin-top:0}
 .cxa{display:flex;gap:8px;margin-top:10px}.cxa button{flex:1}
 .split .shd{margin:-2px 0 8px;font-size:14px;font-weight:600}
+.demob{margin:0 0 12px;padding:10px 12px;border:1px solid #eca03f;border-left:4px solid #eca03f;border-radius:4px;background:rgba(236,160,63,.1)}
+.dbh{display:flex;flex-direction:column;gap:2px}.dbh b{color:#c77a14;letter-spacing:.06em}.dbh span{font-size:14px;color:var(--mute);font-weight:600}
+.dba{display:flex;gap:8px;margin-top:10px}.dba button{flex:1}
+#dm_set{margin-top:10px}#dm_set summary{cursor:pointer;font-weight:700;font-size:15px}.dmg{margin-top:8px}
+body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .split.hal{border-left-color:#eca03f;background:rgba(236,160,63,.13)}
 .hln{margin:6px 0 0;font-size:13px;color:var(--mute);font-weight:600}.hln.bad{color:var(--bad)}
 .halt,.cst{padding:1px 6px;border-radius:3px;background:#eca03f;color:#fff;font-weight:700;font-size:12px}
@@ -495,6 +500,30 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 </div></header>
 <div class="stripe"></div>
 <main id="v-log"><div class="wrap">
+  <div id="demob" class="demob" hidden>
+    <div class="dbh"><b>DEMO BOARD</b><span>Example loads for presentations. Nothing here is saved or shared.</span></div>
+    <div class="dba"><button id="dm_rand" type="button" class="go">Randomize</button><button id="dm_exit" type="button">Exit demo</button></div>
+    <details id="dm_set"><summary>Randomize settings</summary>
+      <div class="g2 dmg">
+        <div><label class="f" for="dm_w">Waiting loads</label><input id="dm_w" type="number" inputmode="numeric" min="0" max="40" value="6"></div>
+        <div><label class="f" for="dm_l">Loading now</label><input id="dm_l" type="number" inputmode="numeric" min="0" max="20" value="3"></div>
+        <div><label class="f" for="dm_d">Finished loads</label><input id="dm_d" type="number" inputmode="numeric" min="0" max="40" value="5"></div>
+        <div><label class="f" for="dm_miss">Finished, missing amounts</label><input id="dm_miss" type="number" inputmode="numeric" min="0" max="40" value="1"></div>
+        <div><label class="f" for="dm_g1">Gallons, low</label><input id="dm_g1" type="number" inputmode="numeric" min="100" step="100" value="4000"></div>
+        <div><label class="f" for="dm_g2">Gallons, high</label><input id="dm_g2" type="number" inputmode="numeric" min="100" step="100" value="6200"></div>
+        <div><label class="f" for="dm_l1">Light weight, low (lb)</label><input id="dm_l1" type="number" inputmode="numeric" min="0" step="100" value="28000"></div>
+        <div><label class="f" for="dm_l2">Light weight, high (lb)</label><input id="dm_l2" type="number" inputmode="numeric" min="0" step="100" value="42000"></div>
+        <div><label class="f" for="dm_nm">New Mexico (%)</label><input id="dm_nm" type="number" inputmode="numeric" min="0" max="100" value="25"></div>
+        <div><label class="f" for="dm_hal">Halliburton chems (%)</label><input id="dm_hal" type="number" inputmode="numeric" min="0" max="100" value="20"></div>
+        <div><label class="f" for="dm_cs">CableShield (%)</label><input id="dm_cs" type="number" inputmode="numeric" min="0" max="100" value="15"></div>
+        <div><label class="f" for="dm_cx">Custom blend (%)</label><input id="dm_cx" type="number" inputmode="numeric" min="0" max="100" value="10"></div>
+        <div><label class="f" for="dm_heel">Heel (%)</label><input id="dm_heel" type="number" inputmode="numeric" min="0" max="100" value="15"></div>
+        <div><label class="f" for="dm_lbt">Waiting with a leave-by (%)</label><input id="dm_lbt" type="number" inputmode="numeric" min="0" max="100" value="70"></div>
+        <div class="full"><label class="f" for="dm_ld">Loaders (comma separated)</label><input id="dm_ld" type="text" autocomplete="off"></div>
+      </div>
+      <p class="note">Tap Randomize to build a new set with these settings. Everything on the board works (start, end, weight check, edit) but only on this phone, and it's gone when you exit or close the app.</p>
+    </details>
+  </div>
   <div id="setup" class="panel setup" hidden>
     <h2>Crew PIN</h2>
     <p class="note">Enter the PIN your lead gave you. Everyone with the same PIN sees the same orders.</p>
@@ -875,6 +904,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
+  <button type="button" id="nav_demo" hidden>Demo Board</button>
   <div class="who" id="who" hidden><span id="who_t"></span><button id="who_sw" type="button">Switch person</button></div>
   <div class="navsep">Theme on this device</div>
   <div class="thm" id="thm" role="group" aria-label="Theme"><button type="button" data-thm="auto">Auto</button><button type="button" data-thm="light">Light</button><button type="button" data-thm="dark">Dark</button></div>
@@ -1595,6 +1625,7 @@ $("copy").onclick=function(){
 
 function syncState(){
   if(!DL)return;
+  if(DEMO){setSync("warn","Demo. Example loads on this phone only");return}
   if(online&&gotData){clearTimeout(loadTimer);setSync("ok","Live. Everyone sees the same orders")}
   else if(!online&&gotData)setSync("warn","Offline. Showing the last orders this phone saw")
   else setSync("","Connecting")
@@ -2013,6 +2044,7 @@ function applyAuth(){
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
+  $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
   renderSched();renderHO();
   renderChat();
 }
@@ -2095,7 +2127,7 @@ async function connect(pin,create){
   build();setSync("","Connecting");
   loadTimer=setTimeout(function(){setSync("warn","Can't reach shared data yet. What you see may be out of date")},10000);
   DL.onConn(function(v){online=v;syncState()});
-  DL.subscribe(onData,onDataErr);
+  DL.subscribe(function(l){LAST_REAL=l;if(!DEMO)onData(l)},onDataErr);
 }
 function init(){
   var p=readPin();
@@ -2272,11 +2304,102 @@ function showView(k){
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
-  $("vt").textContent=v[1];$("vs").textContent=v[2];
+  $("vt").textContent=v[1];$("vs").textContent=DEMO&&k==="log"?"Demo board: example loads, not saved":v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
   for(var i=0;i<bs.length;i++){if(bs[i].getAttribute("data-view")===k)bs[i].setAttribute("aria-current","page");else bs[i].removeAttribute("aria-current")}
   setDrawer(false);window.scrollTo(0,0);
 }
+/* Demo Board (Christian and Admin only): swaps the shared database for one kept in this
+   phone's memory, so the real board can be shown with made-up loads. Live data keeps
+   arriving in the background but is held back until the demo ends. Nothing is written
+   to Firebase while DEMO is on. */
+var DEMO=false,REAL_DL=null,LAST_REAL=null,DEMO_DB={},DM_KEY="tcw-demo";
+function canDemo(){return !!(ME&&(ME.admin||ME.name.toLowerCase()==="christian"))}
+function dmClone(v){return v==null?v:JSON.parse(JSON.stringify(v))}
+function dmEmit(){var l=Object.keys(DEMO_DB).map(function(k){var x=dmClone(DEMO_DB[k]);x.id=k;return x});setTimeout(function(){if(DEMO)onData(l)},0)}
+var DEMO_DL={setCode:function(){},exists:async function(){return true},createMeta:async function(){},subscribe:function(){},onConn:function(){},
+  newId:function(){return "demo"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)},
+  set:async function(id,d){DEMO_DB[id]=dmClone(d);dmEmit()},
+  update:async function(id,p){var o=DEMO_DB[id]||(DEMO_DB[id]={});Object.keys(p).forEach(function(k){var path=k.split("/"),t=o;for(var i=0;i<path.length-1;i++){if(typeof t[path[i]]!=="object"||!t[path[i]])t[path[i]]={};t=t[path[i]]}var last=path[path.length-1];if(p[k]===null)delete t[last];else t[last]=dmClone(p[k])});dmEmit()},
+  remove:async function(id){delete DEMO_DB[id];dmEmit()}};
+function dmWait(){return Promise.all(Object.keys(q).map(function(k){return q[k]})).catch(function(){})}
+var DM_F=["w","l","d","miss","g1","g2","l1","l2","nm","hal","cs","cx","heel","lbt","ld"];
+function dmLoad(){var v=null;try{v=JSON.parse(localStorage.getItem(DM_KEY)||"null")}catch(e){}if(v)DM_F.forEach(function(k){if(v[k]!=null)$("dm_"+k).value=v[k]});
+  if(!$("dm_ld").value.trim())$("dm_ld").value=(ROSTER.length?ROSTER.filter(function(n){return n.toLowerCase()!=="admin"}):["Tony","Sam","Jayden","Christian"]).join(", ")}
+function dmSave(){var v={};DM_F.forEach(function(k){v[k]=$("dm_"+k).value});try{localStorage.setItem(DM_KEY,JSON.stringify(v))}catch(e){}}
+function dmRnd(a,b){return a+Math.random()*(b-a)}
+function dmRi(a,b){return Math.floor(dmRnd(a,b+1))}
+function dmPick(a){return a[Math.floor(Math.random()*a.length)]}
+function dmPct(id){var v=parseFloat($(id).value);return v>0?Math.min(v,100)/100:0}
+function dmOrders(){
+  var n=function(id,d){var v=parseInt($(id).value,10);return v>=0?v:d};
+  var nw=Math.min(n("dm_w",6),40),nl=Math.min(n("dm_l",3),20),nd=Math.min(n("dm_d",5),40),nm=Math.min(n("dm_miss",1),nd);
+  var g1=n("dm_g1",4000),g2=Math.max(n("dm_g2",6200),g1),l1=n("dm_l1",28000),l2=Math.max(n("dm_l2",42000),l1);
+  var lds=$("dm_ld").value.split(",").map(function(x){return x.trim()}).filter(Boolean);if(!lds.length)lds=["Tony"];
+  var HCL=[["15",30],["28",18],["20",12],["10",10],["7.5",8],["acid",10],["32",5],["5",7]],hw=HCL.reduce(function(t,x){return t+x[1]},0);
+  function hcl(){var r=Math.random()*hw;for(var i=0;i<HCL.length;i++){r-=HCL[i][1];if(r<0)return HCL[i][0]}return "15"}
+  var CHEMS=["HAI-OS","FE-1A","HAI 501","T350","CLA-WEB","LoSurf-300","MO-67"],rc=Object.keys(RCP).map(function(k){return RCP[k]});
+  var used={},busy=[],now=Date.now(),out={},tk=dmRi(19000,19700),bl=dmRi(45000,45800);
+  function trailer(){var t;do{t=String(dmRi(101,989))}while(used[t]);used[t]=1;return dmPick(["Trailer ","Trailer ","Trailer ",""])+t}
+  function one(st,miss){
+    var o={loader:dmPick(lds),name:trailer(),gal:Math.round(dmRnd(g1,g2)/50)*50,ticket:String(tk+=dmRi(1,9)),bol:String(bl+=dmRi(1,7)),notes:"",state:Math.random()<dmPct("dm_nm")?"NM":"TX",onSheet:true,createdAt:now-dmRi(1,12)*36e5,lbtAt:null,startAt:null,endAt:null};
+    var r=Math.random(),cs=dmPct("dm_cs"),cx=dmPct("dm_cx");
+    if(r<cs)o.prod=dmPick(["cs100","cs100","cs33"]);
+    else if(r<cs+cx){var rr=rc.length?dmPick(rc):{n:"7.5% CableShield",b:"cs100",f:.25};o.prod=cxKey(rr.b,rr.f);o.cname=rr.n}
+    else o.prod=hcl();
+    if(Math.random()<dmPct("dm_hal")){var cn=CHEMS.slice().sort(function(){return Math.random()-.5}),k=dmRi(1,3);for(var i=1;i<=k;i++){o["hn"+i]=cn[i-1];o["ha"+i]=dmPick([5,10,12,18,20,25,30,50,90])}}
+    if(Math.random()<dmPct("dm_heel")){o.heelProd=dmPick(["15","20","28","15"]);o.heelGal=dmRi(60,450)}
+    var lw=Math.round(dmRnd(l1,l2)/20)*20;
+    if(st==="waiting"){if(Math.random()<dmPct("dm_lbt"))o.lbtAt=Math.round((now+dmRnd(.5,7)*36e5)/9e5)*9e5;if(Math.random()<.6)o.lightWt=lw}
+    else{
+      o.lightWt=lw;
+      if(st==="loading"){o.startAt=now-dmRi(300,4200)*1000;if(busy.length<lds.length){var fr=lds.filter(function(x){return busy.indexOf(x)<0});o.loader=dmPick(fr)}busy.push(o.loader)}
+      else{
+        o.endAt=now-dmRi(10,600)*6e4;o.startAt=o.endAt-dmRi(35,80)*6e4;
+        var wi=wtFor(o.prod,o),c=wtCut(o,lw),tot=c?c.total:o.gal,hl=heelOf(o),hv=hl?hl.gal:0,ld=Math.max(0,(tot-hv)*dmRnd(.985,1.015)),hg=halGal(o);
+        if(wi)o.heavyWt=Math.round(lw+(ld+hg)*wi.w);
+        if(!miss){var sp=finSplit(o.prod,ld,o.gal,hl&&o.prod!=="acid"?hl.water:0,c?c.total:0);
+          if(sp){if(sp.acid!=null)o.acidGal=Math.round(sp.acid);if(sp.water!=null)o.waterGal=Math.round(sp.water)}else o.acidGal=Math.round(ld)}
+      }
+    }
+    out["demo"+st[0]+Object.keys(out).length+Math.random().toString(36).slice(2,6)]=o;
+  }
+  var i;for(i=0;i<nw;i++)one("waiting");for(i=0;i<nl;i++)one("loading");for(i=0;i<nd;i++)one("done",i<nm);
+  /* For a presentation, every feature turned on shows up at least once (on loads not yet finished) */
+  var ks=Object.keys(out).filter(function(k){return !out[k].endAt}),used2={};
+  function spot(has,set){if(!ks.length||Object.keys(out).some(function(k){return has(out[k])}))return;var c=ks.filter(function(k){return !used2[k]}),k=dmPick(c.length?c:ks);used2[k]=1;set(out[k])}
+  if(dmPct("dm_nm"))spot(function(o){return o.state==="NM"},function(o){o.state="NM"});
+  if(dmPct("dm_hal"))spot(function(o){return halHas(o)},function(o){o.hn1="HAI-OS";o.ha1=18;o.hn2="FE-1A";o.ha2=90});
+  if(dmPct("dm_heel"))spot(function(o){return heelOf(o)},function(o){o.heelProd="20";o.heelGal=dmRi(150,400)});
+  if(dmPct("dm_cs"))spot(function(o){return CSB[o.prod]},function(o){o.prod="cs100";delete o.cname});
+  if(dmPct("dm_cx"))spot(function(o){return cxOf(o.prod)},function(o){var rr=rc.length?dmPick(rc):{n:"7.5% CableShield",b:"cs100",f:.25};o.prod=cxKey(rr.b,rr.f);o.cname=rr.n});
+  return out;
+}
+function dmRandomize(){
+  if(!DEMO)return;dmSave();
+  var keep={};[ROSTER_ID,SCHED_ID,RECIPE_ID].forEach(function(k){if(DEMO_DB[k])keep[k]=DEMO_DB[k]});
+  DEMO_DB=Object.assign(keep,dmOrders());OPEN={};editing={};WOPEN={};dataSig="";dmEmit();syncState();
+}
+async function enterDemo(){
+  if(DEMO||!canDemo()||!DL)return;
+  await dmWait();flushAll();await dmWait();
+  REAL_DL=DL;DL=DEMO_DL;DEMO=true;DEMO_DB={};
+  /* Keep the real crew list, schedule and recipes so names, colors and sign-in still work */
+  (LAST_REAL||[]).forEach(function(o){if(o.id===ROSTER_ID||o.id===SCHED_ID||o.id===RECIPE_ID){var x=dmClone(o);delete x.id;DEMO_DB[o.id]=x}});
+  document.body.classList.add("demo");$("demob").hidden=false;dmLoad();
+  dmLoad();showView("log");dmRandomize();toast("Demo Board on. Nothing is saved.");
+}
+async function exitDemo(){
+  if(!DEMO)return;
+  await dmWait();
+  DEMO=false;DL=REAL_DL;REAL_DL=null;DEMO_DB={};
+  document.body.classList.remove("demo");$("demob").hidden=true;
+  OPEN={};editing={};WOPEN={};dataSig="";Object.keys(deb).forEach(function(k){clearTimeout(deb[k].t);delete deb[k]});
+  onData(LAST_REAL||[]);syncState();showView(curView);toast("Back on the live board.");
+}
+$("nav_demo").onclick=function(){setDrawer(false);if(DEMO)showView("log");else enterDemo()};
+$("dm_rand").onclick=dmRandomize;$("dm_exit").onclick=exitDemo;
+$("dm_set").addEventListener("input",dmSave);
 /* Theme switch: saved on this device only */
 function curTheme(){try{var t=localStorage.getItem("tcw-theme");return t==="dark"||t==="light"?t:"auto"}catch(e){return "auto"}}
 function paintThm(){var t=curTheme(),bs=$("thm").querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(bs[i].getAttribute("data-thm")===t))}

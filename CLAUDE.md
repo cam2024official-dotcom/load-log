@@ -40,6 +40,7 @@ Serve the folder on localhost and drive it in a browser: a PowerShell HttpListen
 - The menu Load Weight page reuses `finSplit` / `csChems` / `ticketWater` from the end-of-load window, so changes to that math affect both.
 - The Help page's pictures (`figure.hx`) are frozen copies of real app markup. When a layout they copy changes, update the matching picture too.
 - Style: professional, small corner radii, thin borders, logo colors (blue `#315a8f` / `#2c6384`, orange `#eca03f`). There are Light and Dark themes plus an Auto/Light/Dark switch, so check both.
+- **Demo Board** (menu, Christian and Admin only) swaps `DL` for an in-memory `DEMO_DL` and holds back live data (`LAST_REAL`) until Exit demo. Any new code that writes must go through `DL`, never a saved copy of the real database, or the demo could write to live Firebase.
 - Keep suggestions short. The lead usually picks the recommended option and often skips long idea lists.
 
 ## Data (Firebase Realtime Database)
