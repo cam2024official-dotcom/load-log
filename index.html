@@ -1833,7 +1833,11 @@ function tvPostHtml(p){
   h+='<div class="acts" style="margin-top:10px">'+(!d.sg.i&&canManage()&&ME?'<button type="button" class="go" data-hosigni="'+esc(p.id)+'">Sign as incoming</button>':'')+'<button type="button" data-hoprint="'+esc(p.id)+'">Print or save PDF</button></div>';
   return h+'</div>';
 }
-function hoPostHtml(p){return p.d&&p.d.v===2?tvPostHtml(p):hoPostHtmlOld(p)}
+function hoPostHtml(p){
+  /* One damaged post must never blank the whole tab */
+  try{return p.d&&p.d.v===2?tvPostHtml(p):hoPostHtmlOld(p)}
+  catch(e){return '<div class="hop"><b>'+esc(p.sh||"Shift turnover")+'</b><small>'+(p.by?'Posted by '+esc(p.by)+'. ':'')+'This one could not be shown.</small></div>'}
+}
 /* ---- Printable copy that matches the paper sheet */
 function tvSheet(p){
   var d=hoNorm(p.d),e=function(x){return esc(x==null?"":x)},rows=function(a,n,f){var h="";for(var i=0;i<Math.max(n,a.length);i++)h+=f(a[i]||{});return h};
@@ -1975,6 +1979,8 @@ function hoLoads(){
   return {run:run,wait:wait,miss:miss,dn:dn,acid:Math.round(acid)};
 }
 function hoLoadsHtml(ld,at){
+  /* Firebase drops empty lists, so an old post can come back without run/wait/miss */
+  ld={run:arr(ld&&ld.run),wait:arr(ld&&ld.wait),miss:arr(ld&&ld.miss),dn:+(ld&&ld.dn)||0,acid:+(ld&&ld.acid)||0};
   var li=function(b,extra){return '<li><b>'+esc(b.n)+'</b> · '+(b.g?num(b.g)+' gal ':'')+esc(b.p)+(b.l?' · '+esc(b.l):'')+(extra||'')+'</li>'};
   var h='<h4>Loading</h4>'+(ld.run.length?'<ul>'+ld.run.map(function(b){return li(b,b.st?' · started '+T(b.st):'')}).join("")+'</ul>':'<p class="none">Nothing loading.</p>');
   h+='<h4>Waiting</h4>'+(ld.wait.length?'<ul>'+ld.wait.map(function(b){return li(b,b.lbt?' · LBT '+T(b.lbt):'')}).join("")+'</ul>':'<p class="none">Nothing waiting.</p>');
