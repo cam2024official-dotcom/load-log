@@ -524,6 +524,21 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .hp .hxl{list-style:none;padding:0;margin:8px 0 0;font-size:13px;color:var(--mute)}
 .hp .hxl li{display:flex;gap:8px;align-items:flex-start;margin:5px 0;line-height:1.35}
 .hxl i{flex:none;width:18px;height:18px;border-radius:50%;background:#f5c400;color:#1a1400;font:700 11px/18px var(--body);font-style:normal;text-align:center}
+/* Easier reading on a phone (v54): crew as one-line rows, slim NM strip, details folded away */
+.cg{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px}
+.ct{display:grid;grid-template-columns:fit-content(45%) 1fr;align-items:stretch}
+.ct .ctn{min-width:5em;overflow-wrap:normal;word-break:normal}
+.ct .ctn{grid-row:1/span 6;display:flex;align-items:center;padding:8px 10px;font-size:15px}
+.ct .ctl{grid-column:2;border-top:0;border-left:1px solid var(--line);padding:8px 10px}
+.ct .ctl+.ctl{border-top:1px solid var(--line)}
+.ct .ctl.ctx{border-left-color:#d9ad00}.ct .ctl.ctx+.ctl{border-top-color:#d9ad00}
+.ct .cti{grid-column:2;margin:0;padding:8px 10px;border-left:1px solid var(--line)}
+.nmb{margin:10px 0 0;padding:5px 10px;font-size:14px}
+.ord.open .orow .rsx{display:none}
+.omore{margin-top:12px}
+.omore .wsn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.omore .wsm{flex:1;overflow:hidden}
+.omore .nmc .meta{margin-top:0}.omore .nmc .g2{margin-top:6px}
 </style>
 </head>
 <body>
@@ -769,11 +784,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Starting a load</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><div class="ofoot"><div class="meta"><span>Ticket 4412</span><span>BOL 88120</span></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
-      <li>Started the wrong one? Tap <span class="kb">Undo start</span>.</li>
+      <li>Started the wrong one? Open <b>Details</b> at the bottom of the load and tap <span class="kb">Undo start</span>.</li>
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
@@ -804,7 +819,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Weight check (Texas and NM)</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="cutw"><div class="split"><p class="sl">Needs, cut to 5,444 gal for weight</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div><p class="nmn bad">Cut for weight. The full 6,000 gal ticket would be 84,000 lb.</p></div><details class="wck" open><summary data-n="2"><span class="wst">Weight check</span><span class="wsm"><b class="bad">84,000 lb</b><span class="wsn bad">OVER 80,000</span></span></summary><div class="nmc"><p class="nmn" style="margin:0 0 6px">New Mexico. Do not exceed 80,000 lb. Aim for 79,000.</p><label class="f" data-n="3">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><p class="nmn">Needs above is now cut to 5,444 gal. Load those amounts.</p></div></div></details></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Tap Weight check to open it. When closed, the bar still shows the projected weight</span></li><li><i>3</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NM · Max 80,000 lb · Aim 79,000</p><div class="cutw"><div class="split"><p class="sl">Needs, cut to 5,444 gal for weight</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div><p class="nmn bad">Cut for weight. The full 6,000 gal ticket would be 84,000 lb.</p></div><details class="wck" open><summary data-n="2"><span class="wst">Weight check</span><span class="wsm"><b class="bad">84,000 lb</b><span class="wsn bad">OVER 80,000</span></span></summary><div class="nmc"><p class="nmn" style="margin:0 0 6px">New Mexico. Do not exceed 80,000 lb. Aim for 79,000.</p><label class="f" data-n="3">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><p class="nmn">Needs above is now cut to 5,444 gal. Load those amounts.</p></div></div></details></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Tap Weight check to open it. When closed, the bar still shows the projected weight</span></li><li><i>3</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
     <ol>
       <li>Texas loads can't go over 84,000 lb, and the target is 83,000. NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
       <li>Before loading, open the load, tap <b>Weight check</b> and enter the scale-in light weight. It shows the projected weight of the order and how many gallons fit.</li>
@@ -814,7 +829,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </details>
   <details><summary>Fixing a mistake</summary>
     <ol>
-      <li><span class="kb">Edit</span> changes the trailer, product, gallons, times, ticket, BOL and Halliburton chems.</li>
+      <li><span class="kb">Edit</span> and <span class="kb">Remove</span> are under <b>Details</b> at the bottom of the load, with the loader, Delivering to and On loadout sheet. Edit changes the trailer, product, gallons, times, ticket, BOL and Halliburton chems.</li>
       <li><span class="kb">Reopen</span> puts a finished load back to loading.</li>
     </ol>
   </details>
@@ -858,7 +873,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Trailer came back with product in it? Tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
       <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico under Delivering to for NM loads.</li>
-      <li>To remove one, open it and tap <span class="kb">Remove</span>. Only leads see these buttons.</li>
+      <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
     </ol>
   </details>
   <details><summary>Adding people and setting PINs</summary>
@@ -1104,7 +1119,7 @@ function viewCard(o){
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
     (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
   /* 1. What goes in the trailer */
-  if(o.state==="NM")b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
+  if(o.state==="NM")b+='<p class="nmb">NM · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
   b+='<div id="nd-'+id+'">'+needsHtml(o,o.lightWt)+'</div>';
   b+=halBox(o);
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
@@ -1127,15 +1142,17 @@ function viewCard(o){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
-  /* 4. Details at the bottom */
-  var f='',m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'')+(o.startAt?'<span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':''):'');
+  /* 4. Details at the bottom, folded away: loader, state, sheet, edit and remove are rarely
+     needed while loading. The bar shows the loader, BOL and times so nothing is hidden. */
+  var f='',sm=[ld||"No loader",o.state==="NM"?"New Mexico":"Texas"],m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'')+(o.startAt?'<span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':''):'');
+  if(o.bol)sm.push("BOL "+o.bol);if(o.startAt)sm.push("Started "+T(o.startAt));
   if(m)f+='<div class="meta">'+m+'</div>';
   var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
   if(w)f+='<div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div>'+
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label>';
   else{if(o.loader)f+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';if(o.onSheet===false)f+='<div class="meta"><span>Not on loadout sheet</span></div>'}
   if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(canManage()?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
-  if(f)b+='<div class="ofoot">'+f+'</div>';
+  if(f)b+='<details class="wck omore" data-wid="m'+id+'"'+(WOPEN["m"+o.id]?' open':'')+'><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">'+esc(sm.join(" · "))+'</span></span></summary><div class="nmc">'+f+'</div></details>';
   return '<div class="ord vc '+st+(o.state==="NM"?' nm':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
 function editCard(o){
