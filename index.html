@@ -69,6 +69,20 @@ button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .oh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .oname{font-weight:700;font-size:20px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
 .od{margin:4px 0 0;font-weight:600}
+.split.hal{border-left-color:#eca03f;background:rgba(236,160,63,.13)}
+.hln{margin:6px 0 0;font-size:13px;color:var(--mute);font-weight:600}.hln.bad{color:var(--bad)}
+.halt{padding:1px 6px;border-radius:3px;background:#eca03f;color:#1a1000;font-weight:700;font-size:12px}
+.heelt{padding:0 5px;border-radius:3px;border:1px solid var(--line);color:var(--mute);font-weight:700;font-size:12px}
+.wck{margin-top:10px;border:1px solid var(--line);border-radius:6px}
+.wck summary{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;list-style:none;font-weight:700;font-size:15px}
+.wck summary::-webkit-details-marker{display:none}
+.wck summary::after{content:"\203a";margin-left:auto;color:var(--mute);font-size:20px;line-height:1;transition:transform .15s}
+.wck[open] summary::after{transform:rotate(90deg)}
+.wsm{display:flex;align-items:baseline;gap:8px;min-width:0}.wsm b{font:700 17px var(--display)}
+.wsn{font-size:13px;font-weight:600;color:var(--mute)}.wst,.wsm b,.wsn{white-space:nowrap}
+.wsm .ok{color:var(--ok)}.wsm .warn{color:var(--warn)}.wsm .bad{color:var(--bad)}
+.wck .nmc{margin:0;padding:0 10px 10px}
+.ofoot{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.ofoot .meta:first-child{margin-top:0}.ofoot .g2{margin-top:8px}
 .halw{display:grid;grid-template-columns:1fr 7.5em;gap:6px 8px;align-items:end}.halw .f{margin:0}
 .meta{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:15px;color:var(--mute);margin-top:4px}
 .nt{margin:8px 0 0;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -514,6 +528,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div><label class="f" for="a_gal">Total gallons (ticket)</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
+      <div class="full"><label class="chk"><input id="a_heel" type="checkbox"> Heel? (product left in the trailer)</label></div>
+      <div class="full halw" id="a_heelw" hidden><div><label class="f" for="a_heelp">Heel product</label><select id="a_heelp"></select></div><div><label class="f" for="a_heelg">Heel (gal)</label><input id="a_heelg" type="number" inputmode="decimal" min="0" step="any"></div></div>
       <div class="full" id="a_split"></div>
       <div class="full"><label class="chk"><input id="a_hal" type="checkbox"> Halliburton chems</label></div>
       <div class="full halw" id="a_halw" hidden></div>
@@ -700,7 +716,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Starting a load</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><div class="meta"><span>Ticket 4412</span><span>BOL 88120</span></div><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><div class="ofoot"><div class="meta"><span>Ticket 4412</span><span>BOL 88120</span></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
@@ -735,10 +751,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     </ol>
   </details>
   <details><summary>Weight check (Texas and NM)</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="nmc"><label class="f" data-n="2">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><div class="split"><p class="sl">Updated mix for 5,444 gal</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div></div></div></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NEW MEXICO. Do not exceed 80,000 lb. Aim for 79,000.</p><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,672 <small>gal</small></b></div><div><span>36% acid</span><b>2,328 <small>gal</small></b></div></div></div><details class="wck" open><summary data-n="2"><span class="wst">Weight check</span><span class="wsm"><b class="bad">84,000 lb</b><span class="wsn bad">OVER 80,000</span></span></summary><div class="nmc"><p class="nmn" style="margin:0 0 6px">New Mexico. Do not exceed 80,000 lb. Aim for 79,000.</p><label class="f" data-n="3">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><div class="split"><p class="sl">Updated mix for 5,444 gal</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div></div></div></details></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Tap Weight check to open it. When closed, the bar still shows the projected weight</span></li><li><i>3</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
     <ol>
       <li>Texas loads can't go over 84,000 lb, and the target is 83,000. NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
-      <li>Before loading, open the load and enter the scale-in light weight. It shows the projected weight of the order and how many gallons fit.</li>
+      <li>Before loading, open the load, tap <b>Weight check</b> and enter the scale-in light weight. It shows the projected weight of the order and how many gallons fit.</li>
       <li>If the whole order fits, it says so. Load the amounts in Needs. The Updated mix only shows when the order is too heavy and has to be cut back.</li>
       <li>Halliburton chems are counted in the weight at the product's weight, and they are never cut. Only the product gallons come down.</li>
     </ol>
@@ -784,6 +800,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <details><summary>Adding and removing orders</summary>
     <ol>
       <li>Tap <span class="kb">Add an order</span> on the Load Log. Fill in the trailer or customer, product, ticket gallons, ticket number and anything else you have, then tap <span class="kb">Save order</span>.</li>
+      <li>Trailer came back with product in it? Tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
       <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico under Delivering to for NM loads.</li>
       <li>To remove one, open it and tap <span class="kb">Remove</span>. Only leads see these buttons.</li>
@@ -895,9 +912,27 @@ function splitOf(prod,gal){
   if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d2=DIL[b.hcl];return {acid:hg*d2[0],head:"Blend "+gf(hg)+" gal of "+b.hcl+"% HCl first, then the chemicals",parts:[["Water",hg*d2[1]],["36% acid",hg*d2[0]],["Y007",gal*b.f.y7],["Y007A",gal*b.f.y7a],["A272",gal*b.f.a272]]}}
   return null;
 }
-function splitHtml(prod,gal,label){
+/* Heel: product left in a trailer that comes back. Its acid and water are already in the
+   trailer, so they come off what the load needs. hl = heelOf(o). */
+var HEEL_PRODS=["acid","32","28","20","15","10","7.5","5"];
+function heelOf(o){
+  var g=parseFloat(o&&o.heelGal);if(!(g>0))return null;
+  var p=HEEL_PRODS.indexOf(String(o.heelProd))>=0?String(o.heelProd):"acid",sp=splitOf(p,g);
+  var wt=0;sp.parts.forEach(function(x){if(x[0]==="Water")wt=x[1]});
+  return {gal:g,prod:p,acid:sp.acid,water:wt};
+}
+function splitHtml(prod,gal,label,hl){
   var s=splitOf(prod,gal);if(!s)return "";
-  return '<div class="split"><p class="sl">'+(label||"Needs")+(s.head?': '+esc(s.head):'')+'</p><div class="sg">'+s.parts.map(function(p){return '<div><span>'+p[0]+'</span><b>'+gf(p[1])+' <small>gal</small></b></div>'}).join("")+'</div></div>';
+  var over=[],parts=s.parts.map(function(p){
+    if(!hl)return p;
+    var off=p[0]==="Water"?hl.water:p[0]==="36% acid"?hl.acid:0,v=p[1]-off;
+    if(v<0){over.push(p[0]==="Water"?"water":"acid");v=0}
+    return [p[0],v];
+  });
+  var h='<div class="split"><p class="sl">'+(label||"Needs")+(hl?' (after heel)':'')+(s.head?': '+esc(s.head):'')+'</p><div class="sg">'+parts.map(function(p){return '<div><span>'+p[0]+'</span><b>'+gf(p[1])+' <small>gal</small></b></div>'}).join("")+'</div>';
+  if(hl)h+='<p class="hln">Heel '+gf(hl.gal)+' gal '+esc(pname(hl.prod))+' already in: '+(hl.water>0?'water '+gf(hl.water)+', ':'')+'acid '+gf(hl.acid)+' gal taken off.</p>';
+  if(over.length)h+='<p class="hln bad">The heel has more '+over.join(" and ")+' than this load needs.</p>';
+  return h+'</div>';
 }
 function reqAcid(o){var s=splitOf(o.prod,o.gal);return s?s.acid:(parseFloat(o.gal)||0)}
 var NM_TARGET=79000,NM_MAX=80000;
@@ -924,59 +959,73 @@ function nmOut(o,L){
   if(!(L>0))return '<p class="nmn">Enter the scale-in light weight to see the projected weight and how much product fits.</p>';
   var wi=wtFor(o.prod,o);
   if(!wi)return '<p class="nmn">Enter the product weight per gallon above.</p>';
-  var hg=halGal(o),og=parseFloat(o.gal)||0,h='';
+  var hg=halGal(o),hl=heelOf(o),hv=hl?hl.gal:0,og=parseFloat(o.gal)||0,add=Math.max(0,og-hv),h='';
+  /* The heel is already in the light weight, so only the product still to add is weighed */
   var gal=Math.floor((lim.t-L)/wi.w-hg);
-  var pw=og>0?L+(og+hg)*wi.w:0,cls=pw>lim.m?"bad":pw>lim.t?"warn":"";
+  var pw=og>0?L+(add+hg)*wi.w:0,cls=pw>lim.m?"bad":pw>lim.t?"warn":"";
   if(og>0)h+='<div class="nmr"><div><span>Projected weight'+(hg>0?' (with chems)':'')+'</span><b class="'+cls+'">'+num(pw)+' <small>lb</small></b></div></div>';
-  if(og>0&&gal>=og){
+  if(og>0&&gal>=add){
     h+='<p class="nmn">The full '+gf(og)+' gal order fits under the '+num(lim.t)+' lb target. Load the amounts in Needs above.</p>';
   }else if(gal<=0){
     h+='<p class="nmn bad">'+(hg>0?'The light weight plus the Halliburton chems is':'The light weight is')+' already at or over the '+num(lim.t)+' lb target.</p>';
   }else{
     if(og>0)h+='<p class="nmn '+cls+'">'+(pw>lim.m?'OVER '+num(lim.m)+' LB. Cut the order back.':'Over the '+num(lim.t)+' lb target. Cut the order back.')+'</p>';
-    h+='<div class="nmr"><div><span>Max product at '+num(lim.t)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(L+(gal+hg)*wi.w)+' <small>lb</small></b></div></div>';
-    h+=splitHtml(o.prod,gal,"Updated mix for "+gf(gal)+" gal");
+    h+='<div class="nmr"><div><span>Max product'+(hl?' to add':'')+' at '+num(lim.t)+' lb</span><b>'+gf(gal)+' <small>gal</small></b></div><div><span>Gross weight</span><b>'+num(L+(gal+hg)*wi.w)+' <small>lb</small></b></div></div>';
+    h+=splitHtml(o.prod,gal+hv,"Updated mix for "+gf(gal+hv)+" gal"+(hl?" total":""),hl);
   }
+  if(hl)h+='<p class="nmn">The '+gf(hv)+' gal heel is already in the light weight, so only the '+gf(add)+' gal still to load is added.</p>';
   if(hg>0)h+='<p class="nmn">Includes '+gf(hg)+' gal of Halliburton chems at the product weight. Chem amounts stay the same.</p>';
   if(wi.est)h+='<p class="nmn">CableShield weight is not on file. This uses the '+wi.est+' weight as an estimate, so confirm on the scale.</p>';
   return h;
 }
+/* Short result for the closed Weight check bar */
+function wSum(o,L){
+  L=parseFloat(L);var lim=wtLim(o),wi=wtFor(o.prod,o),og=parseFloat(o.gal)||0;
+  if(!(L>0))return '<span class="wsn">Enter scale-in weight</span>';
+  if(!wi||!(og>0))return '<span class="wsn">Open to see what fits</span>';
+  var hl=heelOf(o),pw=L+(Math.max(0,og-(hl?hl.gal:0))+halGal(o))*wi.w;
+  var c=pw>lim.m?"bad":pw>lim.t?"warn":"ok";
+  return '<b class="'+c+'">'+num(pw)+' lb</b><span class="wsn '+c+'">'+(c==="bad"?"OVER "+num(lim.m):c==="warn"?"Over target":"Fits")+'</span>';
+}
 function nmUpdate(id){
   var o=find(id),out=$("nmo-"+id);if(!o||!out)return;
-  var t=Object.assign({},o),l=$("nml-"+id),w=$("nmw-"+id);
+  var t=Object.assign({},o),l=$("nml-"+id),w=$("nmw-"+id),L=l?l.value:o.lightWt;
   if(w)t.wtPerGal=w.value;
-  out.innerHTML=nmOut(t,l?l.value:o.lightWt);
+  out.innerHTML=nmOut(t,L);
+  var sm=$("ws-"+id);if(sm)sm.innerHTML=wSum(t,L);
 }
 /* Redo every open NM card's numbers, e.g. after a weight per gallon is changed. */
 function nmRefreshAll(){ORD.forEach(function(o){if(status(o)!=="done")nmUpdate(o.id)})}
+/* Halliburton chems box: stands out in orange so it isn't missed */
+function halBox(o){
+  if(!halHas(o))return "";
+  return '<div class="split hal"><p class="sl">Halliburton chems</p><div class="sg">'+HAL_N.map(function(k){var n=String(o["hn"+k]||"").trim(),a=parseFloat(o["ha"+k]);if(!n&&!(a>0))return "";return '<div><span>'+esc(n||"Chem "+k)+'</span><b>'+(a>0?gf(a):'–')+' <small>gal</small></b></div>'}).join("")+'</div></div>';
+}
+var WOPEN={};
 function viewCard(o){
-  var st=status(o),b="",id=esc(o.id),w=can(),ld=canonName(o.loader),op=!!OPEN[o.id];
+  var st=status(o),b="",id=esc(o.id),w=can(),ld=canonName(o.loader),op=!!OPEN[o.id],hl=heelOf(o);
   var row='<button type="button" class="orow" data-act="toggle" data-id="'+id+'" aria-expanded="'+op+'" style="--lc:'+(ld?colOf(ld):'transparent')+'"><span class="lcb"></span><span class="orm">'+
     '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(pname(o.prod))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">\u203a</span></button>';
-  b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs");
-  var m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'');
-  if(m)b+='<div class="meta">'+m+'</div>';
-  if(halHas(o))b+='<div class="meta"><span>Halliburton: '+esc(halText(o))+'</span></div>';
-  if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
-  if(o.startAt)b+='<div class="meta"><span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':'')+'</div>';
+    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
+  /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NEW MEXICO. Do not exceed '+num(NM_MAX)+' lb. Aim for '+num(NM_TARGET)+'.</p>';
+  b+=splitHtml(o.prod,o.gal,o.prod==="acid"?"Requested":"Needs",hl);
+  b+=halBox(o);
+  if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
+  /* 2. Weight check (folds away; the bar shows the result) */
   if(st!=="done"){
-      b+='<div class="nmc">';
-      if(o.state!=="NM")b+='<p class="nmn" style="margin:0 0 6px">Texas. Do not exceed '+num(TX_MAX)+' lb. Aim for '+num(TX_TARGET)+'.</p>';
-      if(w){
-        b+='<label class="f" for="nml-'+id+'">Scale-in light weight (lb)</label><input id="nml-'+id+'" data-f="lightWt" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.lightWt)+'">';
-        if(o.prod==="other")b+='<label class="f" for="nmw-'+id+'" style="margin-top:8px">Product weight (lb per gallon)</label><input id="nmw-'+id+'" data-f="wtPerGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.wtPerGal)+'">';
-      }
-      b+='<div id="nmo-'+id+'">'+nmOut(o,o.lightWt)+'</div></div>';
+    var lim=wtLim(o);
+    b+='<details class="wck" data-wid="'+id+'"'+(WOPEN[o.id]?' open':'')+'><summary><span class="wst">Weight check</span><span class="wsm" id="ws-'+id+'">'+wSum(o,o.lightWt)+'</span></summary><div class="nmc">';
+    b+='<p class="nmn" style="margin:0 0 6px">'+(o.state==="NM"?'New Mexico':'Texas')+'. Do not exceed '+num(lim.m)+' lb. Aim for '+num(lim.t)+'.</p>';
+    if(w){
+      b+='<label class="f" for="nml-'+id+'">Scale-in light weight (lb)</label><input id="nml-'+id+'" data-f="lightWt" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.lightWt)+'">';
+      if(o.prod==="other")b+='<label class="f" for="nmw-'+id+'" style="margin-top:8px">Product weight (lb per gallon)</label><input id="nmw-'+id+'" data-f="wtPerGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.wtPerGal)+'">';
+    }
+    b+='<div id="nmo-'+id+'">'+nmOut(o,o.lightWt)+'</div></div></details>';
   }
-  var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
-  if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div></div>';
-  else if(o.loader)b+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';
-  if(w)b+='<div class="amt"><label class="chk"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label></div>';
-  else if(o.onSheet===false)b+='<div class="meta"><span>Not on loadout sheet</span></div>';
+  /* 3. Start / end */
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go hold" data-act="end" data-id="'+id+'"><span>Hold to end load</span></button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
@@ -984,7 +1033,15 @@ function viewCard(o){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
   }
-  if(w)b+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(canManage()?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
+  /* 4. Details at the bottom */
+  var f='',m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'')+(o.startAt?'<span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':''):'');
+  if(m)f+='<div class="meta">'+m+'</div>';
+  var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
+  if(w)f+='<div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div>'+
+    '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label>';
+  else{if(o.loader)f+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';if(o.onSheet===false)f+='<div class="meta"><span>Not on loadout sheet</span></div>'}
+  if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(canManage()?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
+  if(f)b+='<div class="ofoot">'+f+'</div>';
   return '<div class="ord vc '+st+(o.state==="NM"?' nm':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
 function editCard(o){
@@ -996,6 +1053,8 @@ function editCard(o){
    '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
    '<div><label class="f" for="e_st'+i+'">Start time</label><input id="e_st'+i+'" data-f="startT" data-id="'+i+'" type="time" value="'+tval(o.startAt)+'"></div>'+
    '<div><label class="f" for="e_en'+i+'">End time</label><input id="e_en'+i+'" data-f="endT" data-id="'+i+'" type="time" value="'+tval(o.endAt)+'"></div>'+
+   '<div class="full"><label class="chk"><input type="checkbox" data-heel="'+i+'"'+(heelOf(o)?' checked':'')+'> Heel? (product left in the trailer)</label></div>'+
+   '<div class="full halw" id="e_heelw'+i+'"'+(heelOf(o)?'':' hidden')+'><div><label class="f" for="e_heelp'+i+'">Heel product</label><select id="e_heelp'+i+'" data-f="heelProd" data-id="'+i+'">'+heelOpts(o.heelProd||"20")+'</select></div><div><label class="f" for="e_heelg'+i+'">Heel (gal)</label><input id="e_heelg'+i+'" data-f="heelGal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.heelGal||"")+'"></div></div>'+
    '<div class="full"><label class="chk"><input type="checkbox" data-hal="'+i+'"'+(halHas(o)?' checked':'')+'> Halliburton chems</label></div>'+
    '<div class="full halw" id="e_halw'+i+'"'+(halHas(o)?'':' hidden')+'>'+halRows(o,"e_h"+i,i)+'</div>'+
    '<div><label class="f" for="e_tk'+i+'">Ticket #</label><input id="e_tk'+i+'" data-f="ticket" data-id="'+i+'" type="text" value="'+esc(o.ticket)+'"></div>'+
@@ -1181,7 +1240,7 @@ function flushKey(k){
     }
   }
   else if(f==="lightWt"||f==="wtPerGal"){var n9=parseFloat(v),nv9=(String(v).trim()===""||!(n9>0))?null:n9;var cu9=(o[f]==null)?null:parseFloat(o[f]);if(cu9===nv9)return 0;patch[f]=nv9}
-  else if(/^ha[123]$/.test(f)){var ha=parseFloat(v),hv=ha>0?ha:null,hc=o[f]==null||o[f]===""?null:parseFloat(o[f]);if(hc===hv)return 0;patch[f]=hv}
+  else if(/^ha[123]$/.test(f)||f==="heelGal"){var ha=parseFloat(v),hv=ha>0?ha:null,hc=o[f]==null||o[f]===""?null:parseFloat(o[f]);if(hc===hv)return 0;patch[f]=hv}
   else if(f==="gal"){var g=parseFloat(v);g=g>0?g:0;if((parseFloat(o.gal)||0)===g)return 0;patch.gal=g}
   else{var s=String(v).trim();if(f==="loader")s=canonName(s);if((o[f]||"")===s)return 0;patch[f]=s}
   upd(d.id,patch);return 1;
@@ -1233,12 +1292,14 @@ function ticketWater(prod,tg){
   if(CSB[prod]){var hb=tg-csChems(prod,tg,tg).total;return hb>0?hb*DIL[CSB[prod].hcl][1]:null}
   return null;
 }
-function finSplit(prod,gal,tg){
+function finSplit(prod,gal,tg,hw){
   if(prod==="acid")return {acid:gal,water:null};
   var hg=gal;
   if(CSB[prod]){hg=gal-csChems(prod,gal,tg).total;if(!(hg>0))return null}
   else if(!DIL[prod])return null;
   var d=DIL[DIL[prod]?prod:CSB[prod].hcl],w=ticketWater(prod,tg);
+  /* Heel water is already in the trailer, so less water goes in */
+  if(w!=null&&hw>0)w=Math.max(0,w-hw);
   if(w==null)return {acid:hg*d[0],water:hg*d[1],fromTicket:false};
   return {acid:hg<w?null:hg-w,water:w,fromTicket:true,short:hg<w};
 }
@@ -1248,12 +1309,13 @@ function finCalc(){
   $("fin_wab").hidden=prod==="acid";
   var wi=wtFor(prod,{wtPerGal:$("fin_w").value}),out=$("fin_out"),note="";
   var put=function(el,v){if(el.getAttribute("data-touched")!=="1")el.value=v==null?"":Math.round(v)};
-  var fo=find(finId),tg=fo?parseFloat(fo.gal)||0:0,tw=ticketWater(prod,tg);
+  var fo=find(finId),tg=fo?parseFloat(fo.gal)||0:0,tw=ticketWater(prod,tg),fh=heelOf(fo),hw=fh&&prod!=="acid"?fh.water:0;
+  if(tw!=null&&hw>0)tw=Math.max(0,tw-hw);
   if(tw!=null)put($("fin_wa"),tw);
   if(!(L>0)||!(H>0)){out.innerHTML='<p class="er">Enter the light and heavy weights from the scale ticket.</p>';$("fin_n").textContent="";return}
   if(H<=L){out.innerHTML='<p class="er">Heavy weight must be more than light weight.</p>';$("fin_n").textContent="";return}
   if(!wi){out.innerHTML='<p class="er">Enter the product weight per gallon.</p>';$("fin_n").textContent="";return}
-  var net=H-L,gal=net/wi.w,s=finSplit(prod,gal,tg);
+  var net=H-L,gal=net/wi.w,s=finSplit(prod,gal,tg,hw);
   var oh='<div class="fr"><span>Net product</span><b>'+num(net)+' lb</b></div>';
   if(CSB[prod]){
     /* Show the exact chemicals coming off before the acid/water split (the split uses the HCl blend only) */
@@ -1263,7 +1325,7 @@ function finCalc(){
       (hb>0?'<div class="fr big"><span>= '+CSB[prod].hcl+'% HCl blend</span><b>'+gf(hb)+' gal</b></div>':'<p class="er">The scale shows less than the chemicals alone. Check the weights.</p>');
   }else oh+='<div class="fr big"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>';
   if(s&&s.fromTicket){
-    oh+='<div class="fr"><span>− Water from ticket<small>'+gf(tg)+' gal ticket</small></span><b>−'+gf(s.water)+' gal</b></div>'+
+    oh+='<div class="fr"><span>− Water from ticket<small>'+gf(tg)+' gal ticket'+(hw>0?', less '+gf(hw)+' gal heel water':'')+'</small></span><b>−'+gf(s.water)+' gal</b></div>'+
       (s.short?'<p class="er">The scale shows less than the ticket water. Check the weights.</p>':'<div class="fr big"><span>= Acid (the rest)</span><b>'+gf(s.acid)+' gal</b></div>');
   }
   out.innerHTML=oh;
@@ -1301,8 +1363,11 @@ $("fin_ok").onclick=saveFin;$("fin_x").onclick=closeFin;
 $("fin").addEventListener("keydown",function(e){if(e.key==="Escape")closeFin()});
 function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
 $("a_state").onchange=updState;
-function updSplit(){$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs")}
-$("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;updSplit();
+function heelOpts(sel){return HEEL_PRODS.map(function(k){return '<option value="'+k+'"'+(k===String(sel)?' selected':'')+'>'+esc(pname(k))+'</option>'}).join("")}
+$("a_heelp").innerHTML=heelOpts("20");
+function updSplit(){var hl=$("a_heel").checked?heelOf({heelGal:$("a_heelg").value,heelProd:$("a_heelp").value}):null;$("a_split").innerHTML=splitHtml($("a_prod").value,$("a_gal").value,$("a_prod").value==="acid"?"Requested":"Needs",hl)}
+$("a_prod").onchange=updSplit;$("a_gal").oninput=updSplit;$("a_heelg").oninput=updSplit;$("a_heelp").onchange=updSplit;
+$("a_heel").onchange=function(){$("a_heelw").hidden=!this.checked;updSplit();if(this.checked)try{$("a_heelg").focus()}catch(e){}};updSplit();
 /* Halliburton chems: up to 3 rows of chem name + amount (gal), stored flat on the order as
    hn1/ha1..hn3/ha3. A record only; it does not change the acid/water math. */
 var HAL_N=[1,2,3];
@@ -1323,6 +1388,7 @@ function addOrder(){
   if(!DL||!can()||!canManage())return;
   var gal=parseFloat($("a_gal").value);
   var data={loader:canonName($("a_ld").value),name:$("a_name").value.trim(),prod:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  if($("a_heel").checked){var hgv=parseFloat($("a_heelg").value);if(hgv>0){data.heelGal=hgv;data.heelProd=$("a_heelp").value}}
   if($("a_hal").checked)HAL_N.forEach(function(k){var n=$("a_hn"+k).value.trim(),a=parseFloat($("a_ha"+k).value);if(n)data["hn"+k]=n;if(a>0)data["ha"+k]=a});
   var st=$("a_st").value,en=$("a_en").value;
   if(en&&!st){toast("Add a start time too, or clear the end time.");return}
@@ -1333,6 +1399,7 @@ function addOrder(){
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";updState();
   HAL_N.forEach(function(k){$("a_hn"+k).value="";$("a_ha"+k).value=""});$("a_hal").checked=false;$("a_halw").hidden=true;
+  $("a_heel").checked=false;$("a_heelw").hidden=true;$("a_heelg").value="";$("a_heelp").value="20";updSplit();
   $("addp").hidden=true;
 }
 function buildText(){
@@ -1371,7 +1438,11 @@ $("list").addEventListener("pointerdown",function(e){
 });
 ["pointerup","pointercancel","pointerleave"].forEach(function(t){$("list").addEventListener(t,function(e){if(holdB&&(t!=="pointerleave"||e.target===holdB))holdStop(t==="pointerup"&&!holdDone)},true)});
 $("list").addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest("button.hold"))e.preventDefault()});
-function onEdit(e){var hk=e.target.getAttribute("data-hal");if(hk!=null){if(e.type!=="change")return;var hw=$("e_halw"+hk),hon=e.target.checked;if(hw)hw.hidden=!hon;
+function onEdit(e){var ek=e.target.getAttribute("data-heel");if(ek!=null){if(e.type!=="change")return;var ew=$("e_heelw"+ek),eon=e.target.checked;if(ew)ew.hidden=!eon;
+    if(eon){var ep=$("e_heelp"+ek);if(ep)setField(ek,"heelProd",ep.value)}
+    else{Object.keys(deb).forEach(function(d){if(deb[d].id===ek&&(deb[d].f==="heelGal"||deb[d].f==="heelProd")){clearTimeout(deb[d].t);delete deb[d]}});var eg=$("e_heelg"+ek);if(eg)eg.value="";var eo=find(ek);if(eo&&(eo.heelGal!=null||eo.heelProd!=null))upd(ek,{heelGal:null,heelProd:null})}
+    return}
+  var hk=e.target.getAttribute("data-hal");if(hk!=null){if(e.type!=="change")return;var hw=$("e_halw"+hk),hon=e.target.checked;if(hw)hw.hidden=!hon;
     /* Unticking clears the chems from the order */
     if(!hon){var hp={};HAL_N.forEach(function(k){hp["hn"+k]=null;hp["ha"+k]=null;Object.keys(deb).forEach(function(d){if(deb[d].id===hk&&(deb[d].f==="hn"+k||deb[d].f==="ha"+k)){clearTimeout(deb[d].t);delete deb[d]}})});if(hw)hw.querySelectorAll("input").forEach(function(x){x.value=""});if(halHas(find(hk)||{}))upd(hk,hp)}
     return}var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
@@ -1379,6 +1450,7 @@ function onEdit(e){var hk=e.target.getAttribute("data-hal");if(hk!=null){if(e.ty
   if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
   if(f)setField(eid,f,e.target.value)}
 $("list").oninput=onEdit;$("list").onchange=onEdit;
+$("list").addEventListener("toggle",function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-wid");if(k!=null){if(e.target.open)WOPEN[k]=1;else delete WOPEN[k]}},true);
 $("list").addEventListener("focusout",function(){setTimeout(function(){
   var n=flushAll();
   if(!n&&pendingBuild&&!isEditingNow()&&!hasDeb())build();
