@@ -261,18 +261,35 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .sca{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .sca button{min-height:36px;font-size:14px}
 .silall{margin-top:8px}
+.tqfab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));z-index:20;width:60px;height:60px;min-height:0;padding:0;border-radius:50%;border:2px solid #eca03f;background:#fff;box-shadow:0 4px 14px rgba(5,15,35,.28);display:grid;place-items:center;cursor:pointer;transition:transform .12s}
+.tqfab img{width:42px;height:42px;border-radius:8px;object-fit:cover}
+.tqfab:active{transform:scale(.94)}
+.tqfab:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+#v-log .wrap{padding-bottom:90px}
 .ask{max-width:760px}
-.askf{display:flex;gap:8px;margin-top:4px}.askf input{flex:1;min-width:0}.askf button{flex:none;min-width:84px}
-.askx{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+#v-ask{padding-bottom:0}
+.tqh{display:flex;align-items:center;gap:10px;padding:4px 0 10px;border-bottom:1px solid var(--line)}
+.tqh b{display:block;font-size:17px}.tqh span{font-size:13px;color:var(--mute)}
+.tqa{width:40px;height:40px;border-radius:8px;flex:none;object-fit:cover;border:1px solid var(--line);background:#fff}
+.tql{display:flex;flex-direction:column;gap:10px;margin-top:12px;min-height:30vh}
+.tqm{display:flex;gap:8px;align-items:flex-end;max-width:92%}
+.tqm .tqa{width:30px;height:30px;border-radius:6px}
+.tqb{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:9px 12px;font-size:15px;line-height:1.4}
+.tqm.me{align-self:flex-end;max-width:85%}
+.tqm.me .tqb{background:var(--brand);color:#fff;border-color:var(--brand);border-radius:12px 12px 3px 12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.tqb .ash{margin:0;font:700 24px/1.15 var(--display)}.tqb .ash small{font:600 14px var(--body);color:var(--mute)}
+.tqb .split{margin-top:8px}.tqb table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+.tqb td,.tqb th{text-align:left;padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}.tqb th{font-size:12px;color:var(--mute);font-weight:600}
+.tqb .asw{margin:8px 0 0;font-size:13px;color:var(--mute)}.tqb .asn{margin:6px 0 0;font-size:14px}.tqb ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+.tqb .acts{margin-top:8px}.tqb p{margin:0}
+.tqm.miss .tqb{border-left:3px solid var(--warn)}
+.tqt span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--mute);animation:tqd 1s infinite ease-in-out}
+.tqt span:nth-child(2){animation-delay:.15s}.tqt span:nth-child(3){animation-delay:.3s}
+@keyframes tqd{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.tqt span{animation:none}}
+.askx{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
 .askx button{min-height:32px;padding:3px 10px;font-size:13px;font-weight:600;border-radius:14px;color:var(--mute)}
-.asa{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:var(--r);padding:12px 14px;margin-top:12px}
-.asa>.asq{margin:0 0 6px;font-size:13px;color:var(--mute);font-weight:600}
-.asa>.ash{margin:0;font:700 26px/1.15 var(--display)}.asa>.ash small{font:600 14px var(--body);color:var(--mute)}
-.asa .sg{margin-top:4px}.asa table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
-.asa td,.asa th{text-align:left;padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}.asa th{font-size:12px;color:var(--mute);font-weight:600}
-.asa .asw{margin:8px 0 0;font-size:13px;color:var(--mute)}.asa .asn{margin:6px 0 0;font-size:14px}
-.asa.miss{border-left-color:var(--warn)}.asa ul{margin:6px 0 0;padding-left:18px;font-size:14px}
-.asa .acts{margin-top:8px}
+.askf input{flex:1;min-width:0}.askf button{flex:none;min-width:84px}
 .ho{max-width:760px}
 .tvh{margin:16px -14px 8px;padding:7px 14px;background:#1b2f4d;color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .tvh button{margin-left:auto;min-height:28px;padding:2px 10px;font-size:12px;text-transform:none;letter-spacing:0;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
@@ -560,6 +577,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 </div></header>
 <div class="stripe"></div>
 <main id="v-log"><div class="wrap">
+  <button id="tq_fab" class="tqfab" type="button" aria-label="Ask Tarquino" title="Ask Tarquino"><img src="icon-192.png" alt=""></button>
   <div id="demob" class="demob" hidden>
     <div class="dbh"><b>DEMO BOARD</b><span>Example loads for presentations. Nothing here is saved or shared.</span></div>
     <div class="dba"><button id="dm_rand" type="button" class="go">Randomize</button><button id="dm_exit" type="button">Exit demo</button></div>
@@ -776,10 +794,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div id="ho_past"></div>
 </div></main>
 <main id="v-ask" hidden><div class="wrap ask">
-  <form id="ask_f" class="askf" autocomplete="off"><input id="ask_in" type="search" enterkeyhint="go" placeholder="Ask about gallons, weights, splits or loads" aria-label="Your question"><button class="go" type="submit">Ask</button></form>
+  <div class="tqh"><img src="icon-192.png" alt="" class="tqa"><div><b>Tarquino</b><span>Loader hub assistant · works offline</span></div></div>
+  <div id="ask_out" class="tql" role="log" aria-live="polite"></div>
   <div id="ask_ex" class="askx"></div>
-  <div id="ask_out"></div>
-  <p class="note">Works offline. Answers use the same charts and weights as the rest of the app. Always check against your chart and scale.</p>
+  <form id="ask_f" class="askf chf" autocomplete="off"><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
 </div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
@@ -874,11 +892,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Covering a shift and your name isn't on the sign-in screen? Tap <span class="kb">Show everyone</span>, or ask a lead to mark you on shift.</li>
     </ol>
   </details>
-  <details><summary>Ask</summary>
+  <details><summary>Ask Tarquino</summary>
     <ol>
-      <li>Open the menu and tap <span class="kb">Ask</span>. Type a question and tap <span class="kb">Ask</span>, or tap one of the examples.</li>
+      <li>Tap the round Tarquino button at the bottom right of the Load Log, or open the menu and tap <span class="kb">Ask Tarquino</span>. Type a question and tap <span class="kb">Send</span>, or tap one of the examples.</li>
       <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas or NM, what gallons weigh, and lb per gallon.</li>
-      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. "How do I…" questions are answered from this Help page.</li>
+      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
       <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
     </ol>
   </details>
@@ -950,7 +968,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 <nav id="drawer" aria-label="Sections" aria-hidden="true">
   <div class="dh"><b>Tarquin Coolpro</b><span>Loader hub</span></div>
   <button type="button" data-view="log">Load Log</button>
-  <button type="button" data-view="ask">Ask</button>
+  <button type="button" data-view="ask">Ask Tarquino</button>
   <button type="button" data-view="dil">Acid Dilution</button>
   <button type="button" data-view="lw">Load Weight</button>
   <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
@@ -2450,7 +2468,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],ask:["v-ask","Ask","Quick answers from the app's charts and the board"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -2471,7 +2489,7 @@ function showView(k){
   if(k==="help")$("hp_lead").hidden=!canManage();
   if(k==="sched")setTimeout(renderSched,0);
   if(k==="ho")setTimeout(renderHO,0);
-  if(k==="ask")setTimeout(function(){askEx();try{$("ask_in").focus()}catch(e){}},0);
+  if(k==="ask")setTimeout(function(){askEx();tqRender();try{$("ask_in").focus()}catch(e){}},0);
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
   Object.keys(VIEWS).forEach(function(x){$(VIEWS[x][0]).hidden=x!==k});
@@ -2605,13 +2623,26 @@ function askAnswer(raw){
   var hp=askHelp(q);if(hp)return hp;
   return {miss:1,h:"Not sure what you mean",d:'<p class="asn">Try one of these:</p><ul>'+ASK_EX.slice(0,5).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>'};
 }
-var ASK_LOG=[];
-function askRun(qv){
-  var a=askAnswer(qv);if(!a)return;
-  ASK_LOG.unshift({q:qv,a:a});ASK_LOG=ASK_LOG.slice(0,8);
-  $("ask_out").innerHTML=ASK_LOG.map(function(x,i){return '<div class="asa'+(x.a.miss?' miss':'')+'"'+(i?' style="opacity:.75"':'')+'><p class="asq">'+esc(x.q)+'</p><p class="ash">'+x.a.h+'</p>'+x.a.d+'</div>'}).join("");
+/* Tarquino chat: questions on the right, his answers on the left with the logo.
+   The chat lives in this phone's memory for as long as the app is open. */
+var ASK_LOG=[],tqBusy=false;
+function tqHi(){var n=ME&&!ME.admin?ME.name.split(" ")[0]:"";return '<p>Hi'+(n?' '+esc(n):'')+', I\'m Tarquino. Ask me about gallons loaded, acid and water, heels, weights, how much fits, or what\'s on the board. Tap an example below to start.</p>'}
+function tqMsg(x){
+  if(x.me)return '<div class="tqm me"><div class="tqb">'+esc(x.q)+'</div></div>';
+  return '<div class="tqm'+(x.miss?' miss':'')+'"><img src="icon-192.png" alt="" class="tqa"><div class="tqb">'+(x.typing?'<span class="tqt" aria-label="Tarquino is typing"><span></span><span></span><span></span></span>':x.html)+'</div></div>';
 }
-$("ask_f").onsubmit=function(e){e.preventDefault();var v=$("ask_in").value.trim();if(!v)return;askRun(v);$("ask_in").value="";try{$("ask_in").blur()}catch(x){}};
+function tqRender(){
+  var h=tqMsg({html:tqHi()})+ASK_LOG.map(tqMsg).join("");$("ask_out").innerHTML=h;
+  $("ask_ex").hidden=ASK_LOG.length>0;
+  var last=$("ask_out").lastElementChild;if(last&&curView==="ask")try{last.scrollIntoView({block:"end",behavior:"smooth"})}catch(e){}
+}
+function askRun(qv){
+  if(tqBusy)return;var a=askAnswer(qv);if(!a)return;
+  ASK_LOG.push({me:1,q:qv});ASK_LOG.push({typing:1});tqBusy=true;tqRender();
+  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({html:'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
+}
+$("tq_fab").onclick=function(){showView("ask")};
+$("ask_f").onsubmit=function(e){e.preventDefault();var v=$("ask_in").value.trim();if(!v||tqBusy)return;askRun(v);$("ask_in").value=""};
 $("ask_ex").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-ask]"):null;if(b)askRun(b.getAttribute("data-ask"))};
 $("ask_out").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var g=b.getAttribute("data-askgo"),v=b.getAttribute("data-askview");
   if(g){showView("log");setTimeout(function(){try{openCard(g,true);var el=$("o-"+g);if(el)el.scrollIntoView({block:"center"})}catch(x){}},50)}
