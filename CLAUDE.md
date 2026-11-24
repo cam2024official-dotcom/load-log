@@ -47,7 +47,7 @@ Serve the folder on localhost and drive it in a browser: a PowerShell HttpListen
 
 Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have no `prod`, so the board ignores them:
 
-- `_roster`: the crew list.
+- `_roster`: the crew list. `{names, colors, pins, leads, perms}` keyed `n0`, `n1`… in name order. `perms` holds what a lead granted a crew member (`add`, `rm`, `ho`, `sched`, `rep`, `paper`); check them with `perm(k)`, which is always true for leads, managers and Admin. `saveRoster` rebuilds the whole object, so any new roster field must be added there too.
 - `_chat`: Crew Chat. Messages expire after 24 h.
 - `_sched`: Schedule. `{hrs:{d,n}, w:{name:"DNO×7, Sun first"}, ov:{name:{on,u}}}`. Day shift starts at 6 AM and night shift at 6 PM. A night shift counts toward the day it started.
 - `_handoff`: Shift Handoff, laid out as the Loader Shift Turnover sheet. `{d: draft, p: {id: post}}`. A draft with `v:2` is the turnover sheet (fields listed in the comment above `HO_ID` in index.html); posts without `v` use the old layout. Posting signs as outgoing (`sg.o`); the next lead signs as incoming (`sg.i`). Leads edit; posts are kept 7 days.

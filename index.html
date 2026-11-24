@@ -544,6 +544,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .who b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
 #drawer .who button{margin-top:8px;border:1px solid var(--line);border-radius:var(--r);min-height:40px;padding:6px 12px;text-align:center;font-size:14px}
 /* Roster logins (Lead Panel) */
+.pml{list-style:none;margin:0 0 10px;padding:0}
+.pml li{padding:10px 0;border-bottom:1px solid var(--line)}.pml li:last-child{border-bottom:0}
+.pmc{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:8px}
+.pmc .chk{font-size:14px;font-weight:600}.pmall{display:block;margin-top:4px;font-size:13px;color:var(--mute)}
 .simgh{margin:16px 0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
 .mbadge{font-size:11px;font-weight:700;background:#315a8f;color:#fff;padding:1px 6px;border-radius:3px}
 .lbadge{font-size:11px;font-weight:700;background:var(--acc);color:var(--accink);padding:1px 6px;border-radius:3px}
@@ -824,6 +828,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     <label class="f" for="cptxt">Columns are separated by tabs. Press and hold the text to copy it, then paste into a sheet.</label>
     <textarea id="cptxt" readonly rows="8" wrap="off" style="white-space:pre;overflow:auto"></textarea>
   </div>
+    <div id="ld_admin">
     <h2>Crew Roster</h2>
     <p class="note" style="margin:0 0 10px">Loaders pick their name from this list on every load, so names match on the loadout sheet. Typing a new name still works. Shared with everyone on this crew PIN.</p>
     <ul id="rs_list" class="rs"></ul>
@@ -836,6 +841,11 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     <ul id="mg_list" class="rs"></ul>
     <div class="rsa"><input id="mg_in" type="text" autocomplete="off" maxlength="30" placeholder="Manager's name" aria-label="New manager name"><input id="mg_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="PIN (4 to 8 digits)" aria-label="PIN for new manager" style="max-width:11em"><button id="mg_add" class="go" type="button">Add</button></div>
     <p id="mg_err" class="note" style="color:var(--bad)" hidden></p>
+    <h2>Permissions</h2>
+    <p class="note" style="margin:0 0 10px">Give crew members extra access. Leads, managers and Admin already have all of it. The crew list, PINs, management and permissions stay with leads.</p>
+    <ul id="pm_list" class="pml"></ul>
+    </div>
+    <p id="ld_part" class="note" hidden>You have paperwork access. The crew list, PINs and permissions are for leads.</p>
     <div class="tools" style="margin-top:12px"><button id="ld_lockbtn" class="small" type="button">Lock panel</button></div>
   </div>
 </div></main>
@@ -1090,6 +1100,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>It shows loads finished, gallons, acid and water loaded, average load time, late loads, loads cut for weight and missing amounts, then totals by product, loader and destination, Halliburton chem totals, every finished load, and what's still open.</li>
       <li>Tap <span class="kb">Print or save PDF</span> for a paper copy. It prints in landscape on one page, with the text sized to fill the page: bigger on a quiet shift, smaller on a busy one.</li>
       <li>It's built from the loads on the board, so print it before tapping <span class="kb">Clear finished orders</span>.</li>
+    </ol>
+  </details>
+  <details><summary>Permissions</summary>
+    <ol>
+      <li>In the <span class="kb">Lead Panel</span>, under <b>Permissions</b>, tick what each crew member can do: <b>Add orders</b>, <b>Remove orders</b>, <b>Turnover</b> (fill in, post and sign the Shift Handoff), <b>Schedule</b>, <b>Shift Report</b> and <b>Paperwork</b> (copy shift log, print loadout sheet, clear finished orders).</li>
+      <li>It saves right away and works on their phone as soon as it updates. Leads, managers and Admin always have everything.</li>
+      <li>Someone with Paperwork opens the Lead Panel without the lead PIN but only sees the paperwork part. The crew list, PINs, management and permissions stay with leads.</li>
     </ol>
   </details>
   <details><summary>Management logins</summary>
@@ -1391,7 +1408,7 @@ function viewCard(o){
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="tp" data-id="'+id+'"'+(isTP(o)?' checked':'')+'> Third party driver (80,000 lb limit)</label>'+
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label>';
   else{if(o.loader)f+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';if(o.onSheet===false)f+='<div class="meta"><span>Not on loadout sheet</span></div>'}
-  if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(canManage()?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
+  if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(perm("rm")?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
   if(f)b+='<details class="wck omore" data-wid="m'+id+'"'+(WOPEN["m"+o.id]?' open':'')+'><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">'+esc(sm.join(" · "))+'</span></span></summary><div class="nmc">'+f+'</div></details>';
   return '<div class="ord vc '+st+(o.state==="NM"?' nm':isTP(o)?' tp':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
@@ -1436,9 +1453,9 @@ function build(){
     h+='<section class="grp'+(g[3]?' mine':'')+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
       (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
   if(q)h=(os.length?'<p class="srn">'+os.length+' of '+ORD.length+' loads match “'+esc(q)+'”</p>'+h:'<div class="empty">No loads match “'+esc(q)+'”.</div>');
-  else if(!os.length)h='<div class="empty">'+(can()&&canManage()?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
+  else if(!os.length)h='<div class="empty">'+(can()&&perm("add")?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
   $("list").innerHTML=h;
-  var mg=can()&&canManage();
+  var mg=can()&&perm("add");
   $("addbtn").hidden=!mg;if(!mg)$("addp").hidden=true;
   $("clr").hidden=!can();
   $("ro").hidden=can();
@@ -1638,9 +1655,9 @@ function setField(id,f,v){if(f==="loader")rememberLoader(v);
 function doAct(a,id){
   var o=find(id);if(!o||!can())return;
   if(a==="rm"){
-    if(!canManage())return;
+    if(!perm("rm"))return;
     var rmGo=function(){enqueue(id,function(){return DL.remove(id)});build()};
-    if(isLead())askPin("Remove "+(o.name||"this load")+"? This can't be undone.","Remove load",rmGo,true);
+    if(perm("rm"))askPin("Remove "+(o.name||"this load")+"? This can't be undone.","Remove load",rmGo,true);
     else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
     return}
   rmId=null;
@@ -1848,7 +1865,7 @@ function halText(o){
 $("a_halw").innerHTML=halRows({},"a_h");
 $("a_hal").onchange=function(){$("a_halw").hidden=!this.checked;if(this.checked)try{$("a_hn1").focus()}catch(e){}};
 function addOrder(){
-  if(!DL||!can()||!canManage())return;
+  if(!DL||!can()||!perm("add"))return;
   var gal=parseFloat($("a_gal").value);
   var cxf=$("a_prod").value==="custom"?cxForm():null;
   if($("a_prod").value==="custom"&&!cxf){toast("Enter the base batch and the water for the custom blend.");return}
@@ -1964,8 +1981,9 @@ function onData(list){
   ORD=list.filter(function(o){return o.prod!==undefined});
   /* Loads saved before v73 with Third Party as the destination become Texas + third party driver */
   if(can())ORD.forEach(function(o){if(o.state==="TP"&&!TP_MOVED[o.id]){TP_MOVED[o.id]=1;upd(o.id,{state:"TX",tp:true})}});
-  ROSTER=[];RCOL={};RPIN={};RLEAD={};
+  ROSTER=[];RCOL={};RPIN={};RLEAD={};RPERM={};
   if(rs&&rs.names)Object.keys(rs.names).forEach(function(k){var n=String(rs.names[k]||"").trim();if(!n)return;ROSTER.push(n);var lk=n.toLowerCase();
+    var pm=rs.perms&&rs.perms[k];if(pm&&typeof pm==="object"){var o2={};PERMS.forEach(function(x){if(pm[x[0]])o2[x[0]]=true});RPERM[lk]=o2}
     var c=rs.colors&&rs.colors[k];if(c)RCOL[lk]=String(c);
     var p=rs.pins&&rs.pins[k];if(p)RPIN[lk]=String(p);
     if(rs.leads&&rs.leads[k])RLEAD[lk]=true});
@@ -2009,14 +2027,14 @@ function hhmm(min){return String(Math.floor(min/60)).padStart(2,"0")+":"+String(
 function scErr(t){$("sc_err").textContent=t||"";$("sc_err").hidden=!t}
 function saveSched(p){
   if(!DL||!can()){scErr("Not connected. Schedule changes need a signal.");return false}
-  if(!canManage()){scErr("Only leads can change the schedule.");return false}
+  if(!perm("sched")){scErr("You don't have permission to change the schedule. Ask a lead.");return false}
   scErr("");Object.keys(p).forEach(function(k){if(p[k]!=null)SCHED[k]=p[k];else SCHED[k]=k==="hrs"?{d:360,n:1080}:{}});
   upd(SCHED_ID,p);onShiftChange(true);return true;
 }
 function liveOv(){var o={},now=Date.now();Object.keys(SCHED.ov).forEach(function(k){var v=SCHED.ov[k];if(v&&+v.u>now)o[k]=v});return o}
 function renderSched(){
   if(curView!=="sched")return;
-  var cs=curShift(),lead=canManage();
+  var cs=curShift(),lead=perm("sched");
   $("sc_now").innerHTML=(cs.s==="D"?"Day":"Night")+" shift now<small>"+WD[cs.wd]+" "+clockAt(cs.s==="D"?SCHED.hrs.d:SCHED.hrs.n)+" to "+clockAt(cs.s==="D"?SCHED.hrs.n:SCHED.hrs.d)+"</small>";
   $("sc_ro").hidden=lead;$("sc_lh").hidden=!lead;$("sc_hrs").hidden=!lead;
   var a=document.activeElement;if(!(a&&(a.id==="sc_d"||a.id==="sc_n"))){$("sc_d").value=hhmm(SCHED.hrs.d);$("sc_n").value=hhmm(SCHED.hrs.n)}
@@ -2098,7 +2116,7 @@ function setHO(o){
   renderHO();
 }
 function hoErr(t){$("ho_err").textContent=t||"";$("ho_err").hidden=!t}
-function hoCanEdit(){return canManage()&&!!DL&&can()}
+function hoCanEdit(){return perm("ho")&&!!DL&&can()}
 function hoSave(){
   clearTimeout(hoSaveT);hoSaveT=null;
   if(!hoCanEdit()){hoErr(!can()?"Not connected. Changes need a signal.":"Only leads can fill in the turnover.");return}
@@ -2132,7 +2150,7 @@ function tvPostHtml(p){
   h+='<h4>Facility equipment, maintenance concerns</h4>'+(eq.length?'<table><tr><th>Equipment</th><th>Concern</th><th>Reported?</th></tr>'+eq.map(function(r){return '<tr><td>'+v(r.e)+'</td><td>'+v(r.c)+'</td><td>'+v(r.r)+'</td></tr>'}).join("")+'</table>':'<p class="none">None.</p>');
   if(d.nt)h+='<h4>Notes</h4><p class="hon">'+esc(d.nt)+'</p>';
   h+='<h4>Signatures</h4><p class="tvsig">Outgoing: <b>'+(tvSigTxt(d.sg.o)||'–')+'</b></p><p class="tvsig">Incoming: <b>'+(tvSigTxt(d.sg.i)||'Not signed yet')+'</b></p>';
-  h+='<div class="acts" style="margin-top:10px">'+(!d.sg.i&&canManage()&&ME?'<button type="button" class="go" data-hosigni="'+esc(p.id)+'">Sign as incoming</button>':'')+'<button type="button" data-hoprint="'+esc(p.id)+'">Print or save PDF</button></div>';
+  h+='<div class="acts" style="margin-top:10px">'+(!d.sg.i&&perm("ho")&&ME?'<button type="button" class="go" data-hosigni="'+esc(p.id)+'">Sign as incoming</button>':'')+'<button type="button" data-hoprint="'+esc(p.id)+'">Print or save PDF</button></div>';
   return h+'</div>';
 }
 function hoPostHtml(p){
@@ -2173,7 +2191,7 @@ window.addEventListener("resize",function(){if(!$("tovview").hidden)tvFit()});
 /* ---- The form */
 function renderHO(){
   if(curView!=="ho")return;
-  var ps=hoPosts(),lead=canManage();
+  var ps=hoPosts(),lead=perm("ho");
   $("ho_latest").innerHTML='<h2>Latest turnover</h2>'+(ps.length?hoPostHtml(ps[0]):'<p class="gn">No turnover posted yet.'+(lead?' Fill in this shift below and post it at shift change.':'')+'</p>');
   $("ho_past").innerHTML=ps.length>1?'<h2>Earlier turnovers (last 7 days)</h2><div class="hopast">'+ps.slice(1).map(function(p){return '<details><summary>'+esc(p.sh||"Shift turnover")+(p.by?' · '+esc(p.by):'')+'</summary>'+hoPostHtml(p)+'</details>'}).join("")+'</div>':'';
   $("ho_form").hidden=!lead;if(!lead)return;
@@ -2361,8 +2379,15 @@ function canonName(v){
 
 var rsEdit=-1;
 function crewList(){var cs=curShift();$("crewlist").innerHTML=ROSTER.filter(function(n){return shiftState(n,cs).on}).map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("")}
+function renderPerms(){
+  var el=$("pm_list");if(!el)return;
+  el.innerHTML=ROSTER.length?ROSTER.map(function(n,i){var k=n.toLowerCase();
+    if(RLEAD[k])return '<li><span class="rsn"><i style="background:'+colOf(n)+'"></i>'+esc(n)+' <span class="lbadge">Lead</span></span><span class="pmall">Has everything</span></li>';
+    var pk=RPERM[k]||{};
+    return '<li><span class="rsn"><i style="background:'+colOf(n)+'"></i>'+esc(n)+'</span><div class="pmc">'+PERMS.map(function(x){return '<label class="chk"><input type="checkbox" data-pmi="'+i+'" data-pmk="'+x[0]+'"'+(pk[x[0]]?' checked':'')+'> '+x[1]+'</label>'}).join("")+'</div></li>'}).join(""):'<li class="none">Add crew names first.</li>';
+}
 function renderRoster(){
-  crewList();renderMgmt();
+  crewList();renderMgmt();renderPerms();
   /* Don't redraw while the lead is typing a PIN; Save or Cancel redraws. */
   var a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.type!=="checkbox"&&$("rs_list").contains(a))return;
   $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var k=n.toLowerCase(),cur=RCOL[k],hp=!!RPIN[k],ld=!!RLEAD[k];
@@ -2377,12 +2402,13 @@ function renderRoster(){
    Phones on v23 or older read names (and colors) only. */
 function saveRoster(names){
   if(!DL||!can()){rsErr("Not connected. Open the Load Log with a signal first.");return false}
-  var obj={},cols={},pins={},leads={},hc=false,hp=false,hl=false;
+  var obj={},cols={},pins={},leads={},perms={},hc=false,hp=false,hl=false,hm=false;
   names.forEach(function(n,i){var k=n.toLowerCase();obj["n"+i]=n;
+    var pk=RPERM[k];if(pk&&Object.keys(pk).length){perms["n"+i]=pk;hm=true}
     if(RCOL[k]){cols["n"+i]=RCOL[k];hc=true}
     if(RPIN[k]){pins["n"+i]=RPIN[k];hp=true}
     if(RLEAD[k]){leads["n"+i]=true;hl=true}});
-  var data={names:obj};if(hc)data.colors=cols;if(hp)data.pins=pins;if(hl)data.leads=leads;
+  var data={names:obj};if(hc)data.colors=cols;if(hp)data.pins=pins;if(hl)data.leads=leads;if(hm)data.perms=perms;
   ROSTER=names.slice();renderRoster();applyAuth();refresh();
   enqueue(ROSTER_ID,function(){return names.length?DL.set(ROSTER_ID,data):DL.remove(ROSTER_ID)});
   return true;
@@ -2408,6 +2434,9 @@ async function savePinFor(i){
   rsEdit=-1;try{inp.blur()}catch(e){}
   saveRoster(ROSTER);
 }
+$("pm_list").onchange=function(e){var c=e.target;if(!c.hasAttribute("data-pmi"))return;var nm=ROSTER[+c.getAttribute("data-pmi")];if(nm==null)return;
+  var k=nm.toLowerCase(),pk=RPERM[k]=RPERM[k]||{},key=c.getAttribute("data-pmk");if(c.checked)pk[key]=true;else delete pk[key];if(!Object.keys(pk).length)delete RPERM[k];
+  rsErr("");saveRoster(ROSTER)};
 $("rs_add").onclick=addRoster;
 $("rs_in").onkeydown=function(e){if(e.key==="Enter")addRoster()};
 $("rs_pin").onkeydown=function(e){if(e.key==="Enter")addRoster()};
@@ -2427,7 +2456,7 @@ $("rs_list").onclick=function(e){
   if(!t.hasAttribute("data-rsi"))return;
   var b=t,i=+b.getAttribute("data-rsi"),nm=ROSTER[i];if(nm==null)return;
   if(b.getAttribute("data-arm")!=="1"){b.setAttribute("data-arm","1");b.className="arm";b.textContent="Tap to confirm";setTimeout(function(){if(b.isConnected){b.removeAttribute("data-arm");b.className="";b.textContent="Remove"}},4000);return}
-  var k=nm.toLowerCase();delete RPIN[k];delete RLEAD[k];rsEdit=-1;
+  var k=nm.toLowerCase();delete RPIN[k];delete RLEAD[k];delete RPERM[k];rsEdit=-1;
   rsErr("");saveRoster(ROSTER.filter(function(x,j){return j!==i}));
 };
 
@@ -2498,6 +2527,10 @@ function isLead(){return !!(ME&&ME.lead)}
 /* Adding and removing orders is for leads. Before any logins exist (no PINs set),
    every phone can still do both, so a fresh setup isn't locked out. */
 function canManage(){return isLead()||!needSignIn()}
+/* Permissions a lead can grant to a crew member (saved with the roster as perms:{n0:{add:true}}).
+   Leads, managers and Admin have them all; before any logins exist, everyone does. */
+var PERMS=[["add","Add orders"],["rm","Remove orders"],["ho","Turnover"],["sched","Schedule"],["rep","Shift Report"],["paper","Paperwork"]],RPERM={};
+function perm(k){if(canManage())return true;if(!ME)return false;var p=RPERM[ME.name.toLowerCase()];return !!(p&&p[k])}
 async function checkLeadPin(pin){
   if(!pin)return false;if(pin===LEAD_PIN)return true;
   if(await pinHash(ADMIN_NAME,pin)===ADMIN_HASH)return true;
@@ -2518,7 +2551,7 @@ function applyAuth(){
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
-  $("nav_rep").hidden=!canManage();if(curView==="rep"&&!canManage())showView("log");
+  $("nav_rep").hidden=!perm("rep");if(curView==="rep"&&!perm("rep"))showView("log");
   $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
   if(ME&&ME.name!==was)presSoon();
   renderSched();renderHO();
@@ -3119,7 +3152,7 @@ function askAdd(q){
   if(!ASK_ADD.test(q)&&!cont)return null;
   var d=askAddParse(q,cont?Object.assign({},ASK_CTX.d):{});
   if(cont&&JSON.stringify(d)===JSON.stringify(ASK_CTX.d))return null;
-  if(!canManage())return {miss:1,h:"Only leads can add orders",d:'<p class="asn">Ask a lead to add it, or sign in as a lead.</p>'};
+  if(!perm("add"))return {miss:1,h:"You can't add orders",d:'<p class="asn">Ask a lead to add it, or to give you permission in the Lead Panel.</p>'};
   var c=askAddCard(d),ctx={kind:"add",d:d};
   if(c.need.length)return {miss:1,ctx:ctx,h:"Almost there",d:'<p class="asn">I still need '+c.need.join(", ").replace(/, ([^,]*)$/," and $1")+'. Just send it, like "5000 gal of 15%" or "trailer 707".</p>'+c.t};
   if(!can())return {miss:1,h:"Can't add orders here",d:'<p class="asn">This phone can\'t make changes right now (no signal, or view only).</p>'};
@@ -3134,7 +3167,7 @@ function askDo(pid,ok){
   if(!ok)msg=pd.type==="add"?'<p>No problem, I didn\'t add it.</p>':'<p>Leaving <b>'+esc(pd.nm)+'</b> alone. Holler if you change your mind.</p>';
   else if(pd.type!=="add"&&!can())msg='<p>I couldn\'t save that. Check your signal and try again.</p>';
   else if(pd.type==="add"){
-    if(!canManage()||!can()||!DL)msg='<p>I couldn\'t add it. Check your signal and that you\'re signed in as a lead.</p>';
+    if(!perm("add")||!can()||!DL)msg='<p>I couldn\'t add it. Check your signal and that you have permission to add orders.</p>';
     else{var d=pd.d,data={loader:canonName(d.loader||""),name:d.name,prod:d.prod,gal:d.gal,ticket:d.ticket||"",bol:d.bol||"",notes:"",lbtAt:d.lbt?lbtFrom(d.lbt):null,startAt:null,endAt:null,state:d.state||"TX",onSheet:true,createdAt:Date.now()};if(d.tp)data.tp=true;
       if(cxOf(d.prod))data.cname=d.cname||"Custom blend";
       var nid=DL.newId();enqueue(nid,function(){return DL.set(nid,data)});if(data.loader)rememberLoader(data.loader);
@@ -3442,7 +3475,7 @@ $("drawer").onclick=function(e){var b=e.target.closest?e.target.closest("button[
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("drawer").classList.contains("open"))setDrawer(false)});
 /* Leads signed in on this phone skip the lock. Anyone else unlocks with the lead PIN
    (the shared backup) or any lead's personal PIN. */
-function leadGate(){var ok=isLead()||leadOpen;$("ld_lock").hidden=ok;$("ld_body").hidden=!ok;$("ld_lockbtn").hidden=isLead()}
+function leadGate(){var full=isLead()||leadOpen,ok=full||perm("paper");$("ld_lock").hidden=ok;$("ld_body").hidden=!ok;$("ld_admin").hidden=!full;$("ld_part").hidden=full||!ok;$("ld_lockbtn").hidden=isLead()||!leadOpen}
 function lockLead(){leadOpen=false;rsEdit=-1;$("ld_pin").value="";$("ld_err").hidden=true;leadGate()}
 async function tryLead(){var v=$("ld_pin").value;if(await checkLeadPin(v)){leadOpen=true;$("ld_pin").value="";$("ld_err").hidden=true;renderRoster();leadGate()}else{$("ld_err").hidden=false;$("ld_pin").value="";$("ld_pin").focus()}}
 $("ld_go").onclick=tryLead;$("ld_pin").onkeydown=function(e){if(e.key==="Enter")tryLead()};$("ld_lockbtn").onclick=lockLead;
