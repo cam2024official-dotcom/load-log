@@ -896,7 +896,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <ol>
       <li>Tap the round Tarquino button at the bottom right of the Load Log, or open the menu and tap <span class="kb">Ask Tarquino</span>. Type a question and tap <span class="kb">Send</span>, or tap one of the examples.</li>
       <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas or NM, what gallons weigh, and lb per gallon.</li>
-      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
+      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. Ask about a load by trailer or ticket, like "how much fits on trailer 707", "what does 880 need", "heel on 880 lw 35800 system 32800" or "gallons loaded on 707 hw 76000". It uses that load's product, gallons, light weight, chems, heel and state. Follow up with "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" and it reuses your last question. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
       <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
     </ol>
   </details>
@@ -2501,7 +2501,7 @@ function showView(k){
 /* Ask box: answers typed questions with the app's own charts, weights and board data.
    No AI and no network: it picks the numbers and product out of the question and runs the
    same functions the rest of the app uses (splitOf, wtFor, wtLim, heelOf...). */
-var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","What's loading right now","Acid pulled this shift","Find trailer 707"];
+var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","How much fits on trailer 707","What does trailer 707 need","What's loading right now","Acid pulled this shift"];
 var ASK_PRODS={"36":"acid","32":"32","28":"28","20":"20","15":"15","10":"10","7.5":"7.5","5":"5"};
 function askEx(){$("ask_ex").innerHTML=ASK_EX.map(function(t){return '<button type="button" data-ask="'+esc(t)+'">'+esc(t)+'</button>'}).join("")}
 /* Product named in the question: a saved recipe, CableShield, or an HCl strength */
@@ -2559,7 +2559,7 @@ function askHelp(q){
   var top=best.slice(0,3).filter(function(b){return b.sc>=best[0].sc-1});
   return {h:'From the Help page',d:'<ul>'+top.map(function(b){return '<li><b>'+esc(b.sec)+':</b> '+b.li+'</li>'}).join("")+'</ul><div class="acts"><button type="button" data-askview="help">Open Help</button></div>'};
 }
-function askAnswer(raw){
+function askCore(raw){
   var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
   var p=askProd(q),N=askNums(q);
   /* "5000 gal of 15" with no % sign: a bare strength number nothing else claims */
@@ -2567,7 +2567,7 @@ function askAnswer(raw){
   var pick=function(t){for(var i=0;i<N.length;i++)if(N[i].tag===t)return N[i].v;return null};
   var lw=pick("lw"),hw=pick("hw"),sys=pick("sys"),gal=pick("gal"),bigs=N.filter(function(n){return n.v>=5000&&n.tag!=="gal"}).map(function(n){return n.v});
   var st=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;
-  var needP=function(what){return {miss:1,h:"Which product?",d:'<p class="asn">Add the product to the question, like "'+what+' of 20%" or "of CableShield 100%".</p>'}};
+  var needP=function(what){return {miss:1,needP:1,h:"Which product?",d:'<p class="asn">Add the product to the question, like "'+what+' of 20%" or "of CableShield 100%".</p>'}};
   /* "How do I…" with no numbers is a how-to question: answer from the Help page */
   if(!N.length&&/^(how (do|can|to|would|should)|where|can i|what does|why)\b/.test(q)){var hp0=askHelp(q);if(hp0)return hp0}
   /* Board and lookups first when they're clearly about loads */
@@ -2579,17 +2579,17 @@ function askAnswer(raw){
     if(cur==null||emp==null)return {miss:1,h:"I need two weights",d:'<p class="asn">Give the scale light weight and the system (empty) light weight, like "heel if LW is 35800 but system light weight is 32800, 20%".</p>'};
     var dl=cur-emp;if(!(dl>0))return {h:"No heel",d:'<p class="asn">The scale light weight ('+num(cur)+' lb) isn\'t more than the system light weight ('+num(emp)+' lb).</p>'};
     if(!p){var rows=["acid","32","28","20","15","10","7.5","5"].map(function(k){var w=askWt(k);return '<tr><td>'+pname(k)+'</td><td>'+gf(dl/w.w)+' gal</td></tr>'}).join("");
-      return {h:num(dl)+' <small>lb of heel</small>',d:'<p class="asn">'+num(cur)+' − '+num(emp)+' lb. In gallons, by product:</p><table><tr><th>If the heel is</th><th>Heel</th></tr>'+rows+'</table><p class="asw">Add the product to the question to see its acid and water.</p>'}}
+      ASK_LAST={kind:"heel",p:null,lw:cur,sys:emp};return {h:num(dl)+' <small>lb of heel</small>',d:'<p class="asn">'+num(cur)+' − '+num(emp)+' lb. In gallons, by product:</p><table><tr><th>If the heel is</th><th>Heel</th></tr>'+rows+'</table><p class="asw">Add the product to the question to see its acid and water.</p>'}}
     var w=askWt(p.key);if(!w)return needP("heel");var hgal=dl/w.w;
-    return {h:gf(hgal)+' <small>gal of '+esc(askPn(p))+' heel</small>',d:askSplit(p.key,hgal,"In the heel")+'<p class="asw">'+num(cur)+' − '+num(emp)+' = '+num(dl)+' lb, ÷ '+w.w+' lb/gal'+(w.est?' ('+w.est+' weight, an estimate)':'')+'. Tick Heel? on the order to take it off what the load needs.</p>'};
+    ASK_LAST={kind:"heel",p:p,lw:cur,sys:emp};return {h:gf(hgal)+' <small>gal of '+esc(askPn(p))+' heel</small>',d:askSplit(p.key,hgal,"In the heel")+'<p class="asw">'+num(cur)+' − '+num(emp)+' = '+num(dl)+' lb, ÷ '+w.w+' lb/gal'+(w.est?' ('+w.est+' weight, an estimate)':'')+'. Tick Heel? on the order to take it off what the load needs.</p>'};
   }
   /* Gallons loaded from light and heavy weights */
   if(lw!=null&&hw!=null||/\bloaded\b/.test(q)&&bigs.length>=2&&!/fit/.test(q)){
     var L=lw,H=hw;if(L==null||H==null){L=Math.min.apply(null,bigs);H=Math.max.apply(null,bigs)}
     if(H<L){var t2=L;L=H;H=t2}
     if(!p)return needP("gallons loaded from LW "+num(L)+" to HW "+num(H));
-    var w2=askWt(p.key);if(!w2)return needP("gallons loaded");var net=H-L,g2=net/w2.w,ch=chemsOf(p.key,g2,0);
-    return {h:gf(g2)+' <small>gal of '+esc(askPn(p))+' loaded</small>',d:askSplit(p.key,g2,"By the chart")+'<p class="asw">'+num(H)+' − '+num(L)+' = '+num(net)+' lb net, ÷ '+w2.w+' lb/gal'+(w2.est?' ('+w2.est+' weight, an estimate)':'')+'. With a ticket, the load weight window fills water from the ticket and gives the rest to acid.</p>'};
+    var w2=askWt(p.key);if(!w2)return needP("gallons loaded");var net=H-L,g2=net/w2.w;
+    ASK_LAST={kind:"loaded",p:p,lw:L,hw:H};return {h:gf(g2)+' <small>gal of '+esc(askPn(p))+' loaded</small>',d:askSplit(p.key,g2,"By the chart")+'<p class="asw">'+num(H)+' − '+num(L)+' = '+num(net)+' lb net, ÷ '+w2.w+' lb/gal'+(w2.est?' ('+w2.est+' weight, an estimate)':'')+'. With a ticket, the load weight window fills water from the ticket and gives the rest to acid.</p>'};
   }
   /* How much fits under the weight limit */
   if(/\bfit|\bmax\b|how (much|many).*(can|could|will)|room|under (the )?(limit|weight)|over ?weight|too heavy|cut (it|back)/.test(q)&&(lw!=null||bigs.length)){
@@ -2601,12 +2601,12 @@ function askAnswer(raw){
       d3+='<tr><td>'+(s2==="NM"?"New Mexico":"Texas")+'</td><td>'+(g3>0?gf(g3)+' gal':'none')+'</td><td>'+(g3>0?num(L2+g3*w3.w)+' lb':'–')+'</td><td>aim '+num(lim.t)+', max '+num(lim.m)+'</td></tr>'});
     var tg=gal;if(tg){var lim2=wtLim({state:st||"TX"}),pw=L2+tg*w3.w;d3='<p class="asn">'+gf(tg)+' gal would weigh '+num(pw)+' lb'+(pw>lim2.m?', OVER '+num(lim2.m):pw>lim2.t?', over the '+num(lim2.t)+' target':', under the target')+'.</p>'+'<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>'}
     else d3='<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>';
-    return {h:h3,d:d3+'<p class="asw">Light weight '+num(L2)+' lb, '+w3.w+' lb/gal. Halliburton chems or a heel change this, so use Weight check on the load for the exact cut.</p>'};
+    ASK_LAST={kind:"fit",p:p,lw:L2,st:st,gal:gal};return {h:h3,d:d3+'<p class="asw">Light weight '+num(L2)+' lb, '+w3.w+' lb/gal. Halliburton chems or a heel change this, so use Weight check on the load for the exact cut.</p>'};
   }
   /* Weight of a number of gallons */
   if(gal&&/\b(weigh|weight|heavy|pounds|lbs?)\b/.test(q)&&!/acid and water|split|mix/.test(q)){
     if(!p)return needP("how much does "+num(gal)+" gal weigh");var w4=askWt(p.key);if(!w4)return needP("weight");
-    var pl=gal*w4.w,L4=lw;return {h:num(pl)+' <small>lb for '+gf(gal)+' gal of '+esc(askPn(p))+'</small>',d:(L4?'<p class="asn">With a '+num(L4)+' lb light weight, gross is '+num(L4+pl)+' lb.</p>':'')+'<p class="asw">'+gf(gal)+' × '+w4.w+' lb/gal'+(w4.est?' ('+w4.est+' weight, an estimate)':'')+'.</p>'};
+    var pl=gal*w4.w,L4=lw;ASK_LAST={kind:"weight",p:p,gal:gal,lw:lw};return {h:num(pl)+' <small>lb for '+gf(gal)+' gal of '+esc(askPn(p))+'</small>',d:(L4?'<p class="asn">With a '+num(L4)+' lb light weight, gross is '+num(L4+pl)+' lb.</p>':'')+'<p class="asw">'+gf(gal)+' × '+w4.w+' lb/gal'+(w4.est?' ('+w4.est+' weight, an estimate)':'')+'.</p>'};
   }
   /* Weight per gallon */
   if(/(lb|pound)s?\s*(\/|per|a)\s*gal|per gallon|density/.test(q)){
@@ -2617,7 +2617,7 @@ function askAnswer(raw){
   if(gal&&(p||/acid|water|split|mix|make|blend|need/.test(q))){
     if(!p)return needP("acid and water for "+num(gal)+" gal");
     var sp=splitOf(p.key,gal);if(!sp)return needP("acid and water");
-    return {h:gf(gal)+' <small>gal of '+esc(askPn(p))+'</small>',d:askSplit(p.key,gal,p.key==="acid"?"All 36% acid":"Needs")+'<p class="asw">From the dilution chart'+(cxOf(p.key)||CSB[p.key]?' and the CableShield blend factors':'')+'.</p>'};
+    ASK_LAST={kind:"split",p:p,gal:gal};return {h:gf(gal)+' <small>gal of '+esc(askPn(p))+'</small>',d:askSplit(p.key,gal,p.key==="acid"?"All 36% acid":"Needs")+'<p class="asw">From the dilution chart'+(cxOf(p.key)||CSB[p.key]?' and the CableShield blend factors':'')+'.</p>'};
   }
   var b2=askBoard(q);if(b2)return b2;
   var hp=askHelp(q);if(hp)return hp;
@@ -2625,6 +2625,113 @@ function askAnswer(raw){
 }
 /* Tarquino chat: questions on the right, his answers on the left with the logo.
    The chat lives in this phone's memory for as long as the app is open. */
+/* ---- Follow-ups and questions about a load on the board ----
+   ASK_CTX remembers the last answer (what kind, which product and numbers, or which load),
+   so "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" reuse it. */
+var ASK_CTX=null,ASK_LAST=null;
+var ASK_FW=/^(what about|how about|and|what if|make it|instead|same|now|try|then|ok|okay|also)\b/;
+var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing)/;
+function askPStr(p){if(!p)return "";if(p.name)return p.name;if(p.key==="acid")return "36%";if(p.key==="cs100")return "cableshield 100";if(p.key==="cs33")return "cableshield 33";return p.key+"%"}
+function askSynth(c){var P=askPStr(c.p);
+  if(c.kind==="loaded")return "gallons loaded lw "+c.lw+" hw "+c.hw+" of "+P;
+  if(c.kind==="heel")return "heel lw "+c.lw+" system "+c.sys+" "+P;
+  if(c.kind==="fit")return "how much "+P+" fits light weight "+c.lw+(c.st?" "+c.st:"")+(c.gal?" with "+c.gal+" gal":"");
+  if(c.kind==="weight")return "how much does "+c.gal+" gal of "+P+" weigh"+(c.lw?" light weight "+c.lw:"");
+  if(c.kind==="split")return "acid and water for "+c.gal+" gal of "+P;
+  return null}
+/* Which load the question names: "trailer 707", "ticket 19126", or "on/for 880" when that's on the board */
+function askFindLoad(q){
+  var m=/(?:trailer|truck|ticket|bol|load|unit)\s*#?\s*([a-z0-9-]*\d[a-z0-9-]*)/.exec(q),loose=false;
+  if(!m){m=/\b(?:on|for|about|of)\s+#?(\d{3,6})\b(?!\s*(?:gal|lb|%|percent|pct|k\b))/.exec(q);loose=true}
+  /* Any 3–6 digit number that is exactly a load's trailer, ticket or BOL ("what does 880 need") */
+  if(!m){var re=/\b(\d{3,6})\b(?!\s*(?:gal|lb|%|percent|pct|k\b))/g,mm;while((mm=re.exec(q))){var tt=mm[1];if(ORD.some(function(o){return [o.name,o.ticket,o.bol].some(function(v){v=String(v||"").toLowerCase();return v===tt||v.replace(/^(trailer|truck|unit)\s*#?\s*/,"")===tt})})){m=mm;break}}}
+  if(!m)return null;var t=m[1].toLowerCase();
+  var eq=function(v){v=String(v||"").toLowerCase();return v===t||v.replace(/^(trailer|truck|unit)\s*#?\s*/,"")===t};
+  var hits=ORD.filter(function(o){return eq(o.name)||eq(o.ticket)||eq(o.bol)});
+  if(!hits.length&&!loose)hits=ORD.filter(function(o){return [o.name,o.ticket,o.bol].some(function(v){return String(v||"").toLowerCase().indexOf(t)>=0})});
+  return hits.length?{o:hits[0],ref:m[0]}:(loose?null:{o:null,ref:m[0]});
+}
+function askLoadSub(q){
+  if(/\bheel\b|left (in|over)|leftover/.test(q))return "heel";
+  if(/\bloaded\b|\bhw\b|heavy|gross|scale ?out/.test(q))return "loaded";
+  if(/\bfit|weigh|projected|\bcut\b|over ?weight|too heavy|\bmax\b|room|limit|scale ?in|light weight|\blw\b/.test(q))return "fit";
+  if(/need|acid|water|split|mix|amounts?|recipe|make it up/.test(q))return "needs";
+  return null}
+function askLoadAns(o,sub,ov){
+  ov=ov||{};var o2=Object.assign({},o);if(ov.st)o2.state=ov.st;
+  var L=ov.lw!=null?ov.lw:(parseFloat(o.lightWt)||null),nm=esc(o.name||"This load"),og=parseFloat(o2.gal)||0,wi=wtFor(o2.prod,o2);
+  var head='<p class="asn"><b>'+nm+'</b> · '+(og?num(og)+' gal ':'')+esc(prodName(o2))+' · '+(o2.state==="NM"?"New Mexico":"Texas")+(halHas(o2)?' · Halliburton chems':'')+(heelOf(o2)?' · heel':'')+'</p>';
+  var ctx={kind:"load",id:o.id,sub:sub,lw:ov.lw,hw:ov.hw,sys:ov.sys,st:ov.st};
+  if(sub==="fit"){
+    if(!L)return {miss:1,ctx:ctx,h:"What's the light weight?",d:head+'<p class="asn">'+nm+' has no scale-in light weight yet. Ask like "how much fits on '+nm+' with lw 34000".</p>'};
+    if(!wi)return {miss:1,h:"No product weight",d:head+'<p class="asn">Set the product weight per gallon on the load first.</p>'};
+    var c=wtCut(o2,L),hl=heelOf(o2),add=Math.max(0,og-(hl?hl.gal:0)),pw=L+(add+halGal(o2))*wi.w,lim=wtLim(o2);
+    var h=c?'Cut to '+gf(c.total)+' <small>gal · full ticket would be '+num(pw)+' lb</small>':num(pw)+' <small>lb projected · '+(pw>lim.m?'OVER '+num(lim.m):pw>lim.t?'over the '+num(lim.t)+' target':'fits')+'</small>';
+    return {ctx:ctx,h:h,d:head+needsHtml(o2,L)+'<div class="nmc">'+nmOut(o2,L)+'</div>'+(ov.lw!=null&&String(ov.lw)!==String(o.lightWt)?'<p class="asw">Uses '+num(L)+' lb from your question. Enter it in Weight check on the load to save it.</p>':'<p class="asw">Uses the light weight saved on the load ('+num(L)+' lb).</p>')};
+  }
+  if(sub==="needs"){
+    var c2=L?wtCut(o2,L):null;
+    return {ctx:ctx,h:(c2?'Cut to '+gf(c2.total):gf(og))+' <small>gal of '+esc(prodName(o2))+'</small>',d:head+needsHtml(o2,L)+halBox(o2)+(L?'':'<p class="asw">No light weight saved yet, so this is the full ticket. Add "lw 34000" to check the weight too.</p>')};
+  }
+  if(sub==="heel"){
+    var cur=ov.lw,emp=ov.sys;
+    if(cur!=null&&emp!=null){if(cur<emp){var t=cur;cur=emp;emp=t}var dl=cur-emp,hp=o.heelProd||o.prod,hw=wtFor(hp,o2);
+      if(!(dl>0)||!hw)return {h:"No heel",d:head+'<p class="asn">The scale light weight isn\'t more than the system light weight.</p>'};
+      var hg=dl/hw.w;return {ctx:ctx,h:gf(hg)+' <small>gal heel, if it\'s '+esc(pname(hp))+'</small>',d:head+splitHtml(hp,hg,"In the heel")+'<p class="asw">'+num(cur)+' − '+num(emp)+' = '+num(dl)+' lb, ÷ '+hw.w+' lb/gal. If the heel is a different product, say which, like "heel on '+nm+' lw '+cur+' system '+emp+' 15%". Tick Heel? on the load to take it off what it needs.</p>'}}
+    var hl2=heelOf(o2);
+    if(hl2)return {ctx:ctx,h:gf(hl2.gal)+' <small>gal heel of '+esc(pname(hl2.prod))+'</small>',d:head+splitHtml(hl2.prod,hl2.gal,"In the heel")+'<p class="asw">Saved on the load. It\'s already taken off what the load needs.</p>'};
+    return {miss:1,ctx:ctx,h:"No heel saved",d:head+'<p class="asn">Give the scale light weight and the system light weight, like "heel on '+nm+', lw 35800 system 32800".</p>'};
+  }
+  if(sub==="loaded"){
+    var H=ov.hw!=null?ov.hw:(parseFloat(o.heavyWt)||null);
+    if(!L||!H)return {miss:1,ctx:ctx,h:"I need both weights",d:head+'<p class="asn">'+(!L?'No light weight':'No heavy weight')+' on '+nm+' yet. Ask like "gallons loaded on '+nm+' lw 32000 hw 76000".</p>'};
+    if(!wi)return {miss:1,h:"No product weight",d:head+'<p class="asn">Set the product weight per gallon on the load first.</p>'};
+    var gl=(H-L)/wi.w,fh=heelOf(o2),cut=wtCut(o2,L),sp=finSplit(o2.prod,gl,og,fh&&o2.prod!=="acid"?fh.water:0,cut?cut.total:0);
+    var d=head+'<p class="asn">'+num(H)+' − '+num(L)+' = '+num(H-L)+' lb, ÷ '+wi.w+' lb/gal.</p>';
+    if(sp&&sp.water!=null&&sp.acid!=null)d+='<div class="split"><p class="sl">'+(sp.fromTicket?'Water from the ticket, acid is the rest':'Split by the chart')+'</p><div class="sg"><div><span>Water</span><b>'+gf(sp.water)+' <small>gal</small></b></div><div><span>36% acid</span><b>'+gf(sp.acid)+' <small>gal</small></b></div></div></div>';
+    else if(sp&&sp.short)d+='<p class="asn" style="color:var(--bad)">The scale shows less than the ticket water. Check the weights.</p>';
+    return {ctx:ctx,h:gf(gl)+' <small>gal loaded on '+nm+'</small>',d:d+'<p class="asw">Same math as the load weight window. Save the amounts there.</p>'};
+  }
+  return null;
+}
+function askLoad(q){
+  var f=askFindLoad(q);if(!f||!f.o)return null;
+  var sub=askLoadSub(q.replace(f.ref," "));
+  if(!sub&&ASK_CTX&&ASK_CTX.kind==="load"&&ASK_FW.test(q))sub=ASK_CTX.sub;
+  if(!sub)return null;
+  var N=askNums(q.replace(f.ref," ")),ov={};N.forEach(function(n){if(n.tag==="lw")ov.lw=n.v;else if(n.tag==="hw")ov.hw=n.v;else if(n.tag==="sys")ov.sys=n.v;else if(!n.tag&&n.v>=5000){if(ov.lw==null)ov.lw=n.v;else if(sub==="heel"&&ov.sys==null)ov.sys=n.v;else if(ov.hw==null)ov.hw=n.v}});
+  var st=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;if(st)ov.st=st;
+  var p=askProd(q.replace(f.ref," "));if(sub==="heel"&&p&&ov.lw!=null&&ov.sys!=null){var o3=Object.assign({},f.o,{heelProd:p.key});return askLoadAns(o3,sub,ov)}
+  return askLoadAns(f.o,sub,ov);
+}
+function askFollow(q){
+  var c0=ASK_CTX;if(!c0)return null;
+  var fw=ASK_FW.test(q),p2=askProd(q),N=askNums(q),st2=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;
+  if(ASK_INT.test(q))return null;
+  if(!p2)N.forEach(function(n){if(!p2&&!n.tag&&ASK_PRODS[String(n.v)]&&(fw||N.length===1)){p2={key:ASK_PRODS[String(n.v)]};n.tag="pct"}});
+  var nums=N.filter(function(n){return n.tag!=="pct"}),pieces=(p2?1:0)+nums.length+(st2?1:0);
+  if(!pieces||(!fw&&pieces>1))return null;
+  var c=Object.assign({},c0),ch=[];
+  if(p2){c.p=p2;ch.push(askPn(p2))}
+  nums.forEach(function(n){var t=n.tag;
+    if(!t)t=c.kind==="split"||c.kind==="weight"?(n.v<20000?"gal":"lw"):c.kind==="loaded"?(n.v>=5000?"hw":"gal"):(n.v>=5000?"lw":"gal");
+    c[t]=n.v;ch.push(t==="gal"?gf(n.v)+" gal":t==="lw"?"light weight "+num(n.v)+" lb":t==="hw"?"heavy weight "+num(n.v)+" lb":"system light weight "+num(n.v)+" lb")});
+  if(st2){c.st=st2;ch.push(st2==="NM"?"New Mexico":"Texas")}
+  var r;
+  if(c.kind==="load"){var o=find(c.id);if(!o)return null;if(p2&&c.sub==="heel"){o=Object.assign({},o,{heelProd:p2.key})}r=askLoadAns(o,c.sub,{lw:c.lw,hw:c.hw,sys:c.sys,st:c.st})}
+  else{var sy=askSynth(c);if(!sy)return null;ASK_LAST=null;r=askCore(sy);if(r.miss)return null;r.ctx=ASK_LAST}
+  if(r)r.note="Same as before, with "+ch.join(", ");
+  return r;
+}
+function askAnswer(raw){
+  var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
+  var r=askFollow(q);if(r)return r;
+  r=askLoad(q);if(r)return r;
+  ASK_LAST=null;r=askCore(raw);r.ctx=ASK_LAST;
+  /* Left the product out? Use the one from the last question */
+  if(r.needP&&ASK_CTX&&ASK_CTX.p){ASK_LAST=null;var r2=askCore(raw+" "+askPStr(ASK_CTX.p));if(!r2.miss){r2.ctx=ASK_LAST;r2.note="Using "+askPn(ASK_CTX.p)+" from before";r=r2}}
+  return r;
+}
 var ASK_LOG=[],tqBusy=false;
 function tqHi(){var n=ME&&!ME.admin?ME.name.split(" ")[0]:"";return '<p>Hi'+(n?' '+esc(n):'')+', I\'m Tarquino. Ask me about gallons loaded, acid and water, heels, weights, how much fits, or what\'s on the board. Tap an example below to start.</p>'}
 function tqMsg(x){
@@ -2639,7 +2746,8 @@ function tqRender(){
 function askRun(qv){
   if(tqBusy)return;var a=askAnswer(qv);if(!a)return;
   ASK_LOG.push({me:1,q:qv});ASK_LOG.push({typing:1});tqBusy=true;tqRender();
-  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({html:'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
+  if(a.ctx)ASK_CTX=a.ctx;
+  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({html:(a.note?'<p class="asw" style="margin:0 0 4px">↻ '+esc(a.note)+'</p>':'')+'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
 }
 $("tq_fab").onclick=function(){showView("ask")};
 $("ask_f").onsubmit=function(e){e.preventDefault();var v=$("ask_in").value.trim();if(!v||tqBusy)return;askRun(v);$("ask_in").value=""};
