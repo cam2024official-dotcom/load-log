@@ -14,7 +14,7 @@
 <title>Tarquin Hub</title>
 <script>/* Theme picked on this device (Auto follows the device). Set before paint so there is no flash. */try{var tm=localStorage.getItem("tcw-theme");if(tm==="dark"||tm==="light")document.documentElement.setAttribute("data-theme",tm)}catch(e){}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: blue header band, three count tiles, add-order panel, then orders grouped Loading, Waiting, Done */
 :root{
@@ -581,6 +581,60 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .omore .wsn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
 .omore .wsm{flex:1;overflow:hidden}
 .omore .nmc .meta{margin-top:0}.omore .nmc .g2{margin-top:6px}
+
+/* ===== Industrial look (v64): Barlow Condensed headings and numbers, Barlow body,
+   charcoal and steel with safety orange. Kept as one block so it's easy to tune or roll back. ===== */
+:root{
+  --bg:#e9ecef;--card:#ffffff;--ink:#161b22;--mute:#58626f;--line:#d0d6dd;
+  --head:#1c2128;--acc:#b9510e;--accink:#ffffff;--hl:#fbf1e7;--brand:#ef8a1f;--brandink:#9a4a08;
+  --ok:#11743a;--okbg:#e3f3e8;--warn:#8a4b00;--warnbg:#fff1dc;--bad:#b3261e;--badbg:#fdeceb;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,-apple-system,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1115;--card:#171b21;--ink:#eceff3;--mute:#9aa3ae;--line:#2a3038;
+  --head:#090b0e;--acc:#f2913a;--accink:#1b0e02;--hl:#261d14;--brand:#f2913a;--brandink:#f6a95c;
+  --ok:#6fd49a;--okbg:#10301f;--warn:#f3b25e;--warnbg:#3a2a0e;--bad:#ff8f87;--badbg:#3a1614}}
+:root[data-theme="dark"]{
+  --bg:#0e1115;--card:#171b21;--ink:#eceff3;--mute:#9aa3ae;--line:#2a3038;
+  --head:#090b0e;--acc:#f2913a;--accink:#1b0e02;--hl:#261d14;--brand:#f2913a;--brandink:#f6a95c;
+  --ok:#6fd49a;--okbg:#10301f;--warn:#f3b25e;--warnbg:#3a2a0e;--bad:#ff8f87;--badbg:#3a1614}
+body{font-family:var(--body);font-size:16px;letter-spacing:0}
+.stripe{height:4px;background:var(--brand)}
+.top h1{font:700 32px/1 var(--display);text-transform:uppercase;letter-spacing:.04em}
+.top p{color:#c3cad3;font-size:14px;letter-spacing:.01em}
+.menu{background:rgba(255,255,255,.1);border-radius:4px}
+h2{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.tile{border-top:3px solid var(--line)}
+.tile b{font:700 44px/1 var(--display);letter-spacing:.01em}
+.tile span{font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.tile.on{border-top-color:var(--brand);background:var(--card)}
+.oname{font:700 23px/1.1 var(--display);letter-spacing:.02em;text-transform:uppercase}
+button{font-family:var(--body);font-weight:600}
+button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.add{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border-color:var(--brand);background:var(--card);color:var(--ink)}
+.split{border-left-color:var(--brand)}
+.split .sl,.split .shd~*{font-family:var(--display)}
+.split .sl{font-size:14px;letter-spacing:.1em}
+.split .sg span,.nmr span{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.split .sg b,.nmr b,.ash,.tqb .ash{font-family:var(--display)}
+.split .sg b{font-size:30px}
+.tmr{font-family:var(--display)!important;font-size:22px!important;font-weight:700!important;letter-spacing:.02em!important}
+.chip,.cnt,.nmt,.halt,.cst,.tpt,.heelt{font-family:var(--display);letter-spacing:.06em;font-size:13px}
+.lp{font-family:var(--display);font-size:14px;letter-spacing:.04em}
+.sync{font-family:var(--display);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.ct .ctn{font:700 18px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase}
+#drawer .dh b{font:700 28px/1 var(--display);text-transform:uppercase;letter-spacing:.05em}
+#drawer .dh span{color:#c3cad3}
+#drawer button{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.tvh{background:var(--head);border-left:4px solid var(--brand);font-family:var(--display);font-size:15px;letter-spacing:.1em}
+.wck summary .wst{font-family:var(--display);font-size:18px;letter-spacing:.04em;text-transform:uppercase}
+.wsm b{font-size:20px}
+.tqh b{font:700 22px/1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.tqm.me .tqb{background:var(--brand);border-color:var(--brand);color:#1a1206}
+.askx button{font-family:var(--body)}
+.demob{border-color:var(--brand);border-left-color:var(--brand)}
+.hp details>summary{font-family:var(--display);font-size:18px;letter-spacing:.04em}
 </style>
 </head>
 <body>
