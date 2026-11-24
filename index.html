@@ -269,6 +269,9 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .tqfab:active{transform:scale(.94)}
 .tqfab:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 #v-log .wrap{padding-bottom:90px}
+.onl{margin:-4px 0 10px;font-size:14px;color:var(--mute);display:flex;flex-wrap:wrap;gap:2px 10px;align-items:center}
+.onl b{color:var(--ink);font-weight:700}.onl span{white-space:nowrap}.onl small{font-size:12px}
+.ondot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2fb36b;box-shadow:0 0 0 2px var(--card);margin-left:6px;vertical-align:middle;flex:none}
 .ask{max-width:760px}
 #v-ask{padding-bottom:0}
 .tqh{display:flex;align-items:center;gap:10px;padding:4px 0 10px;border-bottom:1px solid var(--line)}
@@ -635,6 +638,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   </div>
   <div id="app">
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
+  <p class="onl" id="onl" hidden></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
   <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
@@ -899,6 +903,13 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Day shift is 6 AM to 6 PM and night shift is 6 PM to 6 AM, unless a lead changes the hours.</li>
       <li>Only people on shift show on the crew board and in the loader list. Anyone already on a load still shows.</li>
       <li>Covering a shift and your name isn't on the sign-in screen? Tap <span class="kb">Show everyone</span>, or ask a lead to mark you on shift.</li>
+    </ol>
+  </details>
+  <details><summary>Who's online</summary>
+    <ol>
+      <li>A green dot next to a name on the crew board means that person has the app open right now.</li>
+      <li>Under the Live line, <b>Online now</b> lists everyone with the app open and which page they're on.</li>
+      <li>Someone drops off when they close the app, put the phone down, or lose signal for a few minutes.</li>
     </ol>
   </details>
   <details><summary>Ask Tarquino</summary>
@@ -1353,7 +1364,8 @@ function crewBoard(){
   var h=all.map(function(e){
     e.ld.sort(function(a,b){return a.startAt-b.startAt});e.ms.sort(function(a,b){return a.o.endAt-b.o.endAt});
     var col=e.nobody?DEFCOL:colOf(e.name),first=e.ld[0]?[e.ld[0].id,0]:e.ms[0]?[e.ms[0].o.id,1]:null,s='<div class="ct" style="--lc:'+col+'">';
-    s+=first?'<button type="button" class="ctn" data-goto="'+esc(first[0])+'"'+(first[1]?' data-fix="1"':'')+'>'+esc(e.name)+'</button>':'<div class="ctn">'+esc(e.name)+'</div>';
+    var dot=!e.nobody&&presOn(e.name)?'<i class="ondot" title="Online now" aria-label="online"></i>':'';
+    s+=first?'<button type="button" class="ctn" data-goto="'+esc(first[0])+'"'+(first[1]?' data-fix="1"':'')+'>'+esc(e.name)+dot+'</button>':'<div class="ctn">'+esc(e.name)+dot+'</div>';
     e.ld.forEach(function(o){s+='<button type="button" class="ctl ld" data-goto="'+esc(o.id)+'"><b>Loading</b> '+esc(o.name||"Unnamed order")+' · <span class="ctm" data-tid="'+esc(o.id)+'"></span></button>'});
     e.ms.forEach(function(x){var what=x.m.acid&&x.m.water?"acid + water":x.m.acid?"acid":"water";
       s+='<button type="button" class="ctl ctx" data-goto="'+esc(x.o.id)+'" data-fix="1">Needs '+what+' · '+esc(x.o.ticket?"Ticket "+x.o.ticket:(x.o.name||"Unnamed order"))+'</button>'});
@@ -1732,14 +1744,14 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null;
-  list.forEach(function(o){if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null;
+  list.forEach(function(o){if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);
-  /* A new chat message alone doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID}));
+  setChat(ch);setPres(pr);
+  /* A new chat message or someone coming online doesn't need the board rebuilt */
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -2252,6 +2264,7 @@ function applyAuth(){
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
   $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
+  if(ME&&ME.name!==was)presSoon();
   renderSched();renderHO();
   renderChat();
 }
@@ -2310,7 +2323,9 @@ async function makeFirebase(url){
     newId:function(){return D.push(D.ref(db,base)).key},
     set:function(id,d){return D.set(D.ref(db,base+"/"+id),d)},
     update:function(id,p){return D.update(D.ref(db,base+"/"+id),p)},
-    remove:function(id){return D.remove(D.ref(db,base+"/"+id))}
+    remove:function(id){return D.remove(D.ref(db,base+"/"+id))},
+    /* Online status: this phone's entry is removed by Firebase itself when the connection drops */
+    presence:function(id,d){var r=D.ref(db,base+"/_presence/"+id);if(!d)return D.remove(r);return D.onDisconnect(r).remove().then(function(){return D.set(r,d)})}
   };
 }
 function showSetup(msg,canNew){
@@ -2333,7 +2348,7 @@ async function connect(pin,create){
   $("setup").hidden=true;$("app").hidden=false;
   build();setSync("","Connecting");
   loadTimer=setTimeout(function(){setSync("warn","Can't reach shared data yet. What you see may be out of date")},10000);
-  DL.onConn(function(v){online=v;syncState()});
+  DL.onConn(function(v){online=v;syncState();if(v)presBeat()});
   DL.subscribe(function(l){LAST_REAL=l;if(!DEMO)onData(l)},onDataErr);
 }
 function init(){
@@ -2515,7 +2530,7 @@ function showView(k){
   $("vt").textContent=v[1];$("vs").textContent=DEMO&&k==="log"?"Demo board: example loads, not saved":v[2];
   var bs=$("drawer").querySelectorAll("button[data-view]");
   for(var i=0;i<bs.length;i++){if(bs[i].getAttribute("data-view")===k)bs[i].setAttribute("aria-current","page");else bs[i].removeAttribute("aria-current")}
-  setDrawer(false);window.scrollTo(0,0);
+  setDrawer(false);window.scrollTo(0,0);presSoon();
 }
 /* Ask box: answers typed questions with the app's own charts, weights and board data.
    No AI and no network: it picks the numbers and product out of the question and runs the
@@ -2919,6 +2934,34 @@ $("ask_out").onclick=function(e){var b=e.target.closest?e.target.closest("button
   if(g){showView("log");setTimeout(function(){try{openCard(g,true);var el=$("o-"+g);if(el)el.scrollIntoView({block:"center"})}catch(x){}},50)}
   if(v)showView(v)};
 
+/* ---- Who's online ----
+   Each phone keeps {n: name, v: page, t: time} under orders/_presence/<device id> while the
+   app is open and in front. Firebase removes it when the connection drops; the phone removes it
+   when the app goes to the background; entries older than 3 minutes are ignored. */
+var PRES_ID="_presence",PRES={},PRES_DEV=null,PRES_STALE=3*60000,presT=null;
+function presDev(){if(PRES_DEV)return PRES_DEV;try{PRES_DEV=localStorage.getItem("tcw-dev")}catch(e){}if(!PRES_DEV){PRES_DEV="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);try{localStorage.setItem("tcw-dev",PRES_DEV)}catch(e){}}return PRES_DEV}
+function setPres(o){var m={};if(o)Object.keys(o).forEach(function(k){var v=o[k];if(k!=="id"&&v&&typeof v==="object"&&+v.t)m[k]={n:String(v.n||""),v:String(v.v||""),t:+v.t}});PRES=m;renderPres()}
+function presList(){var now=Date.now(),me=presDev();return Object.keys(PRES).map(function(k){var x=PRES[k];return {id:k,n:x.n,v:x.v,t:x.t,me:k===me}}).filter(function(x){return now-x.t<PRES_STALE}).sort(function(a,b){return a.me?-1:b.me?1:a.n.localeCompare(b.n)})}
+function presOn(name){var k=String(name||"").toLowerCase();return presList().some(function(x){return x.n.toLowerCase()===k})}
+function renderPres(){
+  var L=presList(),el=$("onl");if(!el)return;
+  if(!L.length||DEMO){el.hidden=true}
+  else{var seen={},anon=0,items=[];L.forEach(function(x){if(!x.n){anon++;return}var k=x.n.toLowerCase();if(seen[k])return;seen[k]=1;items.push('<span><i class="ondot" style="margin:0 4px 0 0"></i><b>'+esc(x.n)+'</b>'+(x.me?' <small>(you)</small>':'')+(x.v?' <small>· '+esc(x.v)+'</small>':'')+'</span>')});
+    if(anon)items.push('<span><i class="ondot" style="margin:0 4px 0 0;background:var(--mute)"></i>'+anon+' not signed in</span>');
+    el.innerHTML='<span>Online now:</span>'+items.join("");el.hidden=false}
+  crewHtml="";crewBoard();
+}
+function presBeat(){
+  clearTimeout(presT);presT=null;
+  if(!DL||!DL.presence||DEMO||!online)return;
+  var away=document.hidden,d=away?null:{n:ME?ME.name:"",v:(VIEWS[curView]||["","Load Log"])[1],t:Date.now()};
+  try{DL.presence(presDev(),d).catch(function(){})}catch(e){}
+}
+function presSoon(){clearTimeout(presT);presT=setTimeout(presBeat,800)}
+setInterval(function(){if(!document.hidden)presBeat();renderPres()},60000);
+document.addEventListener("visibilitychange",presBeat);
+window.addEventListener("pagehide",function(){if(DL&&DL.presence&&!DEMO){try{DL.presence(presDev(),null)}catch(e){}}});
+
 /* Demo Board (Christian and Admin only): swaps the shared database for one kept in this
    phone's memory, so the real board can be shown with made-up loads. Live data keeps
    arriving in the background but is held back until the demo ends. Nothing is written
@@ -2998,7 +3041,7 @@ async function enterDemo(){
   /* Keep the real crew list, schedule and recipes so names, colors and sign-in still work */
   (LAST_REAL||[]).forEach(function(o){if(o.id===ROSTER_ID||o.id===SCHED_ID||o.id===RECIPE_ID){var x=dmClone(o);delete x.id;DEMO_DB[o.id]=x}});
   document.body.classList.add("demo");$("demob").hidden=false;dmLoad();
-  dmLoad();showView("log");dmRandomize();toast("Demo Board on. Nothing is saved.");
+  dmLoad();showView("log");dmRandomize();renderPres();toast("Demo Board on. Nothing is saved.");
 }
 async function exitDemo(){
   if(!DEMO)return;
@@ -3006,7 +3049,7 @@ async function exitDemo(){
   DEMO=false;DL=REAL_DL;REAL_DL=null;DEMO_DB={};
   document.body.classList.remove("demo");$("demob").hidden=true;
   OPEN={};editing={};WOPEN={};dataSig="";Object.keys(deb).forEach(function(k){clearTimeout(deb[k].t);delete deb[k]});
-  onData(LAST_REAL||[]);syncState();showView(curView);toast("Back on the live board.");
+  onData(LAST_REAL||[]);syncState();showView(curView);presBeat();toast("Back on the live board.");
 }
 $("nav_demo").onclick=function(){setDrawer(false);if(DEMO)showView("log");else enterDemo()};
 $("dm_rand").onclick=dmRandomize;$("dm_exit").onclick=exitDemo;

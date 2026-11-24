@@ -53,4 +53,6 @@ Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have
 - `_handoff`: Shift Handoff, laid out as the Loader Shift Turnover sheet. `{d: draft, p: {id: post}}`. A draft with `v:2` is the turnover sheet (fields listed in the comment above `HO_ID` in index.html); posts without `v` use the old layout. Posting signs as outgoing (`sg.o`); the next lead signs as incoming (`sg.i`). Leads edit; posts are kept 7 days.
 - `_recipes`: saved Custom blend recipes. `{id: {n: name, b: base product, f: base share of the total}}`. A custom blend order stores `prod` as `x:<base>:<share>` (e.g. `x:cs100:0.25`) plus `cname`, so every calculation scales from the key.
 
-Changes to `_chat` and `_handoff` skip the board rebuild. `update` with `null` deletes a key.
+- `_presence`: who's online. `{deviceId: {n: name, v: page, t: ms}}`, written by `DL.presence` with a Firebase onDisconnect remove; the phone also removes it when the app goes to the background, and entries older than 3 minutes are ignored.
+
+Changes to `_chat`, `_handoff` and `_presence` skip the board rebuild. `update` with `null` deletes a key.
