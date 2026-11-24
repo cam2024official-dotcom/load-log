@@ -714,6 +714,8 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .wtx.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .wtc{padding:1px 6px;border-radius:3px;background:#2c6384;color:#fff;font:700 13px/1.5 var(--display);letter-spacing:.05em}
 .wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
+/* Quicker adding and changing (v80) */
+.qch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.qcb{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:0;padding:6px 9px;text-align:left;border:1px dashed var(--line);border-radius:4px;background:transparent;color:var(--ink,inherit);min-width:0}.qcb small{font-size:11px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}.qcb b{font:700 17px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.lbq{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.lbq[hidden]{display:none}.lbq button{flex:1;min-height:36px;padding:4px 6px;font-size:14px}.arep .repw{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}.arep button{min-height:36px;padding:5px 10px;font-size:14px;text-align:left}.amore .wsm{flex:1;overflow:hidden}.amore .wsn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}.amore .wsn.set{color:var(--acc)}.omore .acts{flex-wrap:wrap}.omore .acts button{flex:1 1 calc(50% - 5px)}#qcm_in{width:100%}
 </style>
 </head>
 <body>
@@ -783,10 +785,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <button id="addbtn" class="add" type="button">Add an order</button>
   <div id="addp" class="panel" hidden>
     <div class="g2">
-      <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name"></div>
-      <div class="full"><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
-      <div class="full"><label class="chk"><input id="a_tp" type="checkbox"> Third party driver (80,000 lb limit)</label></div>
-      <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
+      <div class="full arep" id="a_rep" hidden></div>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
       <div class="full cxw" id="a_cx" hidden><div class="g2">
@@ -797,19 +796,25 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
         <div><label class="f" for="a_caw">Then add water (gal)</label><input id="a_caw" type="number" inputmode="decimal" min="0" step="any"></div>
       </div><div class="cxa"><button id="a_rsave" type="button" class="small">Save as recipe</button><button id="a_rdel" type="button" class="small" hidden>Delete recipe</button></div></div>
       <div><label class="f" for="a_gal">Total gallons (ticket)</label><input id="a_gal" type="number" inputmode="decimal" min="0" step="any" value="5000"></div>
-      <div class="full"><label class="chk"><input id="a_heel" type="checkbox"> Heel? (product left in the trailer)</label></div>
-      <div class="full halw" id="a_heelw" hidden><div><label class="f" for="a_heelp">Heel product</label><select id="a_heelp"></select></div><div><label class="f" for="a_heelg">Heel (gal)</label><input id="a_heelg" type="number" inputmode="decimal" min="0" step="any"></div></div>
-      <div class="full" id="a_split"></div>
-      <div class="full"><label class="chk"><input id="a_hal" type="checkbox"> Halliburton chems</label></div>
-      <div class="full halw" id="a_halw" hidden></div>
-      <div><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"></div>
-      <div><label class="f" for="a_st">Start time</label><input id="a_st" type="time"></div>
-      <div><label class="f" for="a_en">End time</label><input id="a_en" type="time"></div>
-      <p class="note full">Fill in start and end only for a load that already happened. Leave them blank for a new order.</p>
       <div><label class="f" for="a_tk">Ticket #</label><input id="a_tk" type="text" autocomplete="off" placeholder="Ticket number"></div>
-      <div><label class="f" for="a_bl">BOL #</label><input id="a_bl" type="text" autocomplete="off" placeholder="BOL number"></div>
-      <div class="full"><label class="chk"><input id="a_sh" type="checkbox" checked> Include on loadout sheet</label></div>
-      <div class="full"><label class="f" for="a_nt">Notes</label><textarea id="a_nt" placeholder="Anything the next shift should know"></textarea></div>
+      <div class="full"><label class="f" for="a_lbt">Leave by (LBT)</label><input id="a_lbt" type="time"><div class="lbq" data-for="a_lbt"><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div></div>
+      <div><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
+      <div><label class="f" for="a_ld">Loader</label><input id="a_ld" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type"></div>
+      <div class="full"><label class="chk"><input id="a_tp" type="checkbox"> Third party driver (80,000 lb limit)</label></div>
+      <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
+      <div class="full" id="a_split"></div>
+      <details class="full wck amore" id="a_more"><summary><span class="wst">More</span><span class="wsm"><span class="wsn" id="a_moresum">Heel, Halliburton, BOL, notes, past times</span></span></summary><div class="nmc"><div class="g2">
+        <div class="full"><label class="chk"><input id="a_heel" type="checkbox"> Heel? (product left in the trailer)</label></div>
+        <div class="full halw" id="a_heelw" hidden><div><label class="f" for="a_heelp">Heel product</label><select id="a_heelp"></select></div><div><label class="f" for="a_heelg">Heel (gal)</label><input id="a_heelg" type="number" inputmode="decimal" min="0" step="any"></div></div>
+        <div class="full"><label class="chk"><input id="a_hal" type="checkbox"> Halliburton chems</label></div>
+        <div class="full halw" id="a_halw" hidden></div>
+        <div class="full"><label class="f" for="a_bl">BOL #</label><input id="a_bl" type="text" autocomplete="off" placeholder="BOL number"></div>
+        <div class="full"><label class="f" for="a_nt">Notes</label><textarea id="a_nt" placeholder="Anything the next shift should know"></textarea></div>
+        <div class="full"><label class="chk"><input id="a_sh" type="checkbox" checked> Include on loadout sheet</label></div>
+        <div><label class="f" for="a_st">Start time</label><input id="a_st" type="time"></div>
+        <div><label class="f" for="a_en">End time</label><input id="a_en" type="time"></div>
+        <p class="note full">Fill in start and end only for a load that already happened. Leave them blank for a new order.</p>
+      </div></div></details>
     </div>
     <div class="acts"><button id="a_go" class="go" type="button">Save order</button><button id="a_x" type="button">Cancel</button></div>
   </div>
@@ -866,6 +871,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <input id="pinm_in" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="PIN">
   <p id="pinm_e" class="note" style="color:var(--bad);margin:8px 0 0" hidden>Wrong PIN.</p>
   <div class="pinr"><button id="pinm_c" type="button">Cancel</button><button id="pinm_ok" class="go" type="button">Remove load</button></div>
+</div></div>
+<div id="qcm" class="pinm" hidden><div class="pinb" role="dialog" aria-modal="true" aria-labelledby="qcm_t">
+  <b id="qcm_t">Change</b>
+  <p id="qcm_s" class="note" style="margin:4px 0 10px"></p>
+  <input id="qcm_in" type="text" autocomplete="off">
+  <div class="lbq" id="qcm_q" data-for="qcm_in" hidden><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div>
+  <div class="pinr"><button id="qcm_c" type="button">Cancel</button><button id="qcm_ok" class="go" type="button">Save</button></div>
 </div></div>
 <div id="fin" class="pinm fin" hidden><div class="pinb finb" role="dialog" aria-modal="true" aria-labelledby="fin_t">
   <b id="fin_t">Load weight</b>
@@ -997,7 +1009,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     </ol>
   </details>
   <details><summary>Starting a load</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 35:48</b><small>3,060 gal ÷ 75 gpm − 5 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="qch"><button type="button" class="qcb" tabindex="-1"><small>Gallons ✎</small><b>5,000</b></button><button type="button" class="qcb" tabindex="-1"><small>Ticket ✎</small><b>4412</b></button><button type="button" class="qcb" tabindex="-1"><small>Leave by ✎</small><b>3:45 PM</b></button></div><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 35:48</b><small>3,060 gal ÷ 75 gpm − 5 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
@@ -1044,6 +1056,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <details><summary>Fixing a mistake</summary>
     <ol>
       <li><span class="kb">Edit</span> and <span class="kb">Remove</span> are under <b>Details</b> at the bottom of the load, with the loader, Delivering to and On loadout sheet. Edit changes the trailer, product, gallons, times, ticket, BOL and Halliburton chems.</li>
+      <li>To change just the gallons, ticket or leave-by, open the load and tap that box at the top (the ones with ✎). Type the new one and tap <span class="kb">Save</span>.</li>
       <li><span class="kb">Reopen</span> puts a finished load back to loading.</li>
     </ol>
   </details>
@@ -1103,9 +1116,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <details><summary>Adding and removing orders</summary>
     <ol>
       <li>Tap <span class="kb">Add an order</span> on the Load Log. Fill in the trailer or customer, product, ticket gallons, ticket number and anything else you have, then tap <span class="kb">Save order</span>.</li>
+      <li>Same kind of load as one you just did? Tap one of the <b>Repeat a recent load</b> buttons at the top of the form. It fills in the product, gallons, state, third party and Halliburton chems. Then type the trailer and ticket.</li>
+      <li>Tap <span class="kb">+1 h</span>, <span class="kb">+2 h</span>, <span class="kb">+3 h</span> or <span class="kb">+4 h</span> under Leave by to set it that far from now.</li>
+      <li>Heel, Halliburton chems, BOL, notes, the loadout sheet box and start and end times for a load that already happened are under <b>More</b>. When it's closed, the More bar shows anything filled in there.</li>
+      <li>To add another load like one on the board, open it, tap <b>Details</b>, then <span class="kb">Copy</span>. Add order opens filled in from it, so you only type the new trailer, ticket and leave-by.</li>
       <li>Blended order, like a CableShield batch cut with water? Pick <b>Custom blend</b> under Product. Enter a blend name, the base batch product and gallons, and the water added after. Needs shows the water, acid and chemicals for the whole load. Tap <span class="kb">Save as recipe</span> to keep it: next time pick it under <b>Saved recipe</b> and it scales to the total gallons. If the load is too heavy, every part is cut back evenly.</li>
-      <li>Trailer came back with product in it? Tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
-      <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
+      <li>Trailer came back with product in it? Open <b>More</b> and tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
+      <li>Halliburton load? Open <b>More</b>, tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico under Delivering to for NM loads. If a third party company's driver is hauling it, tick <b>Third party driver</b>. Both use the 80,000 lb limit. You can change either later under <b>Details</b> on the load.</li>
       <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
     </ol>
@@ -1396,6 +1413,10 @@ function viewCard(o){
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
     (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
+  /* 0. Tap to change gallons, ticket or leave-by without opening Edit (v80) */
+  if(w)b+='<div class="qch"><button type="button" class="qcb" data-act="qc" data-q="gal" data-id="'+id+'"><small>Gallons ✎</small><b>'+(o.gal?num(o.gal):'–')+'</b></button>'+
+    '<button type="button" class="qcb" data-act="qc" data-q="ticket" data-id="'+id+'"><small>Ticket ✎</small><b>'+(o.ticket?esc(o.ticket):'–')+'</b></button>'+
+    '<button type="button" class="qcb" data-act="qc" data-q="lbt" data-id="'+id+'"><small>Leave by ✎</small><b>'+(o.lbtAt?T(o.lbtAt):'–')+'</b></button></div>';
   /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NM'+(isTP(o)?' · third party driver':'')+' · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
   else if(isTP(o))b+='<p class="nmb tpb">Third party driver · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
@@ -1433,7 +1454,7 @@ function viewCard(o){
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="tp" data-id="'+id+'"'+(isTP(o)?' checked':'')+'> Third party driver (80,000 lb limit)</label>'+
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label>';
   else{if(o.loader)f+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';if(o.onSheet===false)f+='<div class="meta"><span>Not on loadout sheet</span></div>'}
-  if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(perm("rm")?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
+  if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(perm("add")?'<button type="button" data-act="copy" data-id="'+id+'">Copy</button>':'')+(perm("rm")?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
   if(f)b+='<details class="wck omore" data-wid="m'+id+'"'+(WOPEN["m"+o.id]?' open':'')+'><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">'+esc(sm.join(" · "))+'</span></span></summary><div class="nmc">'+f+'</div></details>';
   return '<div class="ord vc '+st+(o.state==="NM"?' nm':isTP(o)?' tp':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
@@ -1910,6 +1931,7 @@ function addOrder(){
   $("a_sh").checked=true;$("a_state").value="TX";$("a_tp").checked=false;updState();
   HAL_N.forEach(function(k){$("a_hn"+k).value="";$("a_ha"+k).value=""});$("a_hal").checked=false;$("a_halw").hidden=true;
   $("a_heel").checked=false;$("a_heelw").hidden=true;$("a_heelg").value="";$("a_heelp").value="20";updSplit();
+  $("a_more").open=false;addMoreSum();
   $("addp").hidden=true;
 }
 function buildText(){
@@ -1923,6 +1945,8 @@ function buildText(){
 }
 
 $("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}
+  if(a==="qc"){qcOpen(id,b.getAttribute("data-q"));return}
+  if(a==="copy"){copyLoad(id);return}
   /* End load fires from the hold below. A keyboard press (no pointer) still works. */
   if(a==="end"){if(e.detail===0&&!holdDone)doAct(a,id);holdDone=false;return}
   if(a)doAct(a,id)};
@@ -1966,7 +1990,84 @@ $("list").addEventListener("focusout",function(){setTimeout(function(){
   var n=flushAll();
   if(!n&&pendingBuild&&!isEditingNow()&&!hasDeb())build();
 },0)});
-$("addbtn").onclick=function(){$("addp").hidden=!$("addp").hidden;if(!$("addp").hidden)$("a_name").focus()};
+/* ---- Quicker adding and changing (v80) ---- */
+/* Leave-by quick buttons: now + N hours, rounded up to the next 5 minutes. Clear empties it. */
+document.addEventListener("click",function(e){
+  var b=e.target.closest?e.target.closest(".lbq button"):null;if(!b)return;
+  var inp=$(b.closest(".lbq").getAttribute("data-for")),h=+b.getAttribute("data-h");if(!inp)return;
+  inp.value=h?tval(Math.ceil((Date.now()+h*36e5)/3e5)*3e5):"";
+  inp.dispatchEvent(new Event("input",{bubbles:true}));
+});
+/* More (on Add order): the closed bar says what's filled in, so nothing hides unseen */
+function halFromForm(){var o={};HAL_N.forEach(function(k){o["hn"+k]=$("a_hn"+k).value;o["ha"+k]=$("a_ha"+k).value});return o}
+function addMoreSum(){
+  var s=[],hg=parseFloat($("a_heelg").value),st=$("a_st").value;
+  if($("a_heel").checked&&hg>0)s.push("Heel "+gf(hg)+" gal");
+  if($("a_hal").checked){var ht=halText(halFromForm());s.push(ht?"HAL "+ht:"HAL")}
+  if($("a_bl").value.trim())s.push("BOL "+$("a_bl").value.trim());
+  if($("a_nt").value.trim())s.push("Notes");
+  if(!$("a_sh").checked)s.push("Not on loadout sheet");
+  if(st)s.push("Started "+T(pastTime(st)));
+  $("a_moresum").textContent=s.length?s.join(" · "):"Heel, Halliburton, BOL, notes, past times";
+  $("a_moresum").classList.toggle("set",!!s.length);
+}
+$("addp").addEventListener("input",addMoreSum);$("addp").addEventListener("change",addMoreSum);
+/* Repeat a recent load: the last few product + gallons combos fill the form in one tap */
+function addSrc(o){return {prod:o.prod,gal:parseFloat(o.gal)||0,state:o.state==="NM"?"NM":"TX",tp:isTP(o),cname:o.cname||"",
+  hal:HAL_N.map(function(k){return [String(o["hn"+k]||"").trim(),parseFloat(o["ha"+k])||0]})}}
+var REP=[];
+function renderRepeat(){
+  var all=ORD.concat(Object.keys(HIST).map(function(k){return HIST[k]})).filter(function(o){return o&&o.prod&&o.prod!=="other"&&parseFloat(o.gal)>0})
+    .sort(function(a,b){return (b.createdAt||b.startAt||0)-(a.createdAt||a.startAt||0)}),seen={};
+  REP=[];all.forEach(function(o){if(REP.length>=4)return;var s=addSrc(o),k=JSON.stringify([s.prod,s.gal,s.state,s.tp,s.hal]);if(!seen[k]){seen[k]=1;REP.push(s)}});
+  $("a_rep").innerHTML='<span class="f">Repeat a recent load</span><div class="repw">'+REP.map(function(s,i){
+    var hh=s.hal.some(function(x){return x[0]||x[1]});
+    return '<button type="button" data-r="'+i+'">'+gf(s.gal)+' · '+esc(prodName({prod:s.prod,cname:s.cname}))+(s.state==="NM"?' · NM':'')+(s.tp?' · 3P':'')+(hh?' · HAL':'')+'</button>'}).join("")+'</div>';
+  $("a_rep").hidden=!REP.length;
+}
+$("a_rep").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-r]"):null;if(!b)return;var s=REP[+b.getAttribute("data-r")];if(s){fillAdd(s);$("a_name").focus()}};
+function fillAdd(s){
+  var cx=cxOf(s.prod);
+  if(cx){$("a_prod").value="custom";$("a_rcp").value="";$("a_rdel").hidden=true;$("a_cn").value=s.cname||"Custom blend";$("a_cb").value=cx.b;var bg=r2(s.gal*cx.f);$("a_cbg").value=bg;$("a_caw").value=r2(s.gal-bg)}
+  else $("a_prod").value=s.prod;
+  $("a_gal").value=r2(s.gal);
+  $("a_state").value=s.state;$("a_tp").checked=!!s.tp;updState();
+  var hh=s.hal.some(function(x){return x[0]||x[1]});$("a_hal").checked=hh;$("a_halw").hidden=!hh;
+  HAL_N.forEach(function(k,i){$("a_hn"+k).value=s.hal[i][0];$("a_ha"+k).value=s.hal[i][1]||""});
+  updSplit();addMoreSum();
+}
+function openAdd(){$("addp").hidden=false;renderRepeat();addMoreSum()}
+/* Copy on a load: Add order filled in from it; only the trailer, ticket and leave-by are left */
+function copyLoad(id){
+  var o=find(id);if(!o||!can()||!perm("add"))return;
+  openAdd();fillAdd(addSrc(o));
+  ["a_name","a_tk","a_lbt"].forEach(function(i){$(i).value=""});
+  $("addp").scrollIntoView({block:"start",behavior:"smooth"});setTimeout(function(){$("a_name").focus()},250);
+  toast("Copied. Enter the new trailer and ticket.");
+}
+/* Tap to change gallons, ticket or leave-by on an open load */
+var QC=null;
+function qcOpen(id,q){
+  var o=find(id);if(!o||!can())return;QC={id:id,q:q};var inp=$("qcm_in");
+  $("qcm_t").textContent=q==="gal"?"Change gallons":q==="ticket"?"Change ticket":"Change leave-by";
+  $("qcm_s").textContent=(o.name||"Unnamed order")+" · "+(o.gal?num(o.gal)+" gal ":"")+prodName(o);
+  inp.type=q==="lbt"?"time":q==="gal"?"number":"text";inp.setAttribute("inputmode",q==="gal"?"decimal":q==="ticket"?"text":"none");if(q==="lbt")inp.removeAttribute("inputmode");
+  inp.value=q==="gal"?(o.gal||""):q==="ticket"?(o.ticket||""):tval(o.lbtAt);
+  $("qcm_q").hidden=q!=="lbt";$("qcm").hidden=false;
+  setTimeout(function(){inp.focus();if(q!=="lbt"&&inp.select)try{inp.select()}catch(e){}},40);
+}
+function qcClose(){$("qcm").hidden=true;QC=null}
+function qcSave(){
+  if(!QC)return;var o=find(QC.id),v=$("qcm_in").value,p={};if(!o||!can()){qcClose();return}
+  if(QC.q==="gal"){var g=parseFloat(v);if(!(g>0)){toast("Enter the gallons.");return}if(g===(parseFloat(o.gal)||0)){qcClose();return}p.gal=g}
+  else if(QC.q==="ticket"){var t=String(v).trim();if(t===(o.ticket||"")){qcClose();return}p.ticket=t}
+  else{var l=lbtFrom(v);if((o.lbtAt||null)===(l||null)){qcClose();return}p.lbtAt=l}
+  upd(QC.id,p);qcClose();toast("Saved");
+}
+$("qcm_c").onclick=qcClose;$("qcm_ok").onclick=qcSave;
+$("qcm").onclick=function(e){if(e.target===this)qcClose()};
+$("qcm_in").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();qcSave()}else if(e.key==="Escape")qcClose()};
+$("addbtn").onclick=function(){if($("addp").hidden){openAdd();$("a_name").focus()}else $("addp").hidden=true};
 $("a_x").onclick=function(){$("addp").hidden=true};
 $("a_go").onclick=addOrder;
 $("clr").onclick=function(){
