@@ -300,6 +300,7 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 @keyframes tqd{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.tqt span{animation:none}}
 .askx{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.tqb .tql2{margin:0 0 4px;font-size:14px;font-weight:600;font-style:italic;color:var(--mute)}
 .askx button{min-height:32px;padding:3px 10px;font-size:13px;font-weight:600;border-radius:14px;color:var(--mute)}
 .askf input{flex:1;min-width:0}.askf button{flex:none;min-width:84px}
 .askf .tqmic{min-width:48px;width:48px;padding:0;display:grid;place-items:center;color:var(--brand)}
@@ -933,7 +934,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div id="ho_past"></div>
 </div></main>
 <main id="v-ask" hidden><div class="wrap ask">
-  <div class="tqh"><img src="icon-192.png" alt="" class="tqa"><div><b>Tarquino</b><span>Loader hub assistant · works offline</span></div></div>
+  <div class="tqh"><img src="icon-192.png" alt="" class="tqa"><div><b>Tarquino</b><span>Yard hand · knows the charts · works offline</span></div></div>
   <div id="ask_out" class="tql" role="log" aria-live="polite"></div>
   <div id="ask_ex" class="askx"></div>
   <form id="ask_f" class="askf chf" autocomplete="off"><button id="ask_mic" class="tqmic" type="button" aria-label="Speak your question" title="Speak your question" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
@@ -1058,6 +1059,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>He can change a load for you after you tap <span class="kb">Confirm</span>: "set lw 34000 on 707", "set hw 76000 on 707", "put a 347 gal 20% heel on 880", "remove the heel on 880", "start 707", "assign 707 to Tony", "mark 880 third party".</li>
       <li>Leads can add an order by message: "add trailer 512, 5000 gal 15%, ticket 19131, NM, leave by 3pm, Tony". If something's missing he asks for it, and you can just send it ("5000 gal of 15%"). He shows the order and adds it when you tap <span class="kb">Confirm</span>. Add a heel or Halliburton chems afterward with Edit.</li>
       <li>Ask about time: "how long has 707 been loading", "what's late", "what's due in the next 2 hours", "average load time this shift". And about the latest turnover: "how many Y007 totes", "east tank sonar", "what equipment is down", "rail cars".</li>
+      <li>He's got some personality too: say hi, thank him, ask how he's doing or ask for a joke. He answers like a yard hand who's been around a while, but the numbers always come straight from the charts.</li>
       <li>Tap the microphone to say your question instead of typing. It uses your phone's voice typing, which usually needs a signal. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
       <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
     </ol>
@@ -2912,7 +2914,7 @@ function askCore(raw){
   }
   var b2=askBoard(q);if(b2)return b2;
   var hp=askHelp(q);if(hp)return hp;
-  return {miss:1,h:"Not sure what you mean",d:'<p class="asn">Try one of these:</p><ul>'+ASK_EX.slice(0,5).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>'};
+  return {miss:1,h:"Try it like one of these",d:'<p class="asn">I work best with the numbers and the product in there:</p><ul>'+ASK_EX.slice(0,5).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>'};
 }
 /* Tarquino chat: questions on the right, his answers on the left with the logo.
    The chat lives in this phone's memory for as long as the app is open. */
@@ -3129,20 +3131,57 @@ function askAdd(q){
 function askDo(pid,ok){
   var pd=ASK_PEND[pid];if(!pd||pd.done)return;pd.done=ok?"ok":"no";
   var o=find(pd.oid),msg;
-  if(!ok)msg=pd.type==="add"?'<p>Okay, I didn\'t add it.</p>':'<p>Okay, I left <b>'+esc(pd.nm)+'</b> as it was.</p>';
+  if(!ok)msg=pd.type==="add"?'<p>No problem, I didn\'t add it.</p>':'<p>Leaving <b>'+esc(pd.nm)+'</b> alone. Holler if you change your mind.</p>';
   else if(pd.type!=="add"&&!can())msg='<p>I couldn\'t save that. Check your signal and try again.</p>';
   else if(pd.type==="add"){
     if(!canManage()||!can()||!DL)msg='<p>I couldn\'t add it. Check your signal and that you\'re signed in as a lead.</p>';
     else{var d=pd.d,data={loader:canonName(d.loader||""),name:d.name,prod:d.prod,gal:d.gal,ticket:d.ticket||"",bol:d.bol||"",notes:"",lbtAt:d.lbt?lbtFrom(d.lbt):null,startAt:null,endAt:null,state:d.state||"TX",onSheet:true,createdAt:Date.now()};if(d.tp)data.tp=true;
       if(cxOf(d.prod))data.cname=d.cname||"Custom blend";
       var nid=DL.newId();enqueue(nid,function(){return DL.set(nid,data)});if(data.loader)rememberLoader(data.loader);
-      msg='<p class="ash">Added</p><p class="asn"><b>'+esc(d.name)+'</b> · '+num(d.gal)+' gal '+esc(d.cname||pname(d.prod))+' is on the board.</p><div class="acts"><button type="button" data-askgo="'+esc(nid)+'">Open on the Load Log</button></div>'}}
+      msg='<p class="tql2">'+tqPick("added",["On the board.","Done. Fresh order's up.","Added. Somebody go grab it."])+'</p><p class="ash">Added</p><p class="asn"><b>'+esc(d.name)+'</b> · '+num(d.gal)+' gal '+esc(d.cname||pname(d.prod))+' is on the board.</p><div class="acts"><button type="button" data-askgo="'+esc(nid)+'">Open on the Load Log</button></div>'}}
   else if(!o)msg='<p>That load isn\'t on the board anymore.</p>';
-  else{if(pd.type==="start")doAct("start",pd.oid);else upd(pd.oid,pd.patch);msg='<p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
+  else{if(pd.type==="start")doAct("start",pd.oid);else upd(pd.oid,pd.patch);msg='<p class="tql2">'+tqPick("done",["Done and done.","Took care of it.","All set."])+'</p><p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
   ASK_LOG.push({html:msg});ASK_LOG=ASK_LOG.slice(-40);tqRender();
+}
+/* ---- Tarquino's personality: a seasoned yard hand. Friendly, dependable, a little dry, safety-minded.
+   Only the wording around answers changes; the numbers always come from the same calculators. ---- */
+var TQ_LAST={};
+function tqPick(k,a){var i,n=a.length;if(n<2)return a[0];do{i=Math.floor(Math.random()*n)}while(i===TQ_LAST[k]);TQ_LAST[k]=i;return a[i]}
+function tqName(){return ME&&!ME.admin?ME.name.split(" ")[0]:""}
+function tqPart(){var h=new Date().getHours();return h<5?"late":h<12?"morning":h<17?"afternoon":h<21?"evening":"late"}
+var TQ_JOKES=["I'd tell you a chemistry joke, but all the good ones argon.","Why'd the acid go to the gym? To get a little more concentrated.","Sodium walks into a bar and orders a drink. Bartender says, \"Sorry, we don't serve your kind.\" Na, it's fine.","What do you do with a sick chemist? If you can't helium and you can't curium, you might as well barium.","I tried to write a joke about the water tower. It came out a little watered down.","Never trust an atom. They make up everything.","The scale and I aren't talking. It keeps telling me I'm heavy."];
+function tqTalk(q){
+  var n=tqName(),nm=n?", "+esc(n):"",part=tqPart(),night=curShift().s==="N";
+  if(/\b(stupid|dumb|useless|sucks|worthless|garbage)\b/.test(q))return tqPick("mad",["Fair enough. I'm a yard hand, not a mind reader. Try saying it like one of the examples and I'll get it.","I've been called worse by the acid tower. Give it to me another way and I'll take another swing."]);
+  if(/\b(thank|thanks|thx|ty|appreciate|preciate)\b/.test(q))return tqPick("thx",["Anytime"+nm+". Watch your step out there.","You got it. Keep your gloves on.","No problem. That's what I'm here for.","Happy to help. Go get 'em."]);
+  if(/\b(bye|goodnight|good night|see ya|see you|later|heading home|im out|clocking out)\b/.test(q))return tqPick("bye",["Get home safe"+nm+". I'll keep an eye on the board.","Good work today. Don't forget the turnover.","See you next shift. Drive careful."]);
+  if(/\b(joke|laugh|funny|something fun)\b/.test(q))return tqPick("joke",TQ_JOKES);
+  if(/\b(how are you|hows it going|how you doing|how ya doing|whats up|sup|you good)\b/.test(q))return night?tqPick("how",["Running on coffee and the dilution chart. You?","Can't complain. Quiet nights are the good ones."]):tqPick("how",["Doing alright. Board's moving, nobody's yelling. What do you need?","Can't complain. What can I figure for you?"]);
+  if(/\b(who are you|what are you|your name|what can you do|what do you do|help me|how do i use you)\b/.test(q))return "I'm Tarquino. I've got the dilution chart, the product weights and the board memorized. Ask me about gallons loaded, acid and water, heels, what fits, what's late, the turnover, or tell me to change a load. Tap the mic if your hands are busy.";
+  if(/\b(tired|exhausted|long shift|long night|coffee|sleepy|beat)\b/.test(q))return tqPick("tired",["Long one, huh? Grab some water and take five when you can. I'll watch the board.","Hang in there. Coffee's not a food group, but it helps.","Hydrate. Seriously. Then we'll knock out the next load."]);
+  if(/\b(safety|ppe|be safe|careful)\b/.test(q))return tqPick("safe",["Face shield, gloves, apron. Acid doesn't give second chances.","Always. Check your hoses and couplings before you open a valve.","Safety first, loads second. Every time."]);
+  if(/^(hi|hey|hello|howdy|yo|hiya|morning|evening|afternoon|good (morning|afternoon|evening))\b/.test(q))return tqPick("hi",part==="morning"?["Morning"+nm+". Coffee first, or loads first?","Morning. What are we figuring?"]:part==="late"?["Hey"+nm+". Late one, huh? What do you need?","Evening. "+(night?"Night shift's got me on my third coffee. ":"")+"What do you need?"]:["Hey"+nm+". What can I figure for you?","Howdy. What do you need?"]);
+  return null;
+}
+/* A short lead-in in his voice, based on what kind of answer it is */
+function tqLead(a){
+  if(a.talk)return "";
+  if(a.miss){if(a.needP)return tqPick("np",["Almost. Which product?","Need one more thing."]);return tqPick("miss",["That one went over my hard hat.","Didn't catch that one.","Say that again for the slow guy in the hard hat?"])}
+  if(a.pend)return tqPick("pend",["Want me to do this?","Say the word and I'll make it so.","Double-check me before I touch the board:"]);
+  var h=String(a.h||""),k=a.ctx&&a.ctx.kind;
+  if(/OVER|Cut to/.test(h))return tqPick("heavy",["Heads up, that one's heavy.","Gonna have to trim that one.","Too heavy as written. Here's the fix:"]);
+  if(/fits|projected/.test(h))return tqPick("fit",["Good news, it fits.","You're under. Load it up.","Weight's fine."]);
+  if(/late|past their/.test(h))return /Nothing is late/.test(h)?tqPick("ontime",["Everybody's on time. Nice."]):tqPick("late",["Somebody's running behind.","Clock's not on our side on these:"]);
+  if(k==="heel")return tqPick("heel",["Somebody left you a present.","Here's what's sitting in that trailer:"]);
+  if(k==="loaded")return tqPick("loaded",["Scale says:","Here's what went in:"]);
+  if(k==="split"||k==="weight"||k==="fit")return tqPick("calc",["Easy one.","Here's your mix.","Ran the numbers.","Straight off the chart:"]);
+  if(/turnover|Tote|Tank|Rail|maintenance|Blend/.test(h))return tqPick("turn",["From the last turnover:","Here's what the last shift left us:"]);
+  if(/loading now|waiting|due|match|finished|pulled|on (day|night) shift/.test(h))return tqPick("board",["Here's the board.","Here's what I see:","Board says:"]);
+  return tqPick("gen",["Here you go.","Got it.","Here's what I've got."]);
 }
 function askAnswer(raw){
   var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
+  if(!/\d/.test(q)&&!ASK_INT.test(q)&&!ASK_VERB.test(q)&&!ASK_ADD.test(q)){var tk=tqTalk(q);if(tk)return {talk:1,h:"",d:'<p>'+tk+'</p>'}}
   var r=askAdd(q);if(r)return r;
   r=askAct(q);if(r)return r;
   r=askFollow(q);if(r)return r;
@@ -3155,7 +3194,14 @@ function askAnswer(raw){
   return r;
 }
 var ASK_LOG=[],tqBusy=false;
-function tqHi(){var n=ME&&!ME.admin?ME.name.split(" ")[0]:"";return '<p>Hi'+(n?' '+esc(n):'')+', I\'m Tarquino. Ask me about gallons loaded, acid and water, heels, weights, how much fits, or what\'s on the board. Tap an example below to start.</p>'}
+var TQ_HI=null,TQ_HI_K="";
+function tqHi(){
+  var n=tqName(),k=n+"|"+tqPart();if(TQ_HI&&TQ_HI_K===k)return TQ_HI;TQ_HI_K=k;
+  var part=tqPart(),night=curShift().s==="N",nm=n?" "+esc(n):"";
+  var open=part==="morning"?tqPick("ghi",["Morning"+nm+".","Mornin'"+nm+". Coffee's on, board's up."]):part==="afternoon"?tqPick("ghi",["Afternoon"+nm+".","Hey"+nm+". Halfway there."]):part==="evening"?tqPick("ghi",["Evening"+nm+".","Hey"+nm+". "+(night?"Night shift's starting up.":"Home stretch.")]):tqPick("ghi",["Hey"+nm+". Late one, huh?","Evening"+nm+". Night shift's got me on my third coffee."]);
+  TQ_HI='<p>'+open+' I\'m Tarquino. I know the charts, the weights and the board. Ask me about gallons, acid and water, heels, what fits, what\'s late, the turnover, or tell me to change a load. Tap an example to get going.</p>';
+  return TQ_HI;
+}
 function tqMsg(x){
   if(x.me)return '<div class="tqm me"><div class="tqb">'+esc(x.q)+'</div></div>';
   var pd=x.pend&&ASK_PEND[x.pend],btn=pd?(pd.done?'<p class="asw">'+(pd.done==="ok"?'Confirmed':'Cancelled')+'</p>':'<div class="acts"><button type="button" class="go" data-askok="'+x.pend+'">Confirm</button><button type="button" data-askno="'+x.pend+'">Cancel</button></div>'):'';
@@ -3170,7 +3216,8 @@ function askRun(qv){
   if(tqBusy)return;var a=askAnswer(qv);if(!a)return;
   ASK_LOG.push({me:1,q:qv});ASK_LOG.push({typing:1});tqBusy=true;tqRender();
   if(a.ctx)ASK_CTX=a.ctx;
-  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({pend:a.pend,html:(a.note?'<p class="asw" style="margin:0 0 4px">↻ '+esc(a.note)+'</p>':'')+'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
+  var lead=tqLead(a);
+  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({pend:a.pend,html:a.talk?a.d:(lead?'<p class="tql2">'+esc(lead)+'</p>':'')+(a.note?'<p class="asw" style="margin:0 0 4px">↻ '+esc(a.note)+'</p>':'')+'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
 }
 $("tq_fab").onclick=function(){showView("ask")};
 /* Voice: the phone's own speech recognition, where the browser has it (usually needs a signal) */
