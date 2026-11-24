@@ -2561,7 +2561,7 @@ function canManage(){return isLead()||!needSignIn()}
 var PERMS=[["add","Add orders"],["rm","Remove orders"],["ho","Turnover"],["sched","Schedule"],["rep","Shift Report"],["paper","Paperwork"]],RPERM={};
 function perm(k){if(canManage())return true;if(!ME)return false;var p=RPERM[ME.name.toLowerCase()];return !!(p&&p[k])}
 async function checkLeadPin(pin){
-  if(!pin)return false;if(pin===LEAD_PIN)return true;
+  if(!pin)return false;if(await pinHash(LEAD_NAME,pin)===LEAD_HASH)return true;
   if(await pinHash(ADMIN_NAME,pin)===ADMIN_HASH)return true;
   for(var i=0;i<ROSTER.length;i++){var k=ROSTER[i].toLowerCase();if(RLEAD[k]&&RPIN[k]&&await pinHash(ROSTER[i],pin)===RPIN[k])return true}
   for(var j=0;j<MGMT.length;j++)if(MGMT[j].p&&await pinHash(MGMT[j].n,pin)===MGMT[j].p)return true;
@@ -2824,7 +2824,7 @@ tabs();calc();
 })();
 
 var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],rep:["v-rep","Shift Report","Loads, gallons and times for management"],hist:["v-hist","History","Finished loads from the last 7 days"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
-var LEAD_PIN="0306",curView="log";
+var LEAD_NAME="Backup lead",LEAD_HASH="2d7c4f62ce62d72ffe9cc4d804f4c89f36efc5ef42412c1f6eb37c0034d596df",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
 if(wideMQ.addEventListener)wideMQ.addEventListener("change",syncNav);
