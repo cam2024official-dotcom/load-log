@@ -646,6 +646,17 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .askx button{font-family:var(--body)}
 .demob{border-color:var(--brand);border-left-color:var(--brand)}
 .hp details>summary{font-family:var(--display);font-size:18px;letter-spacing:.04em}
+/* History */
+.hist{max-width:900px}
+.hsbar{display:flex;gap:8px;margin:4px 0 8px}.hsbar input{flex:1;min-width:0}.hsbar select{flex:none;width:auto;max-width:46%}
+.hsr{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:6px}
+.hsr summary{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 12px;cursor:pointer;list-style:none}
+.hsr summary::-webkit-details-marker{display:none}
+.hsn{font:700 18px/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase}.hst{font:600 15px var(--display);color:var(--mute);text-align:right}
+.hsm{grid-column:1/-1;font-size:14px;color:var(--mute)}.hsf{grid-column:1/-1}.hsf:empty{display:none}
+.hsr .rpt{border-left:0;border-right:0;border-bottom:0}.hsr .rpt td:first-child{width:40%;color:var(--mute);font-weight:600}
+.hsr .acts{padding:8px 12px 10px}
+#rp_old{width:auto;min-height:36px;padding:4px 8px;font:600 15px var(--display);letter-spacing:.04em}#rp_old.on{background:var(--head);color:#fff;border-color:var(--head)}
 /* Shift Report */
 .rep{max-width:900px}
 .rpbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:4px 0 12px}
@@ -950,16 +961,21 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <form id="ask_f" class="askf chf" autocomplete="off"><button id="ask_mic" class="tqmic" type="button" aria-label="Speak your question" title="Speak your question" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
 </div></main>
 <main id="v-rep" hidden><div class="wrap rep">
-  <div class="rpbar"><div class="rpsel" id="rp_sel" role="group" aria-label="Report period"><button type="button" data-rp="this" aria-pressed="true">This shift</button><button type="button" data-rp="last" aria-pressed="false">Last shift</button><button type="button" data-rp="today" aria-pressed="false">Today</button><button type="button" data-rp="24h" aria-pressed="false">Last 24 h</button></div>
+  <div class="rpbar"><div class="rpsel" id="rp_sel" role="group" aria-label="Report period"><button type="button" data-rp="this" aria-pressed="true">This shift</button><button type="button" data-rp="last" aria-pressed="false">Last shift</button><button type="button" data-rp="today" aria-pressed="false">Today</button><button type="button" data-rp="24h" aria-pressed="false">Last 24 h</button><select id="rp_old" aria-label="Earlier shift"></select></div>
   <button type="button" class="go" id="rp_print">Print or save PDF</button></div>
   <div id="rp_body"></div>
-  <p class="note">Built from the loads on the board. Print it before tapping Clear finished orders in the Lead Panel, or the finished loads won't be in it.</p>
+  <p class="note">Includes loads still on the board and finished loads from History (the last 7 days).</p>
 </div></main>
 <div id="repview" hidden>
   <div class="sv-bar"><div class="wrap"><p class="note" style="margin:0 0 10px">Print it, or pick Save as PDF in the print window.</p>
     <div class="acts"><button id="rpv_print" class="go" type="button">Print or save PDF</button><button id="rpv_close" type="button">Close</button></div></div></div>
   <div id="rpv_wrap"><div id="rpv_sheet"></div></div>
 </div>
+<main id="v-hist" hidden><div class="wrap hist">
+  <div class="hsbar"><input id="hs_q" type="search" autocomplete="off" placeholder="Search trailer, ticket, BOL, loader or product" aria-label="Search history"><select id="hs_day" aria-label="Day"></select></div>
+  <div id="hs_body"></div>
+  <p class="note">Loads moved here by Clear finished orders are kept for 7 days, then drop off by themselves.</p>
+</div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
   <h2>Loaders</h2>
@@ -1099,7 +1115,15 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>Open the menu and tap <span class="kb">Shift Report</span> (leads and managers). Pick <b>This shift</b>, <b>Last shift</b>, <b>Today</b> or <b>Last 24 h</b>.</li>
       <li>It shows loads finished, gallons, acid and water loaded, average load time, late loads, loads cut for weight and missing amounts, then totals by product, loader and destination, Halliburton chem totals, every finished load, and what's still open.</li>
       <li>Tap <span class="kb">Print or save PDF</span> for a paper copy. It prints in landscape on one page, with the text sized to fill the page: bigger on a quiet shift, smaller on a busy one.</li>
-      <li>It's built from the loads on the board, so print it before tapping <span class="kb">Clear finished orders</span>.</li>
+      <li>It includes finished loads in History, so it still works after <span class="kb">Clear finished orders</span>. Pick <b>Earlier shift</b> for any shift in the last 7 days.</li>
+    </ol>
+  </details>
+  <details><summary>History</summary>
+    <ol>
+      <li><span class="kb">Clear finished orders</span> moves finished loads to <b>History</b> instead of deleting them. They're kept for 7 days.</li>
+      <li>Open the menu and tap <span class="kb">History</span> (same people who can see the Shift Report). Search by trailer, ticket, BOL, loader or product, or pick a day. Tap a load to see everything about it.</li>
+      <li>Cleared one by mistake? Open it and tap <span class="kb">Put back on the board</span> (anyone with Paperwork access).</li>
+      <li><span class="kb">Remove</span> on a load still deletes it for good, since that's for mistakes.</li>
     </ol>
   </details>
   <details><summary>Permissions</summary>
@@ -1175,6 +1199,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <button type="button" data-view="lead">Lead Panel</button>
   <button type="button" data-view="ho">Shift Handoff</button>
   <button type="button" data-view="rep" id="nav_rep" hidden>Shift Report</button>
+  <button type="button" data-view="hist" id="nav_hist" hidden>History</button>
   <button type="button" id="nav_demo" hidden>Demo Board</button>
   <div class="who" id="who" hidden><span id="who_t"></span><button id="who_sw" type="button">Switch person</button></div>
   <div class="navsep">Theme on this device</div>
@@ -1460,7 +1485,7 @@ function build(){
   $("clr").hidden=!can();
   $("ro").hidden=can();
   $("clr").className=clrArm?"arm":"";
-  $("clr").textContent=clrArm?"Printed the Shift Report? Tap again to clear":"Clear finished orders";
+  $("clr").textContent=clrArm?"Tap again to move them to History":"Clear finished orders";
   tick();
 }
 /* Water timer: water fills at 75 gpm. The timer runs (water gallons ÷ 75) minus 5 minutes, so the
@@ -1948,7 +1973,11 @@ $("clr").onclick=function(){
   if(!can())return;
   if(!clrArm){clrArm=true;build();clearTimeout(timers.clr);timers.clr=setTimeout(function(){clrArm=false;build()},4000);return}
   clearTimeout(timers.clr);clrArm=false;
-  ORD.filter(function(o){return status(o)==="done"}).forEach(function(o){enqueue(o.id,function(){return DL.remove(o.id)})});
+  /* Finished loads go to History (kept 7 days) instead of being deleted */
+  var dnl=ORD.filter(function(o){return status(o)==="done"}),hp={},now=Date.now();
+  dnl.forEach(function(o){var c=JSON.parse(JSON.stringify(o));delete c.id;c.clearedAt=now;if(ME)c.clearedBy=ME.name;hp[o.id]=c;HIST[o.id]=Object.assign({id:o.id},c)});
+  if(dnl.length)enqueue(HIST_ID,function(){return DL.update(HIST_ID,hp).then(function(){return Promise.all(dnl.map(function(o){return DL.remove(o.id)}))})});
+  if(dnl.length)toast(dnl.length+" finished load"+(dnl.length===1?"":"s")+" moved to History.");
   build();
 };
 $("copy").onclick=function(){
@@ -1968,14 +1997,14 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null,pr=null,mgo=null;
-  list.forEach(function(o){if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null,mgo=null,hso=null;
+  list.forEach(function(o){if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);setMgmt(mgo);
+  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);
   /* A new chat message or someone coming online doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID}));
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -2552,6 +2581,7 @@ function applyAuth(){
   if(curView==="lead")leadGate();
   if(curView==="help")$("hp_lead").hidden=!canManage();
   $("nav_rep").hidden=!perm("rep");if(curView==="rep"&&!perm("rep"))showView("log");
+  $("nav_hist").hidden=!perm("rep");if(curView==="hist"&&!perm("rep"))showView("log");
   $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
   if(ME&&ME.name!==was)presSoon();
   renderSched();renderHO();
@@ -2793,7 +2823,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],rep:["v-rep","Shift Report","Loads, gallons and times for management"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],rep:["v-rep","Shift Report","Loads, gallons and times for management"],hist:["v-hist","History","Finished loads from the last 7 days"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_PIN="0306",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -2815,6 +2845,7 @@ function showView(k){
   if(k==="sched")setTimeout(renderSched,0);
   if(k==="ho")setTimeout(renderHO,0);
   if(k==="rep")setTimeout(renderRep,0);
+  if(k==="hist")setTimeout(renderHist,0);
   if(k==="ask")setTimeout(function(){askEx();tqRender();try{$("ask_in").focus()}catch(e){}},0);
   if(k==="chat")setTimeout(function(){renderChat(true)},0);
   else chatBadge(chatMsgs());
@@ -3300,6 +3331,49 @@ setInterval(function(){if(!document.hidden)presBeat();renderPres()},60000);
 document.addEventListener("visibilitychange",presBeat);
 window.addEventListener("pagehide",function(){if(DL&&DL.presence&&!DEMO){try{DL.presence(presDev(),null)}catch(e){}}});
 
+/* ---- History: finished loads moved off the board by Clear finished orders, kept 7 days ----
+   Saved beside the orders under a fixed key: {orderId: <the order> + clearedAt, clearedBy}. */
+var HIST_ID="_hist",HIST={},HIST_KEEP=7*864e5,histPruned={};
+function setHist(o){
+  var m={},old={},now=Date.now();
+  if(o)Object.keys(o).forEach(function(k){var v=o[k];if(k==="id"||!v||typeof v!=="object")return;var t=+v.endAt||+v.clearedAt||0;if(now-t>HIST_KEEP){if(!histPruned[k])old[k]=null;return}m[k]=Object.assign({},v,{id:k})});
+  HIST=m;
+  /* The first phone that can write tidies up anything older than 7 days */
+  var ks=Object.keys(old);if(ks.length&&can()&&DL){ks.forEach(function(k){histPruned[k]=1});enqueue(HIST_ID,function(){return DL.update(HIST_ID,old)})}
+  if(curView==="hist")renderHist();if(curView==="rep")renderRep();
+}
+function allDone(){var seen={},out=[];ORD.forEach(function(o){if(o.endAt){seen[o.id]=1;out.push(o)}});Object.keys(HIST).forEach(function(k){if(!seen[k]&&HIST[k].endAt)out.push(HIST[k])});return out}
+var HS_OPEN={};
+function hsDayKey(ms){var d=new Date(ms);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function renderHist(){
+  if(curView!=="hist")return;
+  var all=Object.keys(HIST).map(function(k){return HIST[k]}).sort(function(a,b){return (b.endAt||b.clearedAt)-(a.endAt||a.clearedAt)});
+  var days={};all.forEach(function(o){days[hsDayKey(o.endAt||o.clearedAt)]=1});
+  var sel=$("hs_day").value,dk=Object.keys(days).sort().reverse();
+  $("hs_day").innerHTML='<option value="">All 7 days ('+all.length+')</option>'+dk.map(function(k){var p=k.split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+d.toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"})+'</option>'}).join("");
+  if(sel&&!days[sel])sel="";
+  var q=$("hs_q").value.trim().toLowerCase();
+  var rows=all.filter(function(o){if(sel&&hsDayKey(o.endAt||o.clearedAt)!==sel)return false;if(!q)return true;return [o.name,o.ticket,o.bol,canonName(o.loader),prodName(o)].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})});
+  if(!all.length){$("hs_body").innerHTML='<p class="gn">Nothing in History yet. Finished loads land here when someone taps Clear finished orders in the Lead Panel.</p>';return}
+  if(!rows.length){$("hs_body").innerHTML='<p class="gn">No loads match.</p>';return}
+  var h="",cur="",canRestore=perm("paper")&&can();
+  rows.forEach(function(o){var k=hsDayKey(o.endAt||o.clearedAt);
+    if(k!==cur){cur=k;var p=k.split("-");h+='<h2>'+new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString([],{weekday:"long",month:"short",day:"numeric"})+'</h2>'}
+    var row=function(l,v){return v!=null&&v!==""?'<tr><td>'+l+'</td><td>'+v+'</td></tr>':''};
+    var hl=heelOf(o),chem=halHas(o)?esc(halText(o)):"";
+    h+='<details class="hsr" data-hid="'+esc(o.id)+'"'+(HS_OPEN[o.id]?' open':'')+'><summary><span class="hsn">'+esc(o.name||"Unnamed order")+'</span><span class="hst">'+T(o.endAt||o.clearedAt)+'</span><span class="hsm">'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+' · '+esc(canonName(o.loader)||"No loader")+(o.ticket?' · Ticket '+esc(o.ticket):'')+'</span><span class="hsf">'+rpFlags(o)+'</span></summary>'+
+      '<table class="rpt">'+row("Ticket",esc(o.ticket||""))+row("BOL",esc(o.bol||""))+row("Delivering to",esc(stLabel(o)))+row("Started",o.startAt?T(o.startAt):"")+row("Ended",o.endAt?T(o.endAt):"")+row("Load time",o.startAt&&o.endAt?hm(o.endAt-o.startAt):"")+
+      row("Acid loaded",o.acidGal!=null&&o.acidGal!==""?num(o.acidGal)+' gal':"")+row("Water loaded",o.waterGal!=null&&o.waterGal!==""?num(o.waterGal)+' gal':"")+row("Light weight",o.lightWt?num(o.lightWt)+' lb':"")+row("Heavy weight",o.heavyWt?num(o.heavyWt)+' lb':"")+
+      row("Heel",hl?gf(hl.gal)+' gal '+esc(pname(hl.prod)):"")+row("Halliburton chems",chem)+row("Notes",o.notes?esc(o.notes):"")+row("Cleared",o.clearedAt?rpDT(o.clearedAt)+(o.clearedBy?' by '+esc(o.clearedBy):''):"")+'</table>'+
+      (canRestore?'<div class="acts"><button type="button" data-hsback="'+esc(o.id)+'">Put back on the board</button></div>':'')+'</details>'});
+  $("hs_body").innerHTML=h;
+}
+$("hs_q").oninput=renderHist;$("hs_day").onchange=renderHist;
+$("hs_body").addEventListener("toggle",function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-hid");if(k!=null){if(e.target.open)HS_OPEN[k]=1;else delete HS_OPEN[k]}},true);
+$("hs_body").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-hsback]"):null;if(!b)return;var k=b.getAttribute("data-hsback"),o=HIST[k];if(!o||!perm("paper")||!can())return;
+  askPin("Put "+(o.name||"this load")+" back on the Load Log?","Put back",function(){var c=JSON.parse(JSON.stringify(o));delete c.id;delete c.clearedAt;delete c.clearedBy;var p={};p[k]=null;
+    enqueue(k,function(){return DL.set(k,c)});enqueue(HIST_ID,function(){return DL.update(HIST_ID,p)});delete HIST[k];renderHist();toast((o.name||"Load")+" is back on the board.")},true)};
+
 /* ---- Shift Report: totals for management from the loads on the board ---- */
 var RP_RANGE="this";
 function rpPeriod(k){
@@ -3307,6 +3381,7 @@ function rpPeriod(k){
   if(k==="last"){var pv=curShift(cs.start-60000);return {a:pv.start,b:cs.start,t:(pv.s==="D"?"Day":"Night")+" shift",open:false}}
   if(k==="today"){var t=new Date(now),st=new Date(t.getFullYear(),t.getMonth(),t.getDate());st.setMinutes(D);var a=st.getTime();if(a>now)a-=864e5;return {a:a,b:now,t:"Today",open:true}}
   if(k==="24h")return {a:now-864e5,b:now,t:"Last 24 hours",open:true};
+  if(/^s:\d+$/.test(k)){var a2=+k.slice(2),sh=curShift(a2+60000);return {a:sh.start,b:sh.end,t:(sh.s==="D"?"Day":"Night")+" shift · "+new Date(sh.start).toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"}),open:false}}
   return {a:cs.start,b:now,t:(cs.s==="D"?"Day":"Night")+" shift",open:true};
 }
 function rpDT(ms){return new Date(ms).toLocaleString([],{weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"})}
@@ -3315,7 +3390,7 @@ function rpFlags(o){var f=[];if(o.state==="NM")f.push("NM");if(isTP(o))f.push("3
   return f.map(function(x){return x.charAt(0)==="<"?x:'<span class="rpf">'+x+'</span>'}).join("")}
 function repHtml(k,forPrint){
   var P=rpPeriod(k),now=Date.now(),cs=curShift(now);
-  var dn=ORD.filter(function(o){return o.endAt&&o.endAt>=P.a&&o.endAt<P.b+1}).sort(function(a,b){return a.endAt-b.endAt});
+  var dn=allDone().filter(function(o){return o.endAt>=P.a&&o.endAt<P.b+1}).sort(function(a,b){return a.endAt-b.endAt});
   var sum=function(a,f){return a.reduce(function(t,o){return t+(parseFloat(f(o))||0)},0)};
   var tg=sum(dn,function(o){return o.gal}),ta=sum(dn,function(o){return o.acidGal}),tw=sum(dn,function(o){return o.waterGal});
   var tm=dn.filter(function(o){return o.startAt}).map(function(o){return o.endAt-o.startAt}),avg=tm.length?tm.reduce(function(a,b){return a+b},0)/tm.length:0;
@@ -3349,8 +3424,12 @@ function repHtml(k,forPrint){
     else h+='<h3>Still open now</h3><div class="rpw"><table class="rpt">'+oh2+(all2.length?all2.map(orow).join(""):'<tr><td colspan="6" class="rpnone">Nothing loading or waiting.</td></tr>')+'</table></div>'}
   return h;
 }
-function renderRep(){if(curView!=="rep")return;$("rp_body").innerHTML=repHtml(RP_RANGE);var bs=$("rp_sel").querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(bs[i].getAttribute("data-rp")===RP_RANGE))}
+function rpOldOpts(){var cs=curShift(),out=['<option value="">Earlier shift…</option>'],t=cs.start;
+  for(var i=0;i<14;i++){var pv=curShift(t-60000);t=pv.start;if(Date.now()-pv.start>HIST_KEEP+864e5)break;out.push('<option value="s:'+pv.start+'"'+(RP_RANGE==="s:"+pv.start?' selected':'')+'>'+new Date(pv.start).toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"})+' · '+(pv.s==="D"?"Day":"Night")+'</option>')}
+  return out.join("")}
+function renderRep(){if(curView!=="rep")return;$("rp_body").innerHTML=repHtml(RP_RANGE);var bs=$("rp_sel").querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(bs[i].getAttribute("data-rp")===RP_RANGE));$("rp_old").innerHTML=rpOldOpts();$("rp_old").classList.toggle("on",/^s:/.test(RP_RANGE))}
 $("rp_sel").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-rp]"):null;if(!b)return;RP_RANGE=b.getAttribute("data-rp");renderRep()};
+$("rp_old").onchange=function(){if(this.value){RP_RANGE=this.value;renderRep()}};
 function rpFit(){var w=$("rpv_wrap"),sh=$("rpv_sheet"),k=Math.min(1,(w.clientWidth||1056)/1056);sh.style.transform="scale("+k+")";w.style.height=(sh.offsetHeight*k)+"px"}
 /* Size the printed text so the report fills one landscape page (letter, .35 in margins = 989 x 749 px)
    without spilling onto a second one. The sheet always stays full width; only the text size changes. */

@@ -54,6 +54,7 @@ Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have
 - `_recipes`: saved Custom blend recipes. `{id: {n: name, b: base product, f: base share of the total}}`. A custom blend order stores `prod` as `x:<base>:<share>` (e.g. `x:cs100:0.25`) plus `cname`, so every calculation scales from the key.
 
 - `_mgmt`: Management logins. `{mID: {n: name, p: pin hash}}`. Managers sign in under Management, get full lead rights (`ME.mgr`, `ME.lead`), and are kept off the crew board, schedule and loader lists; starting a load doesn't make them the loader.
+- `_hist`: History. `{orderId: <the finished order> + clearedAt, clearedBy}`, written by Clear finished orders (instead of deleting) and kept 7 days; the first phone that can write removes older entries. The Shift Report reads it through `allDone()`. Remove on a load still deletes outright.
 - `_presence`: who's online. `{deviceId: {n: name, v: page, t: ms}}`, written by `DL.presence` with a Firebase onDisconnect remove; the phone also removes it when the app goes to the background, and entries older than 3 minutes are ignored.
 
-Changes to `_chat`, `_handoff` and `_presence` skip the board rebuild. `update` with `null` deletes a key.
+Changes to `_chat`, `_handoff`, `_presence` and `_hist` skip the board rebuild. `update` with `null` deletes a key.
