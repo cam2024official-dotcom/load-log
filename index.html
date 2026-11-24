@@ -293,6 +293,10 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .askx{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
 .askx button{min-height:32px;padding:3px 10px;font-size:13px;font-weight:600;border-radius:14px;color:var(--mute)}
 .askf input{flex:1;min-width:0}.askf button{flex:none;min-width:84px}
+.askf .tqmic{min-width:48px;width:48px;padding:0;display:grid;place-items:center;color:var(--brand)}
+.askf .tqmic[hidden]{display:none}
+.askf .tqmic.on{background:#c62828;border-color:#c62828;color:#fff;animation:tqpulse 1.2s infinite}
+@keyframes tqpulse{0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,.5)}50%{box-shadow:0 0 0 6px rgba(198,40,40,0)}}
 .ho{max-width:760px}
 .tvh{margin:16px -14px 8px;padding:7px 14px;background:#1b2f4d;color:#fff;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .tvh button{margin-left:auto;min-height:28px;padding:2px 10px;font-size:12px;text-transform:none;letter-spacing:0;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
@@ -802,7 +806,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div class="tqh"><img src="icon-192.png" alt="" class="tqa"><div><b>Tarquino</b><span>Loader hub assistant · works offline</span></div></div>
   <div id="ask_out" class="tql" role="log" aria-live="polite"></div>
   <div id="ask_ex" class="askx"></div>
-  <form id="ask_f" class="askf chf" autocomplete="off"><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
+  <form id="ask_f" class="askf chf" autocomplete="off"><button id="ask_mic" class="tqmic" type="button" aria-label="Speak your question" title="Speak your question" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
 </div></main>
 <main id="v-help" hidden><div class="wrap hp">
   <p class="note">Tap a topic to open it. Words in boxes, like <span class="kb">Start load</span>, are the buttons you tap.</p>
@@ -901,7 +905,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <ol>
       <li>Tap the round Tarquino button at the bottom right of the Load Log, or open the menu and tap <span class="kb">Ask Tarquino</span>. Type a question and tap <span class="kb">Send</span>, or tap one of the examples.</li>
       <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas, NM or Third Party, what gallons weigh, and lb per gallon.</li>
-      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. Ask about a load by trailer or ticket, like "how much fits on trailer 707", "what does 880 need", "heel on 880 lw 35800 system 32800" or "gallons loaded on 707 hw 76000". It uses that load's product, gallons, light weight, chems, heel and state. Follow up with "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" and it reuses your last question. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
+      <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. Ask about a load by trailer or ticket, like "how much fits on trailer 707", "what does 880 need", "heel on 880 lw 35800 system 32800" or "gallons loaded on 707 hw 76000". It uses that load's product, gallons, light weight, chems, heel and state. Follow up with "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" and it reuses your last question.</li>
+      <li>He can change a load for you after you tap <span class="kb">Confirm</span>: "set lw 34000 on 707", "set hw 76000 on 707", "put a 347 gal 20% heel on 880", "remove the heel on 880", "start 707", "assign 707 to Tony", "mark 880 third party".</li>
+      <li>Leads can add an order by message: "add trailer 512, 5000 gal 15%, ticket 19131, NM, leave by 3pm, Tony". If something's missing he asks for it, and you can just send it ("5000 gal of 15%"). He shows the order and adds it when you tap <span class="kb">Confirm</span>. Add a heel or Halliburton chems afterward with Edit.</li>
+      <li>Ask about time: "how long has 707 been loading", "what's late", "what's due in the next 2 hours", "average load time this shift". And about the latest turnover: "how many Y007 totes", "east tank sonar", "what equipment is down", "rail cars".</li>
+      <li>Tap the microphone to say your question instead of typing. It uses your phone's voice typing, which usually needs a signal. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
       <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
     </ol>
   </details>
@@ -2512,7 +2520,7 @@ function showView(k){
 /* Ask box: answers typed questions with the app's own charts, weights and board data.
    No AI and no network: it picks the numbers and product out of the question and runs the
    same functions the rest of the app uses (splitOf, wtFor, wtLim, heelOf...). */
-var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","How much fits on trailer 707","What does trailer 707 need","What's loading right now","Acid pulled this shift"];
+var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","How much fits on trailer 707","What does trailer 707 need","Set lw 34000 on trailer 707","Add trailer 512, 5000 gal 15%, ticket 19131","What's late","How many Y007 totes","What's loading right now"];
 var ASK_PRODS={"36":"acid","32":"32","28":"28","20":"20","15":"15","10":"10","7.5":"7.5","5":"5"};
 function askEx(){$("ask_ex").innerHTML=ASK_EX.map(function(t){return '<button type="button" data-ask="'+esc(t)+'">'+esc(t)+'</button>'}).join("")}
 /* Product named in the question: a saved recipe, CableShield, or an HCl strength */
@@ -2641,7 +2649,7 @@ function askCore(raw){
    so "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" reuse it. */
 var ASK_CTX=null,ASK_LAST=null;
 var ASK_FW=/^(what about|how about|and|what if|make it|instead|same|now|try|then|ok|okay|also)\b/;
-var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing)/;
+var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing|tote|y007|sonar|strap|battery|tank|equipment|rail|transloader|turnover|handoff|\bdue\b|\blate\b|how long|\btook\b|average|\bstart\b|assign)/;
 function askPStr(p){if(!p)return "";if(p.name)return p.name;if(p.key==="acid")return "36%";if(p.key==="cs100")return "cableshield 100";if(p.key==="cs33")return "cableshield 33";return p.key+"%"}
 function askSynth(c){var P=askPStr(c.p);
   if(c.kind==="loaded")return "gallons loaded lw "+c.lw+" hw "+c.hw+" of "+P;
@@ -2663,6 +2671,7 @@ function askFindLoad(q){
   return hits.length?{o:hits[0],ref:m[0]}:(loose?null:{o:null,ref:m[0]});
 }
 function askLoadSub(q){
+  if(/how long|been loading|loading for|\btook\b|time on|how much time/.test(q))return "time";
   if(/\bheel\b|left (in|over)|leftover/.test(q))return "heel";
   if(/\bloaded\b|\bhw\b|heavy|gross|scale ?out/.test(q))return "loaded";
   if(/\bfit|weigh|projected|\bcut\b|over ?weight|too heavy|\bmax\b|room|limit|scale ?in|light weight|\blw\b/.test(q))return "fit";
@@ -2673,6 +2682,10 @@ function askLoadAns(o,sub,ov){
   var L=ov.lw!=null?ov.lw:(parseFloat(o.lightWt)||null),nm=esc(o.name||"This load"),og=parseFloat(o2.gal)||0,wi=wtFor(o2.prod,o2);
   var head='<p class="asn"><b>'+nm+'</b> · '+(og?num(og)+' gal ':'')+esc(prodName(o2))+' · '+stName(o2.state)+(halHas(o2)?' · Halliburton chems':'')+(heelOf(o2)?' · heel':'')+'</p>';
   var ctx={kind:"load",id:o.id,sub:sub,lw:ov.lw,hw:ov.hw,sys:ov.sys,st:ov.st};
+  if(sub==="time"){var stt=status(o),now=Date.now();
+    if(stt==="loading")return {ctx:ctx,h:hms(now-o.startAt)+' <small>loading</small>',d:head+'<p class="asn">Started '+T(o.startAt)+(o.lbtAt?' · leave by '+T(o.lbtAt)+(o.lbtAt<now?' (<b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>)':' ('+hm(o.lbtAt-now)+' left)'):'')+'.</p>'};
+    if(stt==="done")return {ctx:ctx,h:hm(o.endAt-(o.startAt||o.endAt))+' <small>to load</small>',d:head+'<p class="asn">'+(o.startAt?T(o.startAt)+' to ':'Ended ')+T(o.endAt)+'.</p>'};
+    return {ctx:ctx,h:'Not started',d:head+'<p class="asn">'+(o.lbtAt?'Leave by '+T(o.lbtAt)+(o.lbtAt<now?', <b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>':', '+hm(o.lbtAt-now)+' from now')+'.':'No leave-by time set.')+'</p>'}}
   if(sub==="fit"){
     if(!L)return {miss:1,ctx:ctx,h:"What's the light weight?",d:head+'<p class="asn">'+nm+' has no scale-in light weight yet. Ask like "how much fits on '+nm+' with lw 34000".</p>'};
     if(!wi)return {miss:1,h:"No product weight",d:head+'<p class="asn">Set the product weight per gallon on the load first.</p>'};
@@ -2719,6 +2732,8 @@ function askFollow(q){
   var c0=ASK_CTX;if(!c0)return null;
   var fw=ASK_FW.test(q),p2=askProd(q),N=askNums(q),st2=askSt(q);
   if(ASK_INT.test(q))return null;
+  /* A fresh question ("how long…", "what's…") is never a follow-up unless it starts like one */
+  if(!fw&&/^(how|what|whats|when|where|who|which|is|are|do|does|did|can|will|should|show|find)\b/.test(q))return null;
   if(!p2)N.forEach(function(n){if(!p2&&!n.tag&&ASK_PRODS[String(n.v)]&&(fw||N.length===1)){p2={key:ASK_PRODS[String(n.v)]};n.tag="pct"}});
   var nums=N.filter(function(n){return n.tag!=="pct"}),pieces=(p2?1:0)+nums.length+(st2?1:0);
   if(!pieces||(!fw&&pieces>1))return null;
@@ -2734,10 +2749,133 @@ function askFollow(q){
   if(r)r.note="Same as before, with "+ch.join(", ");
   return r;
 }
+/* ---- Deadlines and load times ---- */
+function askTime(q){
+  var now=Date.now(),cs=curShift();
+  if(/\b(late|overdue|past (its |the )?(lbt|leave)|behind|missed)\b/.test(q)){
+    var late=ORD.filter(function(o){return !o.endAt&&o.lbtAt&&o.lbtAt<now}).sort(function(a,b){return a.lbtAt-b.lbtAt});
+    return {h:late.length?late.length+' <small>past their leave-by</small>':'Nothing is late',d:late.length?'<ul>'+late.map(function(o){return '<li><b>'+esc(o.name||"Unnamed order")+'</b> · LBT '+T(o.lbtAt)+' · <b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b> · '+(status(o)==="loading"?'loading':'not started')+'</li>'}).join("")+'</ul>':'<p class="asn">Every open load is still ahead of its leave-by time.</p>'}}
+  if(/\b(due|leaving|leave by|lbt)\b/.test(q)&&/(next|within|soon|coming up|\bhours?\b|\bhr\b)/.test(q)){
+    var m=/(\d+(?:\.\d+)?)\s*(?:h\b|hr|hour)/.exec(q),hrs=m?parseFloat(m[1]):1,until=now+hrs*36e5;
+    var due=ORD.filter(function(o){return !o.endAt&&o.lbtAt&&o.lbtAt>=now&&o.lbtAt<=until}).sort(function(a,b){return a.lbtAt-b.lbtAt});
+    return {h:due.length+' <small>due in the next '+(hrs===1?'hour':hrs+' hours')+'</small>',d:due.length?'<ul>'+due.map(function(o){return '<li><b>'+esc(o.name||"Unnamed order")+'</b> · LBT '+T(o.lbtAt)+' ('+hm(o.lbtAt-now)+') · '+(status(o)==="loading"?'loading':'not started')+'</li>'}).join("")+'</ul>':'<p class="asn">No leave-by times in that window.</p>'}}
+  if(/\b(average|avg|mean|fastest|slowest|quickest|longest)\b/.test(q)&&/(load|time|took)/.test(q)){
+    var dn=ORD.filter(function(o){return o.endAt&&o.startAt&&o.endAt>=cs.start}).map(function(o){return {o:o,t:o.endAt-o.startAt}}).sort(function(a,b){return a.t-b.t});
+    if(!dn.length)return {h:'No finished loads yet',d:'<p class="asn">Nothing has finished this shift yet.</p>'};
+    var avg=dn.reduce(function(t,x){return t+x.t},0)/dn.length;
+    return {h:hm(avg)+' <small>average this shift</small>',d:'<p class="asn">'+dn.length+' finished load'+(dn.length===1?'':'s')+'. Fastest: <b>'+esc(dn[0].o.name||"")+'</b> '+hm(dn[0].t)+'. Slowest: <b>'+esc(dn[dn.length-1].o.name||"")+'</b> '+hm(dn[dn.length-1].t)+'.</p>'}}
+  return null;
+}
+/* ---- Answers from the latest posted turnover (or this shift's draft) ---- */
+function askTurn(q){
+  if(!/(tote|y007|sonar|strap|battery|east tank|west tank|acid tank|water tank|blend station|equipment|maintenance|broken|repair|concern|\bdown\b|rail ?car|transloader|turnover|handoff|temp storage|rinse|soak)/.test(q))return null;
+  var ps=hoPosts().filter(function(x){return x.d&&x.d.v===2}),src=ps[0],d=src?hoNorm(src.d):(HO.d&&HO.d.v===2?HO.d:null);
+  if(!d)return {miss:1,h:'No turnover yet',d:'<p class="asn">No Loader Shift Turnover has been filled in yet.</p>'};
+  var from='<p class="asw" style="margin:0 0 6px">'+(src?'From the '+esc(src.sh||"last turnover")+(src.by?', posted by '+esc(src.by):''):'From this shift\'s turnover, not posted yet')+'</p>',v=function(x){return x!==""&&x!=null?esc(x):'–'},open='<div class="acts"><button type="button" data-askview="ho">Open Shift Handoff</button></div>';
+  if(/tote|y007|rinse|soak|temp storage/.test(q))return {h:'Tote counts',d:from+'<table><tr><th>CableShield totes</th><th>Y007</th><th>Y007A</th></tr>'+TV_CS.map(function(x){var c=d.cs[x[0]];return '<tr><td>'+x[1]+'</td><td>'+v(c.y7)+'</td><td>'+v(c.y7a)+'</td></tr>'}).join("")+'</table><table><tr><td>Empty totes needing rinse</td><td>'+v(d.rin)+'</td></tr><tr><td>Soaking totes needing drain</td><td>'+v(d.soak)+'</td></tr><tr><td>Temp acid tote storage</td><td>'+v(d.tmp)+'</td></tr></table>'+open};
+  if(/sonar|strap|battery|east tank|west tank/.test(q))return {h:'Tank battery',d:from+'<table><tr><th>Battery</th><th>Strap (in)</th><th>Sonar %</th></tr><tr><td>West Tanks</td><td>'+v(d.tb.w.s)+'</td><td>'+v(d.tb.w.n)+'</td></tr><tr><td>East Tanks</td><td>'+v(d.tb.e.s)+'</td><td>'+v(d.tb.e.n)+'</td></tr></table>'+open};
+  if(/acid tank|water tank|blend station/.test(q))return {h:'Blend station levels',d:from+'<table><tr><td>Acid Tank 1</td><td>'+v(d.bl.a1)+'</td></tr><tr><td>Acid Tank 2</td><td>'+v(d.bl.a2)+'</td></tr><tr><td>Water Tank</td><td>'+v(d.bl.w)+'</td></tr></table>'+open};
+  if(/equipment|maintenance|broken|repair|concern|\bdown\b/.test(q)){var eq=d.eq.filter(function(r){return r.e||r.c});return {h:eq.length?eq.length+' <small>maintenance concern'+(eq.length===1?'':'s')+'</small>':'No concerns listed',d:from+(eq.length?'<table><tr><th>Equipment</th><th>Concern</th><th>Reported?</th></tr>'+eq.map(function(r){return '<tr><td>'+v(r.e)+'</td><td>'+v(r.c)+'</td><td>'+v(r.r)+'</td></tr>'}).join("")+'</table>':'')+open}}
+  if(/rail ?car|transloader/.test(q)){var sr=d.src.filter(function(r){return r.c||r.s}),mv=d.mv.filter(function(r){return r.c||r.t});return {h:'Rail cars',d:from+(sr.length?'<table><tr><th>South rail car</th><th>Status</th></tr>'+sr.map(function(r){return '<tr><td>'+v(r.c)+'</td><td>'+v(r.s)+'</td></tr>'}).join("")+'</table>':'<p class="asn">No south rail cars listed.</p>')+(mv.length?'<table><tr><th>Moved to empty line</th><th>Time</th></tr>'+mv.map(function(r){return '<tr><td>'+v(r.c)+'</td><td>'+(r.t?T(atTime(r.t,Date.now())):'–')+'</td></tr>'}).join("")+'</table>':'')+(d.tl?'<p class="asn">Transloader: '+esc(d.tl)+'</p>':'')+open}}
+  var lo=d.lo.filter(Boolean),eq2=d.eq.filter(function(r){return r.e||r.c});
+  return {h:'Latest turnover',d:from+'<p class="asn">Supervisor '+v(d.sup)+' · '+v(tvShift(d.sh))+' shift · trailers loaded '+v(d.tot)+(lo.length?' · loaders '+lo.map(esc).join(", "):'')+(eq2.length?' · '+eq2.length+' maintenance concern'+(eq2.length===1?'':'s'):'')+'</p>'+(d.nt?'<p class="asn">Notes: '+esc(d.nt)+'</p>':'')+(src&&!(src.d.sg&&src.d.sg.i)?'<p class="asw">Not signed by the incoming supervisor yet.</p>':'')+open};
+}
+/* ---- Changes to a load, made only after the person taps Confirm ---- */
+var ASK_PEND={},askPid=0;
+var ASK_VERB=/^(please\s+)?(set|put|enter|save|record|log|update|add|start|begin|assign|give|mark|change|make|remove|clear|delete|take off)\b/;
+function askAct(q){
+  if(!ASK_VERB.test(q))return null;
+  var f=askFindLoad(q);if(!f)return null;
+  if(!f.o)return {miss:1,h:'Which load?',d:'<p class="asn">I couldn\'t find that load on the board. Say the trailer or ticket, like "set lw 34000 on trailer 707".</p>'};
+  var o=f.o,nm=o.name||"this load",rest=q.replace(f.ref," "),N=askNums(rest),patch=null,desc="",type="upd";
+  var pick=function(t){for(var i=0;i<N.length;i++)if(N[i].tag===t)return N[i].v;return null};
+  if(/^(please\s+)?(start|begin)\b/.test(q)){var st=status(o);
+    if(st==="loading")return {h:'Already loading',d:'<p class="asn">'+esc(nm)+' started at '+T(o.startAt)+'.</p>'};
+    if(st==="done")return {h:'Already finished',d:'<p class="asn">'+esc(nm)+' finished at '+T(o.endAt)+'. Use Reopen on the board if it needs to go back to loading.</p>'};
+    type="start";desc="Start loading <b>"+esc(nm)+"</b> now"+(!o.loader&&ME&&!ME.admin?" with you as the loader":"")+".";}
+  else if(/\bheel\b/.test(q)&&/(remove|clear|delete|take off|\bno\b)/.test(q)){if(!heelOf(o))return {h:'No heel saved',d:'<p class="asn">'+esc(nm)+' has no heel to remove.</p>'};patch={heelGal:null,heelProd:null};desc="Remove the heel from <b>"+esc(nm)+"</b>.";}
+  else if(/\bheel\b/.test(q)){
+    var p=askProd(rest),hp=p&&HEEL_PRODS.indexOf(p.key)>=0?p.key:null,g=pick("gal"),lw=pick("lw"),sy=pick("sys");
+    if(g==null)N.forEach(function(n){if(g==null&&!n.tag&&n.v<5000&&!ASK_PRODS[String(n.v)])g=n.v});
+    if(g==null&&lw!=null&&sy!=null&&hp){var hw=wtFor(hp,{});if(hw&&lw>sy)g=Math.round((lw-sy)/hw.w*100)/100}
+    if(!hp)return {miss:1,h:'Which heel product?',d:'<p class="asn">Say the heel\'s product, like "put a 347 gal 20% heel on '+esc(nm)+'".</p>'};
+    if(!(g>0))return {miss:1,h:'How many gallons?',d:'<p class="asn">Say the heel gallons, like "put a 347 gal 20% heel on '+esc(nm)+'", or the two weights: "put a 20% heel on '+esc(nm)+' lw 35800 system 32800".</p>'};
+    patch={heelGal:g,heelProd:hp};desc="Put a <b>"+gf(g)+" gal "+esc(pname(hp))+"</b> heel on <b>"+esc(nm)+"</b>. Its acid and water come off what the load needs.";}
+  else if(/(\blw\b|light weight|scale ?in|tare)/.test(q)){var l=pick("lw");if(l==null)N.forEach(function(n){if(l==null&&!n.tag&&n.v>=5000)l=n.v});
+    if(!(l>0))return {miss:1,h:'What weight?',d:'<p class="asn">Say the weight, like "set lw 34000 on '+esc(nm)+'".</p>'};patch={lightWt:l};desc="Set the scale-in light weight on <b>"+esc(nm)+"</b> to <b>"+num(l)+" lb</b>.";}
+  else if(/(\bhw\b|heavy weight|heavy|gross|scale ?out)/.test(q)){var h=pick("hw");if(h==null)N.forEach(function(n){if(h==null&&!n.tag&&n.v>=5000)h=n.v});
+    if(!(h>0))return {miss:1,h:'What weight?',d:'<p class="asn">Say the weight, like "set hw 76000 on '+esc(nm)+'".</p>'};patch={heavyWt:h};desc="Set the heavy weight on <b>"+esc(nm)+"</b> to <b>"+num(h)+" lb</b>. Open Figure from scale weights on the load to work out the amounts.";}
+  else if(/\b(nm|new mexico|third ?party|3rd ?party|3p|tx|texas)\b/.test(rest)&&/^(please\s+)?(mark|set|make|change|put)\b/.test(q)){var s2=askSt(rest);patch={state:s2};desc="Mark <b>"+esc(nm)+"</b> as <b>"+stName(s2)+"</b>"+(s2==="TX"?" (84,000 lb limit).":" (80,000 lb limit).");}
+  else{var mt=/\bto\s+([a-z][a-z .'-]*)$/.exec(rest)||/\bloader (?:is |to )?([a-z][a-z .'-]*)$/.exec(rest);
+    if(mt&&/(assign|give|loader|set|change|put)/.test(q)){var typed=mt[1].replace(/\b(the|loader)\b/g,"").trim(),who=null;ROSTER.forEach(function(n){if(!who&&n.toLowerCase().indexOf(typed)===0)who=n});who=who||canonName(typed.replace(/\b\w/g,function(c){return c.toUpperCase()}));
+      if(!who)return null;patch={loader:who};desc="Make <b>"+esc(who)+"</b> the loader on <b>"+esc(nm)+"</b>.";}
+    else return null;}
+  if(!can())return {miss:1,h:'Can\'t change loads here',d:'<p class="asn">This phone can\'t make changes right now (no signal, or view only).</p>'};
+  var pid="p"+(++askPid);ASK_PEND[pid]={oid:o.id,type:type,patch:patch,desc:desc,nm:nm};
+  return {pend:pid,h:'Confirm this change',d:'<p class="asn">'+desc+'</p>'};
+}
+/* ---- Adding an order by message ("add trailer 707, 5000 gal 15%, ticket 19130, NM, leave by 3pm, Tony") ----
+   Missing pieces are asked for and the next message fills them in; nothing saves until Confirm. */
+var ASK_ADD=/^(please\s+)?(add|new|create|enter|put in|make)\s+(an?\s+|the\s+)?(new\s+)?(order|load|trailer|truck)\b/;
+function askAddParse(q,d){
+  d=d||{};var r=q,m;
+  if((m=/\b(?:trailer|truck|unit)\s*#?\s*([a-z0-9][a-z0-9-]*)/.exec(r))&&!/^(for|with|of|to)$/.test(m[1])){d.name="Trailer "+m[1].toUpperCase();r=r.replace(m[0]," ")}
+  else if((m=/\b(?:customer|for)\s+([a-z][a-z0-9 &.'-]{1,30}?)(?=,|$|\s+(?:\d|ticket|bol|lbt|leave|nm|tx|texas|new mexico|third|loader))/.exec(r))&&!ROSTER.some(function(n){return n.toLowerCase()===m[1].trim()})){d.name=m[1].trim().replace(/\b\w/g,function(c){return c.toUpperCase()});r=r.replace(m[0]," ")}
+  if((m=/\bticket\s*#?\s*([a-z0-9-]+)/.exec(r))){d.ticket=m[1].toUpperCase();r=r.replace(m[0]," ")}
+  if((m=/\bbol\s*#?\s*([a-z0-9-]+)/.exec(r))){d.bol=m[1].toUpperCase();r=r.replace(m[0]," ")}
+  if((m=/\b(?:lbt|leave by|leaving at|leaves at|leave at|due at|due by|due)\s*(?:at\s*)?(\d{1,2})(?::?(\d{2}))?\s*(am|pm|a|p)?\b/.exec(r))){var h=+m[1],mi=m[2]?+m[2]:0,ap=m[3];
+    if(ap&&ap[0]==="p"&&h<12)h+=12;if(ap&&ap[0]==="a"&&h===12)h=0;if(!ap&&h<6)h+=12;if(h<24&&mi<60)d.lbt=pad(h)+":"+pad(mi);r=r.replace(m[0]," ")}
+  var st=askSt(r);if(st)d.state=st;
+  ROSTER.forEach(function(n){var k=n.toLowerCase();if(k!=="admin"&&new RegExp("\\b"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b").test(r)){d.loader=n;r=r.replace(k," ")}});
+  var p=askProd(r);if(p){d.prod=p.key;d.cname=p.name||null}
+  var N=askNums(r);if(!p)N.forEach(function(n){if(!d.prod&&!n.tag&&ASK_PRODS[String(n.v)]&&n.v<=36&&N.length>1){d.prod=ASK_PRODS[String(n.v)];n.tag="pct"}});
+  N.forEach(function(n){if(n.tag==="gal"||(!n.tag&&n.v>=100&&n.v<20000&&!ASK_PRODS[String(n.v)]&&d.gal==null))d.gal=n.v});
+  return d;
+}
+function askAddCard(d){
+  var need=[];if(!d.name)need.push("the trailer or customer");if(!d.prod)need.push("the product");if(!(d.gal>0))need.push("the gallons");
+  var row=function(k,v){return '<tr><td>'+k+'</td><td>'+v+'</td></tr>'};
+  var t='<table>'+row("Trailer",d.name?esc(d.name):'<i>needed</i>')+row("Product",d.prod?esc(d.cname||pname(d.prod)):'<i>needed</i>')+row("Gallons",d.gal>0?num(d.gal)+' gal':'<i>needed</i>')+
+    row("Delivering to",stName(d.state||"TX"))+row("Loader",d.loader?esc(d.loader):'–')+row("Ticket",d.ticket?esc(d.ticket):'–')+row("BOL",d.bol?esc(d.bol):'–')+row("Leave by",d.lbt?T(lbtFrom(d.lbt)):'–')+'</table>';
+  return {need:need,t:t};
+}
+function askAdd(q){
+  var cont=ASK_CTX&&ASK_CTX.kind==="add"&&!ASK_ADD.test(q)&&!/^(how|what|whats|when|where|who|which|is|are|do|does|did|can|will|should|show|find|set|start|assign|mark|remove|put|clear)\b/.test(q)&&!/(heel|loaded|\bfit|weigh|\blate\b|\bdue\b|tote|sonar|\btank|equipment|\brail|turnover|loading|waiting|pulled)/.test(q);
+  if(!ASK_ADD.test(q)&&!cont)return null;
+  var d=askAddParse(q,cont?Object.assign({},ASK_CTX.d):{});
+  if(cont&&JSON.stringify(d)===JSON.stringify(ASK_CTX.d))return null;
+  if(!canManage())return {miss:1,h:"Only leads can add orders",d:'<p class="asn">Ask a lead to add it, or sign in as a lead.</p>'};
+  var c=askAddCard(d),ctx={kind:"add",d:d};
+  if(c.need.length)return {miss:1,ctx:ctx,h:"Almost there",d:'<p class="asn">I still need '+c.need.join(", ").replace(/, ([^,]*)$/," and $1")+'. Just send it, like "5000 gal of 15%" or "trailer 707".</p>'+c.t};
+  if(!can())return {miss:1,h:"Can't add orders here",d:'<p class="asn">This phone can\'t make changes right now (no signal, or view only).</p>'};
+  var dup=ORD.filter(function(o){return status(o)!=="done"&&String(o.name||"").toLowerCase()===d.name.toLowerCase()});
+  var sp=splitOf(d.prod,d.gal);
+  var pid="p"+(++askPid);ASK_PEND[pid]={type:"add",d:d,nm:d.name,desc:"Add "+esc(d.name)};
+  return {pend:pid,ctx:{kind:"addDone"},h:"Add this order?",d:c.t+(sp?splitHtml(d.prod,d.gal,d.prod==="acid"?"Requested":"Needs"):'')+(dup.length?'<p class="asn" style="color:var(--warn)">'+esc(d.name)+' is already on the board and not finished. Confirm only if this is a second load.</p>':'')+'<p class="asw">Add a heel or Halliburton chems afterward with Edit on the load.</p>'};
+}
+function askDo(pid,ok){
+  var pd=ASK_PEND[pid];if(!pd||pd.done)return;pd.done=ok?"ok":"no";
+  var o=find(pd.oid),msg;
+  if(!ok)msg=pd.type==="add"?'<p>Okay, I didn\'t add it.</p>':'<p>Okay, I left <b>'+esc(pd.nm)+'</b> as it was.</p>';
+  else if(pd.type!=="add"&&!can())msg='<p>I couldn\'t save that. Check your signal and try again.</p>';
+  else if(pd.type==="add"){
+    if(!canManage()||!can()||!DL)msg='<p>I couldn\'t add it. Check your signal and that you\'re signed in as a lead.</p>';
+    else{var d=pd.d,data={loader:canonName(d.loader||""),name:d.name,prod:d.prod,gal:d.gal,ticket:d.ticket||"",bol:d.bol||"",notes:"",lbtAt:d.lbt?lbtFrom(d.lbt):null,startAt:null,endAt:null,state:d.state||"TX",onSheet:true,createdAt:Date.now()};
+      if(cxOf(d.prod))data.cname=d.cname||"Custom blend";
+      var nid=DL.newId();enqueue(nid,function(){return DL.set(nid,data)});if(data.loader)rememberLoader(data.loader);
+      msg='<p class="ash">Added</p><p class="asn"><b>'+esc(d.name)+'</b> · '+num(d.gal)+' gal '+esc(d.cname||pname(d.prod))+' is on the board.</p><div class="acts"><button type="button" data-askgo="'+esc(nid)+'">Open on the Load Log</button></div>'}}
+  else if(!o)msg='<p>That load isn\'t on the board anymore.</p>';
+  else{if(pd.type==="start")doAct("start",pd.oid);else upd(pd.oid,pd.patch);msg='<p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
+  ASK_LOG.push({html:msg});ASK_LOG=ASK_LOG.slice(-40);tqRender();
+}
 function askAnswer(raw){
   var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
-  var r=askFollow(q);if(r)return r;
+  var r=askAdd(q);if(r)return r;
+  r=askAct(q);if(r)return r;
+  r=askFollow(q);if(r)return r;
   r=askLoad(q);if(r)return r;
+  r=askTime(q);if(r)return r;
+  r=askTurn(q);if(r)return r;
   ASK_LAST=null;r=askCore(raw);r.ctx=ASK_LAST;
   /* Left the product out? Use the one from the last question */
   if(r.needP&&ASK_CTX&&ASK_CTX.p){ASK_LAST=null;var r2=askCore(raw+" "+askPStr(ASK_CTX.p));if(!r2.miss){r2.ctx=ASK_LAST;r2.note="Using "+askPn(ASK_CTX.p)+" from before";r=r2}}
@@ -2747,7 +2885,8 @@ var ASK_LOG=[],tqBusy=false;
 function tqHi(){var n=ME&&!ME.admin?ME.name.split(" ")[0]:"";return '<p>Hi'+(n?' '+esc(n):'')+', I\'m Tarquino. Ask me about gallons loaded, acid and water, heels, weights, how much fits, or what\'s on the board. Tap an example below to start.</p>'}
 function tqMsg(x){
   if(x.me)return '<div class="tqm me"><div class="tqb">'+esc(x.q)+'</div></div>';
-  return '<div class="tqm'+(x.miss?' miss':'')+'"><img src="icon-192.png" alt="" class="tqa"><div class="tqb">'+(x.typing?'<span class="tqt" aria-label="Tarquino is typing"><span></span><span></span><span></span></span>':x.html)+'</div></div>';
+  var pd=x.pend&&ASK_PEND[x.pend],btn=pd?(pd.done?'<p class="asw">'+(pd.done==="ok"?'Confirmed':'Cancelled')+'</p>':'<div class="acts"><button type="button" class="go" data-askok="'+x.pend+'">Confirm</button><button type="button" data-askno="'+x.pend+'">Cancel</button></div>'):'';
+  return '<div class="tqm'+(x.miss?' miss':'')+'"><img src="icon-192.png" alt="" class="tqa"><div class="tqb">'+(x.typing?'<span class="tqt" aria-label="Tarquino is typing"><span></span><span></span><span></span></span>':x.html+btn)+'</div></div>';
 }
 function tqRender(){
   var h=tqMsg({html:tqHi()})+ASK_LOG.map(tqMsg).join("");$("ask_out").innerHTML=h;
@@ -2758,12 +2897,25 @@ function askRun(qv){
   if(tqBusy)return;var a=askAnswer(qv);if(!a)return;
   ASK_LOG.push({me:1,q:qv});ASK_LOG.push({typing:1});tqBusy=true;tqRender();
   if(a.ctx)ASK_CTX=a.ctx;
-  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({html:(a.note?'<p class="asw" style="margin:0 0 4px">↻ '+esc(a.note)+'</p>':'')+'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
+  setTimeout(function(){ASK_LOG.pop();ASK_LOG.push({pend:a.pend,html:(a.note?'<p class="asw" style="margin:0 0 4px">↻ '+esc(a.note)+'</p>':'')+'<p class="ash">'+a.h+'</p>'+a.d,miss:a.miss});ASK_LOG=ASK_LOG.slice(-40);tqBusy=false;tqRender()},450);
 }
 $("tq_fab").onclick=function(){showView("ask")};
+/* Voice: the phone's own speech recognition, where the browser has it (usually needs a signal) */
+var TQ_SR=window.SpeechRecognition||window.webkitSpeechRecognition,tqRec=null;
+if(TQ_SR)$("ask_mic").hidden=false;
+$("ask_mic").onclick=function(){
+  if(tqRec){try{tqRec.stop()}catch(e){}return}
+  var r=new TQ_SR(),heard="",b=this;tqRec=r;r.lang="en-US";r.interimResults=true;r.maxAlternatives=1;
+  b.classList.add("on");$("ask_in").placeholder="Listening…";
+  r.onresult=function(e){heard="";for(var i=0;i<e.results.length;i++)heard+=e.results[i][0].transcript;$("ask_in").value=heard};
+  r.onerror=function(e){var c=e&&e.error;toast(c==="not-allowed"||c==="service-not-allowed"?"Allow the microphone for this app to talk to Tarquino.":c==="network"?"Voice needs a signal. You can still type.":c==="no-speech"?"I didn't hear anything. Tap the mic and try again.":"Voice didn't work. You can still type.")};
+  r.onend=function(){tqRec=null;b.classList.remove("on");$("ask_in").placeholder="Message Tarquino";var v=heard.trim();if(v){askRun(v);$("ask_in").value=""}};
+  try{r.start()}catch(e){tqRec=null;b.classList.remove("on");toast("Voice didn't start. You can still type.")}
+};
 $("ask_f").onsubmit=function(e){e.preventDefault();var v=$("ask_in").value.trim();if(!v||tqBusy)return;askRun(v);$("ask_in").value=""};
 $("ask_ex").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-ask]"):null;if(b)askRun(b.getAttribute("data-ask"))};
-$("ask_out").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var g=b.getAttribute("data-askgo"),v=b.getAttribute("data-askview");
+$("ask_out").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var g=b.getAttribute("data-askgo"),v=b.getAttribute("data-askview"),ok=b.getAttribute("data-askok"),no=b.getAttribute("data-askno");
+  if(ok){askDo(ok,true);return}if(no){askDo(no,false);return}
   if(g){showView("log");setTimeout(function(){try{openCard(g,true);var el=$("o-"+g);if(el)el.scrollIntoView({block:"center"})}catch(x){}},50)}
   if(v)showView(v)};
 
