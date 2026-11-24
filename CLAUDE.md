@@ -35,7 +35,7 @@ Serve the folder on localhost and drive it in a browser: a PowerShell HttpListen
 
 ## Rules
 
-- **Never write any PIN into code, commits, or chat.** The hidden Admin login stores only `ADMIN_HASH`. PINs are checked in browser code, so they're casual protection only.
+- **Never write any PIN into code, commits, or chat.** The hidden Admin login stores only `ADMIN_HASH`, and the backup lead PIN only `LEAD_HASH` (`pinHash("Backup lead", pin)`, v79). PINs are checked in browser code, so they're casual protection only.
 - **Never auto-fill acid from the ticket.** The acid tower runs short or over, but water is almost always exact. Water = ticket gallons × the water ratio; acid = scaled gallons − ticket water. CableShield chemicals use their exact ticket amounts and come off first. With no ticket gallons, fall back to the ratio split.
 - The menu Load Weight page reuses `finSplit` / `csChems` / `ticketWater` from the end-of-load window, so changes to that math affect both.
 - The Help page's pictures (`figure.hx`) are frozen copies of real app markup. When a layout they copy changes, update the matching picture too.
