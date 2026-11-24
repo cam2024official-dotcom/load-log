@@ -190,6 +190,9 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .chk input{width:26px;height:26px;min-height:0;padding:0;margin:0;flex:none;accent-color:var(--acc)}
 .g2 .note{margin:0}
 .ord.nm{border:4px solid #f5c400!important;box-shadow:0 0 0 3px rgba(245,196,0,.28)}
+.ord.tp{border:4px solid #6a4fb3!important;box-shadow:0 0 0 3px rgba(106,79,179,.25)}
+.tpt{padding:1px 6px;border-radius:3px;background:#6a4fb3;color:#fff;font-weight:700;font-size:12px}
+.nmb.tpb{background:#6a4fb3;color:#fff}
 .nmb{margin:10px 0 0;padding:8px 10px;border-radius:8px;background:#f5c400;color:#1a1400;font-weight:700;font-size:15px}
 .nmc{margin-top:10px}
 .nmr{display:flex;gap:6px 22px;flex-wrap:wrap;margin-top:10px}
@@ -239,7 +242,7 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
 .grp.none{display:none}
 .grp.mine h2{color:var(--brandink)}
 .grp.mine .mnm{font:600 13px var(--body);color:var(--mute);margin-left:2px;text-transform:none;letter-spacing:0}
-.grp.mine .ord:not(.nm){box-shadow:0 0 0 1px var(--brand)}
+.grp.mine .ord:not(.nm):not(.tp){box-shadow:0 0 0 1px var(--brand)}
 #v-chat{padding-bottom:0}
 .sch{max-width:760px}
 .scnow{margin:0 0 4px;font-weight:700;font-size:16px}
@@ -416,6 +419,7 @@ button{min-height:42px;font-weight:600;font-size:14px}
 .split{border-radius:4px;border-left-width:3px}
 .nmb,#a_nmh{border-radius:4px!important}
 .ord.nm{border-width:2px!important;box-shadow:none;border-color:#f5c400!important}
+.ord.tp{border-width:2px!important;box-shadow:none;border-color:#6a4fb3!important}
 .menu{border-radius:6px;width:42px;height:42px;min-height:42px}
 .menu i{height:2px;border-radius:0}
 .sync i{width:8px;height:8px}
@@ -592,6 +596,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
         <div><label class="f" for="dm_l1">Light weight, low (lb)</label><input id="dm_l1" type="number" inputmode="numeric" min="0" step="100" value="28000"></div>
         <div><label class="f" for="dm_l2">Light weight, high (lb)</label><input id="dm_l2" type="number" inputmode="numeric" min="0" step="100" value="42000"></div>
         <div><label class="f" for="dm_nm">New Mexico (%)</label><input id="dm_nm" type="number" inputmode="numeric" min="0" max="100" value="25"></div>
+        <div><label class="f" for="dm_tp">Third Party (%)</label><input id="dm_tp" type="number" inputmode="numeric" min="0" max="100" value="10"></div>
         <div><label class="f" for="dm_hal">Halliburton chems (%)</label><input id="dm_hal" type="number" inputmode="numeric" min="0" max="100" value="20"></div>
         <div><label class="f" for="dm_cs">CableShield (%)</label><input id="dm_cs" type="number" inputmode="numeric" min="0" max="100" value="15"></div>
         <div><label class="f" for="dm_cx">Custom blend (%)</label><input id="dm_cx" type="number" inputmode="numeric" min="0" max="100" value="10"></div>
@@ -635,7 +640,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <div id="addp" class="panel" hidden>
     <div class="g2">
       <div class="full"><label class="f" for="a_ld">Loader name</label><input id="a_ld" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name"></div>
-      <div class="full"><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
+      <div class="full"><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option><option value="TP">Third Party</option></select></div>
       <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
@@ -854,10 +859,10 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>The line under the counts shows the total acid pulled this shift and how many finished loads are still missing acid.</li>
     </ol>
   </details>
-  <details><summary>Weight check (Texas and NM)</summary>
+  <details><summary>Weight check (Texas, NM and Third Party)</summary>
     <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting nm open"><button type="button" class="orow" aria-expanded="true" style="--lc:#1d64d8" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 230</span><span class="chip mute">No LBT</span></span><span class="orl2"><span class="lp">Christian</span><span>6,000 gal 15% HCl</span><span>Ticket 4415</span><span class="nmt" data-n="1">NM</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><p class="nmb">NM · Max 80,000 lb · Aim 79,000</p><div class="cutw"><div class="split"><p class="sl">Needs, cut to 5,444 gal for weight</p><div class="sg"><div><span>Water</span><b>3,331.7 <small>gal</small></b></div><div><span>36% acid</span><b>2,112.3 <small>gal</small></b></div></div></div><p class="nmn bad">Cut for weight. The full 6,000 gal ticket would be 84,000 lb.</p></div><details class="wck" open><summary data-n="2"><span class="wst">Weight check</span><span class="wsm"><b class="bad">84,000 lb</b><span class="wsn bad">OVER 80,000</span></span></summary><div class="nmc"><p class="nmn" style="margin:0 0 6px">New Mexico. Do not exceed 80,000 lb. Aim for 79,000.</p><label class="f" data-n="3">Scale-in light weight (lb)</label><input type="number" inputmode="decimal" min="0" step="any" value="30000" tabindex="-1"><div><div class="nmr"><div><span>Projected weight</span><b class="bad">84,000 <small>lb</small></b></div></div><p class="nmn bad">OVER 80,000 LB. Cut the order back.</p><div class="nmr"><div><span>Max product at 79,000 lb</span><b>5,444 <small>gal</small></b></div><div><span>Gross weight</span><b>78,996 <small>lb</small></b></div></div><p class="nmn">Needs above is now cut to 5,444 gal. Load those amounts.</p></div></div></details></div></div></div><ol class="hxl"><li><i>1</i><span>NM tag on the row</span></li><li><i>2</i><span>Tap Weight check to open it. When closed, the bar still shows the projected weight</span></li><li><i>3</i><span>Enter the scale-in light weight. It shows the projected weight, and the most product that fits when the order is over</span></li></ol></figure>
     <ol>
-      <li>Texas loads can't go over 84,000 lb, and the target is 83,000. NM loads have a yellow NM tag. They can't go over 80,000 lb, and the target is 79,000.</li>
+      <li>Texas loads can't go over 84,000 lb, and the target is 83,000. NM loads have a yellow NM tag and Third Party loads have a purple 3P tag. Both can't go over 80,000 lb, and the target is 79,000.</li>
       <li>Before loading, open the load, tap <b>Weight check</b> and enter the scale-in light weight. It shows the projected weight of the order and how many gallons fit.</li>
       <li>If the whole order fits, it says so. Load the amounts in Needs. When the order is too heavy, Needs switches to the cut-back amounts and turns orange, so you don't have to open Weight check to see them.</li>
       <li>Halliburton chems are counted in the weight at the product's weight, and they are never cut. Only the product gallons come down.</li>
@@ -895,7 +900,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
   <details><summary>Ask Tarquino</summary>
     <ol>
       <li>Tap the round Tarquino button at the bottom right of the Load Log, or open the menu and tap <span class="kb">Ask Tarquino</span>. Type a question and tap <span class="kb">Send</span>, or tap one of the examples.</li>
-      <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas or NM, what gallons weigh, and lb per gallon.</li>
+      <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas, NM or Third Party, what gallons weigh, and lb per gallon.</li>
       <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. Ask about a load by trailer or ticket, like "how much fits on trailer 707", "what does 880 need", "heel on 880 lw 35800 system 32800" or "gallons loaded on 707 hw 76000". It uses that load's product, gallons, light weight, chems, heel and state. Follow up with "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" and it reuses your last question. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
       <li>Name the product in the question, like "of 20%", "CableShield 100%" or a saved recipe name. Answers use the same charts and weights as the rest of the app and work without a signal.</li>
     </ol>
@@ -916,7 +921,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Blended order, like a CableShield batch cut with water? Pick <b>Custom blend</b> under Product. Enter a blend name, the base batch product and gallons, and the water added after. Needs shows the water, acid and chemicals for the whole load. Tap <span class="kb">Save as recipe</span> to keep it: next time pick it under <b>Saved recipe</b> and it scales to the total gallons. If the load is too heavy, every part is cut back evenly.</li>
       <li>Trailer came back with product in it? Tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
       <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
-      <li>Pick New Mexico under Delivering to for NM loads.</li>
+      <li>Pick New Mexico or Third Party under Delivering to for those loads. Both have the 80,000 lb limit.</li>
       <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
     </ol>
   </details>
@@ -1084,9 +1089,14 @@ function wtFor(prod,o){
   if(prod==="cs33")return {w:W[5],est:"5% HCl"};
   var c=parseFloat(o&&o.wtPerGal);return c>0?{w:c,est:""}:null;
 }
-/* Weight limits by state: NM 80,000 max (aim 79,000), Texas 84,000 max (aim 83,000). */
+/* Weight limits by state: NM and Third Party 80,000 max (aim 79,000), Texas 84,000 max (aim 83,000). */
 var TX_TARGET=83000,TX_MAX=84000;
-function wtLim(o){return o.state==="NM"?{t:NM_TARGET,m:NM_MAX}:{t:TX_TARGET,m:TX_MAX}}
+/* Third Party (TP) loads have the same 80,000 lb limit as New Mexico */
+function wtLim(o){return o.state==="NM"||o.state==="TP"?{t:NM_TARGET,m:NM_MAX}:{t:TX_TARGET,m:TX_MAX}}
+var STATES=[["TX","Texas"],["NM","New Mexico"],["TP","Third Party"]];
+function stName(s){return s==="NM"?"New Mexico":s==="TP"?"Third Party":"Texas"}
+function stOpts(sel){return STATES.map(function(x){return '<option value="'+x[0]+'"'+((sel||"TX")===x[0]?' selected':'')+'>'+x[1]+'</option>'}).join("")}
+function askSt(q){return /\b(nm|new mexico)\b/.test(q)?"NM":/\b(third ?party|3rd ?party|3p|tp)\b/.test(q)?"TP":/\b(tx|texas)\b/.test(q)?"TX":null}
 /* Halliburton chem gallons ride on top of the ticket and are never cut. With no separate
    chem weight, they are counted at the product's weight. */
 function halGal(o){return HAL_N.reduce(function(t,k){var a=parseFloat(o["ha"+k]);return t+(a>0?a:0)},0)}
@@ -1162,9 +1172,10 @@ function viewCard(o){
     '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
+    (o.state==="NM"?'<span class="nmt">NM</span>':o.state==="TP"?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
   /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NM · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
+  else if(o.state==="TP")b+='<p class="nmb tpb">Third Party · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
   b+='<div id="nd-'+id+'">'+needsHtml(o,o.lightWt)+'</div>';
   b+=halBox(o);
   if(o.notes)b+='<p class="nt">'+esc(o.notes)+'</p>';
@@ -1172,7 +1183,7 @@ function viewCard(o){
   if(st!=="done"){
     var lim=wtLim(o);
     b+='<details class="wck" data-wid="'+id+'"'+(WOPEN[o.id]?' open':'')+'><summary><span class="wst">Weight check</span><span class="wsm" id="ws-'+id+'">'+wSum(o,o.lightWt)+'</span></summary><div class="nmc">';
-    b+='<p class="nmn" style="margin:0 0 6px">'+(o.state==="NM"?'New Mexico':'Texas')+'. Do not exceed '+num(lim.m)+' lb. Aim for '+num(lim.t)+'.</p>';
+    b+='<p class="nmn" style="margin:0 0 6px">'+stName(o.state)+'. Do not exceed '+num(lim.m)+' lb. Aim for '+num(lim.t)+'.</p>';
     if(w){
       b+='<label class="f" for="nml-'+id+'">Scale-in light weight (lb)</label><input id="nml-'+id+'" data-f="lightWt" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.lightWt)+'">';
       if(o.prod==="other")b+='<label class="f" for="nmw-'+id+'" style="margin-top:8px">Product weight (lb per gallon)</label><input id="nmw-'+id+'" data-f="wtPerGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.wtPerGal)+'">';
@@ -1189,20 +1200,20 @@ function viewCard(o){
   }
   /* 4. Details at the bottom, folded away: loader, state, sheet, edit and remove are rarely
      needed while loading. The bar shows the loader, BOL and times so nothing is hidden. */
-  var f='',sm=[ld||"No loader",o.state==="NM"?"New Mexico":"Texas"],m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'')+(o.startAt?'<span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':''):'');
+  var f='',sm=[ld||"No loader",stName(o.state)],m=(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+(o.bol?'<span>BOL '+esc(o.bol)+'</span>':'')+(o.startAt?'<span>Started '+T(o.startAt)+'</span>'+(o.endAt?'<span>Ended '+T(o.endAt)+'</span>':''):'');
   if(o.bol)sm.push("BOL "+o.bol);if(o.startAt)sm.push("Started "+T(o.startAt));
   if(m)f+='<div class="meta">'+m+'</div>';
-  var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'"><option value="TX"'+(o.state==="NM"?'':' selected')+'>Texas</option><option value="NM"'+(o.state==="NM"?' selected':'')+'>New Mexico</option></select>';
+  var stSel='<select id="sl-'+id+'" data-f="state" data-id="'+id+'">'+stOpts(o.state)+'</select>';
   if(w)f+='<div class="g2"><div><label class="f" for="ld-'+id+'">Loader</label><input id="ld-'+id+'" data-f="loader" data-id="'+id+'" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type a name" value="'+esc(o.loader)+'"></div><div><label class="f" for="sl-'+id+'">Delivering to</label>'+stSel+'</div></div>'+
     '<label class="chk" style="margin-top:10px"><input type="checkbox" data-f="onSheet" data-id="'+id+'"'+(o.onSheet===false?'':' checked')+'> On loadout sheet</label>';
   else{if(o.loader)f+='<div class="meta"><span>Loader '+esc(o.loader)+'</span></div>';if(o.onSheet===false)f+='<div class="meta"><span>Not on loadout sheet</span></div>'}
   if(w)f+='<div class="acts">'+(st==="loading"?'<button type="button" data-act="undo" data-id="'+id+'">Undo start</button>':'')+'<button type="button" data-act="edit" data-id="'+id+'">Edit</button>'+(canManage()?'<button type="button" data-act="rm" data-id="'+id+'">Remove</button>':'')+'</div>';
   if(f)b+='<details class="wck omore" data-wid="m'+id+'"'+(WOPEN["m"+o.id]?' open':'')+'><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">'+esc(sm.join(" · "))+'</span></span></summary><div class="nmc">'+f+'</div></details>';
-  return '<div class="ord vc '+st+(o.state==="NM"?' nm':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
+  return '<div class="ord vc '+st+(o.state==="NM"?' nm':o.state==="TP"?' tp':'')+(op?' open':'')+'" id="o-'+id+'">'+row+'<div class="obody" id="ob-'+id+'">'+b+'</div></div>';
 }
 function editCard(o){
   var i=esc(o.id);
-  return '<div class="ord'+(o.state==="NM"?' nm':'')+'" id="o-'+i+'"><div class="g2">'+
+  return '<div class="ord'+(o.state==="NM"?' nm':o.state==="TP"?' tp':'')+'" id="o-'+i+'"><div class="g2">'+
    '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
    '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod,prodName(o))+'</select></div>'+
    (cxOf(o.prod)?'<div class="full"><label class="f" for="e_cn'+i+'">Blend name</label><input id="e_cn'+i+'" data-f="cname" data-id="'+i+'" type="text" value="'+esc(o.cname||"")+'"></div><p class="note full">Changing the total gallons keeps the same recipe. To change the recipe, remove this order and add it again.</p>':'')+
@@ -1540,7 +1551,7 @@ $("fin_pr").onchange=finCalc;
 ["fin_ac","fin_wa"].forEach(function(i){$(i).oninput=function(){this.setAttribute("data-touched","1")}});
 $("fin_ok").onclick=saveFin;$("fin_x").onclick=closeFin;
 $("fin").addEventListener("keydown",function(e){if(e.key==="Escape")closeFin()});
-function updState(){$("a_nmh").hidden=$("a_state").value!=="NM"}
+function updState(){var v=$("a_state").value;$("a_nmh").hidden=v==="TX";$("a_nmh").textContent=stName(v)+" load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.";$("a_nmh").style.background=v==="TP"?"#6a4fb3":"#f5c400";$("a_nmh").style.color=v==="TP"?"#fff":"#1a1400"}
 $("a_state").onchange=updState;
 function heelOpts(sel){return HEEL_PRODS.map(function(k){return '<option value="'+k+'"'+(k===String(sel)?' selected':'')+'>'+esc(pname(k))+'</option>'}).join("")}
 $("a_heelp").innerHTML=heelOpts("20");
@@ -2518,7 +2529,7 @@ function askNums(q){
   while((m=re.exec(q))){
     var v=parseFloat(m[1].replace(/,/g,""));if(m[2])v*=1000;
     var after=q.slice(m.index+m[0].length,m.index+m[0].length+10),before=q.slice(Math.max(last,m.index-40),m.index);last=m.index+m[0].length;
-    if(/^\s*(%|percent|pct)/.test(after))continue;
+    if(/^\s*(%|percent|pct)/.test(after)||/^(st|nd|rd|th|p)\b/.test(after))continue;
     var tag="";
     if(/^\s*(gal|gallon)/.test(after))tag="gal";
     else{
@@ -2566,7 +2577,7 @@ function askCore(raw){
   if(!p)N.forEach(function(n){if(!p&&!n.tag&&ASK_PRODS[String(n.v)]){p={key:ASK_PRODS[String(n.v)]};n.tag="pct"}});
   var pick=function(t){for(var i=0;i<N.length;i++)if(N[i].tag===t)return N[i].v;return null};
   var lw=pick("lw"),hw=pick("hw"),sys=pick("sys"),gal=pick("gal"),bigs=N.filter(function(n){return n.v>=5000&&n.tag!=="gal"}).map(function(n){return n.v});
-  var st=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;
+  var st=askSt(q);
   var needP=function(what){return {miss:1,needP:1,h:"Which product?",d:'<p class="asn">Add the product to the question, like "'+what+' of 20%" or "of CableShield 100%".</p>'}};
   /* "How do I…" with no numbers is a how-to question: answer from the Help page */
   if(!N.length&&/^(how (do|can|to|would|should)|where|can i|what does|why)\b/.test(q)){var hp0=askHelp(q);if(hp0)return hp0}
@@ -2598,7 +2609,7 @@ function askCore(raw){
     var sts=st?[st]:["TX","NM"];
     var h3="",d3="";sts.forEach(function(s2,i){var lim=wtLim({state:s2}),g3=Math.floor((lim.t-L2)/w3.w);
       if(i===0)h3=(g3>0?gf(g3)+' <small>gal of '+esc(askPn(p))+' fits'+(st?'':' (Texas)')+'</small>':'Nothing fits');
-      d3+='<tr><td>'+(s2==="NM"?"New Mexico":"Texas")+'</td><td>'+(g3>0?gf(g3)+' gal':'none')+'</td><td>'+(g3>0?num(L2+g3*w3.w)+' lb':'–')+'</td><td>aim '+num(lim.t)+', max '+num(lim.m)+'</td></tr>'});
+      d3+='<tr><td>'+(s2==="NM"&&!st?"New Mexico or Third Party":stName(s2))+'</td><td>'+(g3>0?gf(g3)+' gal':'none')+'</td><td>'+(g3>0?num(L2+g3*w3.w)+' lb':'–')+'</td><td>aim '+num(lim.t)+', max '+num(lim.m)+'</td></tr>'});
     var tg=gal;if(tg){var lim2=wtLim({state:st||"TX"}),pw=L2+tg*w3.w;d3='<p class="asn">'+gf(tg)+' gal would weigh '+num(pw)+' lb'+(pw>lim2.m?', OVER '+num(lim2.m):pw>lim2.t?', over the '+num(lim2.t)+' target':', under the target')+'.</p>'+'<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>'}
     else d3='<table><tr><th>State</th><th>Most that fits</th><th>Gross</th><th>Limit</th></tr>'+d3+'</table>';
     ASK_LAST={kind:"fit",p:p,lw:L2,st:st,gal:gal};return {h:h3,d:d3+'<p class="asw">Light weight '+num(L2)+' lb, '+w3.w+' lb/gal. Halliburton chems or a heel change this, so use Weight check on the load for the exact cut.</p>'};
@@ -2660,7 +2671,7 @@ function askLoadSub(q){
 function askLoadAns(o,sub,ov){
   ov=ov||{};var o2=Object.assign({},o);if(ov.st)o2.state=ov.st;
   var L=ov.lw!=null?ov.lw:(parseFloat(o.lightWt)||null),nm=esc(o.name||"This load"),og=parseFloat(o2.gal)||0,wi=wtFor(o2.prod,o2);
-  var head='<p class="asn"><b>'+nm+'</b> · '+(og?num(og)+' gal ':'')+esc(prodName(o2))+' · '+(o2.state==="NM"?"New Mexico":"Texas")+(halHas(o2)?' · Halliburton chems':'')+(heelOf(o2)?' · heel':'')+'</p>';
+  var head='<p class="asn"><b>'+nm+'</b> · '+(og?num(og)+' gal ':'')+esc(prodName(o2))+' · '+stName(o2.state)+(halHas(o2)?' · Halliburton chems':'')+(heelOf(o2)?' · heel':'')+'</p>';
   var ctx={kind:"load",id:o.id,sub:sub,lw:ov.lw,hw:ov.hw,sys:ov.sys,st:ov.st};
   if(sub==="fit"){
     if(!L)return {miss:1,ctx:ctx,h:"What's the light weight?",d:head+'<p class="asn">'+nm+' has no scale-in light weight yet. Ask like "how much fits on '+nm+' with lw 34000".</p>'};
@@ -2700,13 +2711,13 @@ function askLoad(q){
   if(!sub&&ASK_CTX&&ASK_CTX.kind==="load"&&ASK_FW.test(q))sub=ASK_CTX.sub;
   if(!sub)return null;
   var N=askNums(q.replace(f.ref," ")),ov={};N.forEach(function(n){if(n.tag==="lw")ov.lw=n.v;else if(n.tag==="hw")ov.hw=n.v;else if(n.tag==="sys")ov.sys=n.v;else if(!n.tag&&n.v>=5000){if(ov.lw==null)ov.lw=n.v;else if(sub==="heel"&&ov.sys==null)ov.sys=n.v;else if(ov.hw==null)ov.hw=n.v}});
-  var st=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;if(st)ov.st=st;
+  var st=askSt(q);if(st)ov.st=st;
   var p=askProd(q.replace(f.ref," "));if(sub==="heel"&&p&&ov.lw!=null&&ov.sys!=null){var o3=Object.assign({},f.o,{heelProd:p.key});return askLoadAns(o3,sub,ov)}
   return askLoadAns(f.o,sub,ov);
 }
 function askFollow(q){
   var c0=ASK_CTX;if(!c0)return null;
-  var fw=ASK_FW.test(q),p2=askProd(q),N=askNums(q),st2=/\b(nm|new mexico)\b/.test(q)?"NM":/\b(tx|texas)\b/.test(q)?"TX":null;
+  var fw=ASK_FW.test(q),p2=askProd(q),N=askNums(q),st2=askSt(q);
   if(ASK_INT.test(q))return null;
   if(!p2)N.forEach(function(n){if(!p2&&!n.tag&&ASK_PRODS[String(n.v)]&&(fw||N.length===1)){p2={key:ASK_PRODS[String(n.v)]};n.tag="pct"}});
   var nums=N.filter(function(n){return n.tag!=="pct"}),pieces=(p2?1:0)+nums.length+(st2?1:0);
@@ -2716,7 +2727,7 @@ function askFollow(q){
   nums.forEach(function(n){var t=n.tag;
     if(!t)t=c.kind==="split"||c.kind==="weight"?(n.v<20000?"gal":"lw"):c.kind==="loaded"?(n.v>=5000?"hw":"gal"):(n.v>=5000?"lw":"gal");
     c[t]=n.v;ch.push(t==="gal"?gf(n.v)+" gal":t==="lw"?"light weight "+num(n.v)+" lb":t==="hw"?"heavy weight "+num(n.v)+" lb":"system light weight "+num(n.v)+" lb")});
-  if(st2){c.st=st2;ch.push(st2==="NM"?"New Mexico":"Texas")}
+  if(st2){c.st=st2;ch.push(stName(st2))}
   var r;
   if(c.kind==="load"){var o=find(c.id);if(!o)return null;if(p2&&c.sub==="heel"){o=Object.assign({},o,{heelProd:p2.key})}r=askLoadAns(o,c.sub,{lw:c.lw,hw:c.hw,sys:c.sys,st:c.st})}
   else{var sy=askSynth(c);if(!sy)return null;ASK_LAST=null;r=askCore(sy);if(r.miss)return null;r.ctx=ASK_LAST}
@@ -2770,7 +2781,7 @@ var DEMO_DL={setCode:function(){},exists:async function(){return true},createMet
   update:async function(id,p){var o=DEMO_DB[id]||(DEMO_DB[id]={});Object.keys(p).forEach(function(k){var path=k.split("/"),t=o;for(var i=0;i<path.length-1;i++){if(typeof t[path[i]]!=="object"||!t[path[i]])t[path[i]]={};t=t[path[i]]}var last=path[path.length-1];if(p[k]===null)delete t[last];else t[last]=dmClone(p[k])});dmEmit()},
   remove:async function(id){delete DEMO_DB[id];dmEmit()}};
 function dmWait(){return Promise.all(Object.keys(q).map(function(k){return q[k]})).catch(function(){})}
-var DM_F=["w","l","d","miss","g1","g2","l1","l2","nm","hal","cs","cx","heel","lbt","ld"];
+var DM_F=["w","l","d","miss","g1","g2","l1","l2","nm","tp","hal","cs","cx","heel","lbt","ld"];
 function dmLoad(){var v=null;try{v=JSON.parse(localStorage.getItem(DM_KEY)||"null")}catch(e){}if(v)DM_F.forEach(function(k){if(v[k]!=null)$("dm_"+k).value=v[k]});
   if(!$("dm_ld").value.trim())$("dm_ld").value=(ROSTER.length?ROSTER.filter(function(n){return n.toLowerCase()!=="admin"}):["Tony","Sam","Jayden","Christian"]).join(", ")}
 function dmSave(){var v={};DM_F.forEach(function(k){v[k]=$("dm_"+k).value});try{localStorage.setItem(DM_KEY,JSON.stringify(v))}catch(e){}}
@@ -2789,7 +2800,7 @@ function dmOrders(){
   var used={},busy=[],now=Date.now(),out={},tk=dmRi(19000,19700),bl=dmRi(45000,45800);
   function trailer(){var t;do{t=String(dmRi(101,989))}while(used[t]);used[t]=1;return dmPick(["Trailer ","Trailer ","Trailer ",""])+t}
   function one(st,miss){
-    var o={loader:dmPick(lds),name:trailer(),gal:Math.round(dmRnd(g1,g2)/50)*50,ticket:String(tk+=dmRi(1,9)),bol:String(bl+=dmRi(1,7)),notes:"",state:Math.random()<dmPct("dm_nm")?"NM":"TX",onSheet:true,createdAt:now-dmRi(1,12)*36e5,lbtAt:null,startAt:null,endAt:null};
+    var o={loader:dmPick(lds),name:trailer(),gal:Math.round(dmRnd(g1,g2)/50)*50,ticket:String(tk+=dmRi(1,9)),bol:String(bl+=dmRi(1,7)),notes:"",state:(function(r){return r<dmPct("dm_nm")?"NM":r<dmPct("dm_nm")+dmPct("dm_tp")?"TP":"TX"})(Math.random()),onSheet:true,createdAt:now-dmRi(1,12)*36e5,lbtAt:null,startAt:null,endAt:null};
     var r=Math.random(),cs=dmPct("dm_cs"),cx=dmPct("dm_cx");
     if(r<cs)o.prod=dmPick(["cs100","cs100","cs33"]);
     else if(r<cs+cx){var rr=rc.length?dmPick(rc):{n:"7.5% CableShield",b:"cs100",f:.25};o.prod=cxKey(rr.b,rr.f);o.cname=rr.n}
@@ -2816,6 +2827,7 @@ function dmOrders(){
   var ks=Object.keys(out).filter(function(k){return !out[k].endAt}),used2={};
   function spot(has,set){if(!ks.length||Object.keys(out).some(function(k){return has(out[k])}))return;var c=ks.filter(function(k){return !used2[k]}),k=dmPick(c.length?c:ks);used2[k]=1;set(out[k])}
   if(dmPct("dm_nm"))spot(function(o){return o.state==="NM"},function(o){o.state="NM"});
+  if(dmPct("dm_tp"))spot(function(o){return o.state==="TP"},function(o){o.state="TP"});
   if(dmPct("dm_hal"))spot(function(o){return halHas(o)},function(o){o.hn1="HAI-OS";o.ha1=18;o.hn2="FE-1A";o.ha2=90});
   if(dmPct("dm_heel"))spot(function(o){return heelOf(o)},function(o){o.heelProd="20";o.heelGal=dmRi(150,400)});
   if(dmPct("dm_cs"))spot(function(o){return CSB[o.prod]},function(o){o.prod="cs100";delete o.cname});
