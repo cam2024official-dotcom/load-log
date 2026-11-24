@@ -408,7 +408,7 @@ body.demo header.top{box-shadow:inset 0 -3px 0 #eca03f}
   body{padding-left:240px}
   .wrap{max-width:1400px}
   .calc .wrap{max-width:1100px}
-  #list{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px;margin-top:8px}
+  #list{gap:0 20px;margin-top:8px}
   .grp h2{margin-top:14px}
   #drawer{transform:none!important;visibility:visible!important;width:240px;z-index:5;box-shadow:none;border-right:1px solid var(--line);transition:none}
   #drawer .dh{padding-top:22px}
@@ -716,6 +716,22 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
 /* Quicker adding and changing (v80) */
 .qch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}.qcb{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:0;padding:6px 9px;text-align:left;border:1px dashed var(--line);border-radius:4px;background:transparent;color:var(--ink,inherit);min-width:0}.qcb small{font-size:11px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}.qcb b{font:700 17px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.lbq{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.lbq[hidden]{display:none}.lbq button{flex:1;min-height:36px;padding:4px 6px;font-size:14px}.arep .repw{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}.arep button{min-height:36px;padding:5px 10px;font-size:14px;text-align:left}.amore .wsm{flex:1;overflow:hidden}.amore .wsn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}.amore .wsn.set{color:var(--acc)}.omore .acts{flex-wrap:wrap}.omore .acts button{flex:1 1 calc(50% - 5px)}#qcm_in{width:100%}
+/* Load list on PC (v81): each section is its own column, read left to right as a load moves.
+   Laptop: Loading | Waiting, with Done across the bottom. Wide screen: Loading | Waiting | Done.
+   Your loads stays across the top. Phones keep the stacked list. */
+@media screen and (min-width:700px){
+  #list{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+  .grp,.grp.none{display:block;min-width:0}
+  .grp h2{grid-column:auto}
+  .grp.mine,.grp.gdn{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;align-items:start}
+  .grp.mine>h2,.grp.gdn>h2,.grp.mine>.gn,.grp.gdn>.gn{grid-column:1/-1}
+  #list>p,#list>.empty{grid-column:1/-1}
+}
+@media screen and (min-width:1280px){
+  #list{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}
+  .grp.gdn{grid-column:auto;display:block}
+  .grp.mine{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}
+}
 </style>
 </head>
 <body>
@@ -1494,9 +1510,9 @@ function build(){
       D=rest.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
   if(M.length&&OPEN[M[0].id]===undefined)OPEN[M[0].id]=true;
   var h="";
-  [["Your loads",M,"",true],["Loading now",L,"Nothing loading right now."],["Waiting",W,"No orders waiting."],["Done",D,"Nothing finished yet."]].forEach(function(g){
+  [["Your loads",M,"",true,"mine"],["Loading now",L,"Nothing loading right now.",false,"gld"],["Waiting",W,"No orders waiting.",false,"gwt"],["Done",D,"Nothing finished yet.",false,"gdn"]].forEach(function(g){
     if(g[3]&&!g[1].length)return;
-    h+='<section class="grp'+(g[3]?' mine':'')+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
+    h+='<section class="grp '+g[4]+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
       (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
   if(q)h=(os.length?'<p class="srn">'+os.length+' of '+ORD.length+' loads match “'+esc(q)+'”</p>'+h:'<div class="empty">No loads match “'+esc(q)+'”.</div>');
   else if(!os.length)h='<div class="empty">'+(can()&&perm("add")?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
