@@ -635,6 +635,18 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .askx button{font-family:var(--body)}
 .demob{border-color:var(--brand);border-left-color:var(--brand)}
 .hp details>summary{font-family:var(--display);font-size:18px;letter-spacing:.04em}
+/* Water timer: logo blue with white lettering */
+.wtbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:10px;padding:10px 14px;min-height:52px;text-align:left;background:#2c6384;border:1px solid #2c6384;color:#fff;border-radius:var(--r)}
+.wtbtn b{font:700 19px/1.1 var(--display);letter-spacing:.06em;text-transform:uppercase}
+.wtbtn small{font-size:13px;font-weight:500;opacity:.9}
+.wtbtn.on{background:#315a8f;border-color:#315a8f}
+.wtbtn.on b{font-size:22px}
+.wtbtn.over{background:#315a8f;border-color:#eca03f;box-shadow:0 0 0 2px #eca03f;animation:wtpulse 1.4s infinite}
+@keyframes wtpulse{0%,100%{box-shadow:0 0 0 2px #eca03f}50%{box-shadow:0 0 0 5px rgba(236,160,63,.35)}}
+@media (prefers-reduced-motion:reduce){.wtbtn.over{animation:none}}
+.wtbtn.ro{cursor:default}
+.wtc{padding:1px 6px;border-radius:3px;background:#2c6384;color:#fff;font:700 13px/1.5 var(--display);letter-spacing:.05em}
+.wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
 </style>
 </head>
 <body>
@@ -895,11 +907,12 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     </ol>
   </details>
   <details><summary>Starting a load</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 37:48</b><small>3,060 gal ÷ 75 gpm − 3 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
       <li>Started the wrong one? Open <b>Details</b> at the bottom of the load and tap <span class="kb">Undo start</span>.</li>
+      <li>Loads that need water have a blue <b>water timer</b> button. Tap it when the water starts. It counts down the water gallons ÷ 75 gpm, minus 3 minutes so you have time to walk back. The countdown also shows on the load's row, and your phone buzzes when the water should be done. Tap twice to stop it early.</li>
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
@@ -1261,7 +1274,7 @@ function viewCard(o){
     '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':o.state==="TP"?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
+    (o.state==="NM"?'<span class="nmt">NM</span>':o.state==="TP"?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span></span><span class="chev" aria-hidden="true">›</span></button>';
   /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NM · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
   else if(o.state==="TP")b+='<p class="nmb tpb">Third Party · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
@@ -1283,6 +1296,7 @@ function viewCard(o){
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go hold" data-act="end" data-id="'+id+'"><span>Hold to end load</span></button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
+  if(st!=="done"&&waterNeed(o)>0)b+=w?'<button type="button" class="wtbtn" data-act="water" data-id="'+id+'" id="wt-'+id+'">'+wtLabel(o)+'</button>':'<div class="wtbtn ro" id="wt-'+id+'">'+wtLabel(o)+'</div>';
   if(st==="done"){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
@@ -1351,12 +1365,38 @@ function build(){
   $("clr").textContent=clrArm?"Tap again to clear":"Clear finished orders";
   tick();
 }
+/* Water timer: water fills at 75 gpm. The timer runs (water gallons ÷ 75) minus 3 minutes, so the
+   loader gets back to the water station in time. Water gallons are what Needs shows (after a heel or
+   a cut for weight). Saved on the order as waterAt (start) and waterMin, so every phone sees it. */
+var WT_GPM=75,WT_BUF=3,WT_FIRED={},WT_ARM={};
+function waterNeed(o){
+  var L=parseFloat(o.lightWt)||null,c=L?wtCut(o,L):null,g=c?c.total:(parseFloat(o.gal)||0),sp=splitOf(o.prod,g),w=0;
+  if(!sp)return 0;sp.parts.forEach(function(x){if(x[0]==="Water")w=x[1]});
+  var hl=heelOf(o);if(hl)w-=hl.water;return Math.max(0,w);
+}
+function waterMins(o){return Math.max(0,waterNeed(o)/WT_GPM-WT_BUF)}
+function mmss(ms){var s2=Math.max(0,Math.round(ms/1000)),h=Math.floor(s2/3600),m=Math.floor(s2%3600/60),x=s2%60;return (h?h+":"+pad(m):m)+":"+pad(x)}
+function wtLabel(o){
+  var now=Date.now();
+  if(o.waterAt){var end=o.waterAt+(+o.waterMin||0)*60000,rem=end-now;
+    if(rem>0)return '<b>Water '+mmss(rem)+' left</b><small>'+(WT_ARM[o.id]?'Tap again to stop the timer':'Started '+T(o.waterAt)+' · tap twice to stop')+'</small>';
+    return '<b>Water should be done</b><small>'+mmss(now-end)+' past · tap to clear</small>'}
+  var w=waterNeed(o),m=waterMins(o);
+  if(!(m>0))return '<b>Water under 3 min</b><small>'+gf(w)+' gal at '+WT_GPM+' gpm. No timer needed.</small>';
+  return '<b>Start water timer · '+mmss(m*60000)+'</b><small>'+gf(w)+' gal ÷ '+WT_GPM+' gpm − '+WT_BUF+' min buffer</small>';
+}
 function tick(){
   var now=Date.now(),c={loading:0,waiting:0,done:0},gal=0,noAcid=0;
   ORD.forEach(function(o){
     /* Shift total = actual 36% acid pulled (acid loaded on finished loads), not ticket gallons */
     var st=status(o);c[st]++;if(st==="done"){gal+=parseFloat(o.acidGal)||0;if(missing(o).acid)noAcid++}
-    var t=$("t-"+o.id),ch=$("c-"+o.id);
+    var t=$("t-"+o.id),ch=$("c-"+o.id),wb=$("wt-"+o.id),wr=$("wr-"+o.id);
+    if(wb){var wo=st!=="done"&&o.waterAt,wend=wo?o.waterAt+(+o.waterMin||0)*60000:0;wb.innerHTML=wtLabel(o);wb.classList.toggle("on",!!wo&&wend>now);wb.classList.toggle("over",!!wo&&wend<=now)}
+    if(wr){if(st!=="done"&&o.waterAt){var we=o.waterAt+(+o.waterMin||0)*60000;wr.hidden=false;wr.textContent=we>now?"Water "+mmss(we-now):"Water done";wr.classList.toggle("over",we<=now)}else wr.hidden=true}
+    /* Buzz once when the water should be done, on the loader's phone (or every phone if no loader) */
+    if(st!=="done"&&o.waterAt){var fk=o.id+":"+o.waterAt,wd=o.waterAt+(+o.waterMin||0)*60000;
+      if(wd<=now&&now-wd<120000&&!WT_FIRED[fk]){WT_FIRED[fk]=1;var mine=!o.loader||(ME&&canonName(o.loader).toLowerCase()===ME.name.toLowerCase());
+        if(mine){toast("Water should be done on "+(o.name||"this load")+". Head back to the water station.");try{if(navigator.vibrate)navigator.vibrate([400,150,400,150,400])}catch(e){}}}}
     if(t){
       if(st==="waiting")t.textContent="Not started";
       else if(st==="loading")t.textContent="Loading: "+hms(now-o.startAt);
@@ -1524,6 +1564,13 @@ function doAct(a,id){
   if(a==="start"){var sp={startAt:Date.now(),endAt:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
   else if(a==="end"){upd(id,{endAt:Date.now()});openFin(id)}
   else if(a==="weigh"){flushAll(id);openFin(id)}
+  else if(a==="water"){
+    var wend=o.waterAt?o.waterAt+(+o.waterMin||0)*60000:0;
+    if(!o.waterAt){var wm=waterMins(o);if(!(wm>0))return;upd(id,{waterAt:Date.now(),waterMin:Math.round(wm*100)/100})}
+    else if(wend<=Date.now())upd(id,{waterAt:null,waterMin:null});
+    else if(!WT_ARM[id]){WT_ARM[id]=1;tick();setTimeout(function(){delete WT_ARM[id];tick()},3000)}
+    else{delete WT_ARM[id];upd(id,{waterAt:null,waterMin:null})}
+    return}
   else if(a==="undo")upd(id,{startAt:null,endAt:null});
   else if(a==="reopen")upd(id,{endAt:null});
   else if(a==="edit"){editing[id]=true;OPEN[id]=true;build()}
@@ -3124,7 +3171,7 @@ function dmOrders(){
     if(st==="waiting"){if(Math.random()<dmPct("dm_lbt"))o.lbtAt=Math.round((now+dmRnd(.5,7)*36e5)/9e5)*9e5;if(Math.random()<.6)o.lightWt=lw}
     else{
       o.lightWt=lw;
-      if(st==="loading"){o.startAt=now-dmRi(300,4200)*1000;if(busy.length<lds.length){var fr=lds.filter(function(x){return busy.indexOf(x)<0});o.loader=dmPick(fr)}busy.push(o.loader)}
+      if(st==="loading"){o.startAt=now-dmRi(300,4200)*1000;if(Math.random()<.6){var wmn=waterMins(o);if(wmn>0){o.waterMin=Math.round(wmn*100)/100;o.waterAt=now-Math.round(Math.random()*wmn*0.8*60000)}}if(busy.length<lds.length){var fr=lds.filter(function(x){return busy.indexOf(x)<0});o.loader=dmPick(fr)}busy.push(o.loader)}
       else{
         o.endAt=now-dmRi(10,600)*6e4;o.startAt=o.endAt-dmRi(35,80)*6e4;
         var wi=wtFor(o.prod,o),c=wtCut(o,lw),tot=c?c.total:o.gal,hl=heelOf(o),hv=hl?hl.gal:0,ld=Math.max(0,(tot-hv)*dmRnd(.985,1.015)),hg=halGal(o);
