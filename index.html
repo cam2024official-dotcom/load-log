@@ -537,6 +537,8 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 .who b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
 #drawer .who button{margin-top:8px;border:1px solid var(--line);border-radius:var(--r);min-height:40px;padding:6px 12px;text-align:center;font-size:14px}
 /* Roster logins (Lead Panel) */
+.simgh{margin:16px 0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.mbadge{font-size:11px;font-weight:700;background:#315a8f;color:#fff;padding:1px 6px;border-radius:3px}
 .lbadge{font-size:11px;font-weight:700;background:var(--acc);color:var(--accink);padding:1px 6px;border-radius:3px}
 .rs li .rsp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;width:100%;padding:0 0 6px;font-size:13px;font-weight:500;color:var(--mute)}
 .rs li .rsp .chk{font-size:13px;margin-left:auto}
@@ -588,7 +590,6 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
 </div></header>
 <div class="stripe"></div>
 <main id="v-log"><div class="wrap">
-  <button id="tq_fab" class="tqfab" type="button" aria-label="Ask Tarquino" title="Ask Tarquino"><img src="icon-192.png" alt=""></button>
   <div id="demob" class="demob" hidden>
     <div class="dbh"><b>DEMO BOARD</b><span>Example loads for presentations. Nothing here is saved or shared.</span></div>
     <div class="dba"><button id="dm_rand" type="button" class="go">Randomize</button><button id="dm_exit" type="button">Exit demo</button></div>
@@ -627,6 +628,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <p class="note">Tap your name, then enter your PIN. This phone stays signed in after that.</p>
     <div id="si_list" class="silist"></div>
     <button id="si_all" type="button" class="silall" hidden>Show everyone</button>
+    <div id="si_mg" hidden><p class="simgh">Management</p><div id="si_mlist" class="silist"></div></div>
     <div id="si_pinrow" hidden>
       <label class="f" for="si_pin">PIN for <span id="si_name"></span></label>
       <input id="si_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="Your PIN">
@@ -637,6 +639,7 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <p class="note">Not on the list or forgot your PIN? Ask a lead. <button id="si_lead" class="small" type="button">Lead setup</button></p>
   </div>
   <div id="app">
+  <button id="tq_fab" class="tqfab" type="button" aria-label="Ask Tarquino" title="Ask Tarquino"><img src="icon-192.png" alt=""></button>
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
   <p class="onl" id="onl" hidden></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
@@ -709,6 +712,11 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
     <div class="rsa"><input id="rs_in" type="text" autocomplete="off" maxlength="30" placeholder="Name as it should print" aria-label="New crew member name"><button id="rs_add" class="go" type="button">Add</button></div>
     <div class="rsa2"><input id="rs_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="PIN (4 to 8 digits)" aria-label="PIN for new crew member"><label class="chk"><input id="rs_lead" type="checkbox"> Lead</label></div>
     <p id="rs_err" class="note" style="color:var(--bad)" hidden></p>
+    <h2>Management</h2>
+    <p class="note" style="margin:0 0 10px">Logins for managers. They sign in with their name and PIN and get full lead access everywhere in the app, but they aren't on the crew board, the schedule or the loader lists.</p>
+    <ul id="mg_list" class="rs"></ul>
+    <div class="rsa"><input id="mg_in" type="text" autocomplete="off" maxlength="30" placeholder="Manager's name" aria-label="New manager name"><input id="mg_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="8" placeholder="PIN (4 to 8 digits)" aria-label="PIN for new manager" style="max-width:11em"><button id="mg_add" class="go" type="button">Add</button></div>
+    <p id="mg_err" class="note" style="color:var(--bad)" hidden></p>
     <div class="tools" style="margin-top:12px"><button id="ld_lockbtn" class="small" type="button">Lock panel</button></div>
   </div>
 </div></main>
@@ -942,6 +950,14 @@ input.miss{animation:tcmissin 1.6s ease-in-out infinite}
       <li>Halliburton load? Tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico or Third Party under Delivering to for those loads. Both have the 80,000 lb limit.</li>
       <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
+    </ol>
+  </details>
+  <details><summary>Management logins</summary>
+    <ol>
+      <li>In the <span class="kb">Lead Panel</span>, under <b>Management</b>, type the manager's name and a PIN, then tap <span class="kb">Add</span>.</li>
+      <li>They sign in on their phone by picking their name under <b>Management</b> on the sign-in screen and entering their PIN.</li>
+      <li>Managers have full lead access: adding, editing and removing loads, the Lead Panel, the turnover and everything else. They aren't on the crew board, the schedule or the loader lists, and starting a load doesn't make them the loader.</li>
+      <li>Change a manager's PIN or remove them from the same list.</li>
     </ol>
   </details>
   <details><summary>Adding people and setting PINs</summary>
@@ -1451,7 +1467,7 @@ function doAct(a,id){
     else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
     return}
   rmId=null;
-  if(a==="start"){var sp={startAt:Date.now(),endAt:null};if(!o.loader&&ME&&!ME.admin)sp.loader=ME.name;upd(id,sp)}
+  if(a==="start"){var sp={startAt:Date.now(),endAt:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
   else if(a==="end"){upd(id,{endAt:Date.now()});openFin(id)}
   else if(a==="weigh"){flushAll(id);openFin(id)}
   else if(a==="undo")upd(id,{startAt:null,endAt:null});
@@ -1744,12 +1760,12 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null,pr=null;
-  list.forEach(function(o){if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null,mgo=null;
+  list.forEach(function(o){if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);
+  setChat(ch);setPres(pr);setMgmt(mgo);
   /* A new chat message or someone coming online doesn't need the board rebuilt */
   var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID}));
   if(gotData&&sig===dataSig)return;
@@ -2153,7 +2169,7 @@ function canonName(v){
 var rsEdit=-1;
 function crewList(){var cs=curShift();$("crewlist").innerHTML=ROSTER.filter(function(n){return shiftState(n,cs).on}).map(function(n){return '<option value="'+esc(n)+'"></option>'}).join("")}
 function renderRoster(){
-  crewList();
+  crewList();renderMgmt();
   /* Don't redraw while the lead is typing a PIN; Save or Cancel redraws. */
   var a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.type!=="checkbox"&&$("rs_list").contains(a))return;
   $("rs_list").innerHTML=ROSTER.length?ROSTER.map(function(n,i){var k=n.toLowerCase(),cur=RCOL[k],hp=!!RPIN[k],ld=!!RLEAD[k];
@@ -2222,6 +2238,46 @@ $("rs_list").onclick=function(e){
   rsErr("");saveRoster(ROSTER.filter(function(x,j){return j!==i}));
 };
 
+function mgErr(t){$("mg_err").textContent=t||"";$("mg_err").hidden=!t}
+function renderMgmt(){
+  var a=document.activeElement;if(a&&a.tagName==="INPUT"&&$("mg_list").contains(a))return;
+  $("mg_list").innerHTML=MGMT.length?MGMT.map(function(m){
+    var s='<li><span class="rsn"><i style="background:#315a8f"></i>'+esc(m.n)+' <span class="mbadge">Management</span></span><button type="button" data-mgr="'+esc(m.id)+'">Remove</button><div class="rsp">';
+    if(mgEdit===m.id)s+='<input id="mgp_in" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="off" placeholder="4 to 8 digits" aria-label="New PIN for '+esc(m.n)+'"><button type="button" class="go" data-mgps="'+esc(m.id)+'">Save PIN</button><button type="button" data-mgpx="1">Cancel</button>';
+    else s+='<span>'+(m.p?'PIN set':'No PIN yet')+'</span><button type="button" data-mgp="'+esc(m.id)+'">'+(m.p?'Change PIN':'Set PIN')+'</button>';
+    return s+'</div></li>'}).join(""):'<li class="none">No managers yet.</li>';
+  if(mgEdit){var pi=$("mgp_in");if(pi)try{pi.focus()}catch(e){}}
+}
+function mgSave(id,v){if(!DL||!can()){mgErr("Not connected. Open the Load Log with a signal first.");return false}var p={};p[id]=v;enqueue(MGMT_ID,function(){return DL.update(MGMT_ID,p)});return true}
+async function mgAdd(){
+  var v=$("mg_in").value.trim().replace(/\s+/g," "),pin=$("mg_pin").value.trim();mgErr("");
+  if(!v){$("mg_in").focus();return}
+  if(isAdminName(v)){mgErr("That name is reserved. Pick another.");return}
+  if(rosterName(v)){mgErr(v+" is on the crew roster. Use a different name, or remove them from the crew first.");return}
+  if(mgmtOf(v)){mgErr(v+" is already in Management.");return}
+  if(!okPin(pin)){mgErr("Give them a PIN, 4 to 8 digits, numbers only.");$("mg_pin").focus();return}
+  var id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),rec={n:v,p:await pinHash(v,pin)};
+  if(mgSave(id,rec)){MGMT.push({id:id,n:rec.n,p:rec.p});setMgmt(MGMT.reduce(function(o,m){o[m.id]={n:m.n,p:m.p};return o},{}));renderMgmt();$("mg_in").value="";$("mg_pin").value="";$("mg_in").focus()}
+}
+async function mgPin(id){
+  var m=MGMT.filter(function(x){return x.id===id})[0],inp=$("mgp_in");if(!m||!inp)return;
+  var pin=inp.value.trim();if(!okPin(pin)){mgErr("The PIN is 4 to 8 digits, numbers only.");inp.value="";inp.focus();return}
+  mgErr("");m.p=await pinHash(m.n,pin);mgEdit=null;try{inp.blur()}catch(e){}
+  if(mgSave(id,{n:m.n,p:m.p}))renderMgmt();
+}
+$("mg_add").onclick=mgAdd;
+$("mg_in").onkeydown=$("mg_pin").onkeydown=function(e){if(e.key==="Enter")mgAdd()};
+$("mg_list").onkeydown=function(e){if(e.key==="Enter"&&e.target.id==="mgp_in")mgPin(mgEdit)};
+$("mg_list").onclick=function(e){
+  var t=e.target.closest?e.target.closest("button"):null;if(!t)return;
+  if(t.hasAttribute("data-mgp")){mgEdit=t.getAttribute("data-mgp");mgErr("");renderMgmt();return}
+  if(t.hasAttribute("data-mgps")){mgPin(t.getAttribute("data-mgps"));return}
+  if(t.hasAttribute("data-mgpx")){mgEdit=null;var pi=$("mgp_in");if(pi)try{pi.blur()}catch(x){}renderMgmt();return}
+  if(!t.hasAttribute("data-mgr"))return;var id=t.getAttribute("data-mgr");
+  if(t.getAttribute("data-arm")!=="1"){t.setAttribute("data-arm","1");t.className="arm";t.textContent="Tap to confirm";setTimeout(function(){if(t.isConnected){t.removeAttribute("data-arm");t.className="";t.textContent="Remove"}},4000);return}
+  if(mgSave(id,null)){MGMT=MGMT.filter(function(m){return m.id!==id});mgEdit=null;renderMgmt()}
+};
+
 /* Personal logins. Each phone signs in once as a roster name with that person's PIN.
    PINs are stored hashed (not readable in the database) but checked in the browser,
    so this is casual protection, same as the crew PIN and the lead PIN. */
@@ -2239,6 +2295,11 @@ async function pinHash(name,pin){
   return Array.prototype.map.call(new Uint8Array(b),function(x){return (x<16?"0":"")+x.toString(16)}).join("");
 }
 function rosterName(v){v=String(v||"").trim().toLowerCase();for(var i=0;i<ROSTER.length;i++)if(ROSTER[i].toLowerCase()===v)return ROSTER[i];return null}
+/* Management logins, beside the orders under a fixed key: {mID:{n:"Name",p:<pin hash>}}.
+   Managers have full lead rights but aren't crew: not on the crew board, schedule or loader lists. */
+var MGMT_ID="_mgmt",MGMT=[],mgEdit=null;
+function setMgmt(o){var a=[];if(o)Object.keys(o).forEach(function(k){var v=o[k];if(k!=="id"&&v&&v.n)a.push({id:k,n:String(v.n),p:v.p?String(v.p):""})});a.sort(function(x,y){return x.n.localeCompare(y.n,undefined,{sensitivity:"base"})});MGMT=a}
+function mgmtOf(v){v=String(v||"").trim().toLowerCase();for(var i=0;i<MGMT.length;i++)if(MGMT[i].n.toLowerCase()===v)return MGMT[i];return null}
 function needSignIn(){for(var i=0;i<ROSTER.length;i++)if(RPIN[ROSTER[i].toLowerCase()])return true;return false}
 function isLead(){return !!(ME&&ME.lead)}
 /* Adding and removing orders is for leads. Before any logins exist (no PINs set),
@@ -2248,17 +2309,18 @@ async function checkLeadPin(pin){
   if(!pin)return false;if(pin===LEAD_PIN)return true;
   if(await pinHash(ADMIN_NAME,pin)===ADMIN_HASH)return true;
   for(var i=0;i<ROSTER.length;i++){var k=ROSTER[i].toLowerCase();if(RLEAD[k]&&RPIN[k]&&await pinHash(ROSTER[i],pin)===RPIN[k])return true}
+  for(var j=0;j<MGMT.length;j++)if(MGMT[j].p&&await pinHash(MGMT[j].n,pin)===MGMT[j].p)return true;
   return false;
 }
 function applyAuth(){
   var saved="";try{saved=localStorage.getItem(USER_KEY)||""}catch(e){}
-  var adm=isAdminName(saved),nm=saved?(adm?ADMIN_NAME:rosterName(saved)):null;
+  var adm=isAdminName(saved),mg=!adm&&!rosterName(saved)?mgmtOf(saved):null,nm=saved?(adm?ADMIN_NAME:mg?mg.n:rosterName(saved)):null;
   if(saved&&!nm&&gotData){try{localStorage.removeItem(USER_KEY)}catch(e){}}  /* removed from the roster: signed out */
   var was=ME&&ME.name;
-  ME=nm?{name:nm,lead:adm||!!RLEAD[nm.toLowerCase()],admin:adm}:null;
-  if(ME&&ME.name!==was&&$("addp").hidden)$("a_ld").value=adm?"":ME.name;
+  ME=nm?{name:nm,lead:adm||!!mg||!!RLEAD[nm.toLowerCase()],admin:adm,mgr:!!mg}:null;
+  if(ME&&ME.name!==was&&$("addp").hidden)$("a_ld").value=adm||mg?"":ME.name;
   var w=$("who");w.hidden=!ME&&!needSignIn();
-  $("who_t").innerHTML=ME?'<b>'+esc(ME.name)+'</b>'+(adm?'Admin on this phone':ME.lead?'Lead on this phone':'Signed in on this phone'):'<b>Not signed in</b>';
+  $("who_t").innerHTML=ME?'<b>'+esc(ME.name)+'</b>'+(adm?'Admin on this phone':ME.mgr?'Management on this phone':ME.lead?'Lead on this phone':'Signed in on this phone'):'<b>Not signed in</b>';
   $("who_sw").textContent=ME?"Switch person":"Sign in";
   if(gotData&&$("setup").hidden){if((needSignIn()&&!ME)||siSwitching)showSignIn();else hideSignIn()}
   if(curView==="lead")leadGate();
@@ -2277,17 +2339,19 @@ function renderSignIn(){
   $("si_all").hidden=vis.length===ROSTER.length;
   $("si_list").innerHTML=vis.map(function(n){var k=n.toLowerCase(),hp=!!RPIN[k];
     return '<button type="button" data-si="'+esc(n)+'" style="--lc:'+colOf(n)+'"'+(hp?'':' disabled')+' aria-pressed="'+(siName===n)+'"><span>'+esc(n)+'</span><small>'+(hp?(RLEAD[k]?'Lead':''):'No PIN yet')+'</small></button>'}).join("")||'<p class="note">No crew names yet. A lead adds them in the Lead Panel.</p>';
+  var mgs=MGMT.filter(function(m){return m.p});$("si_mg").hidden=!mgs.length;
+  $("si_mlist").innerHTML=mgs.map(function(m){return '<button type="button" data-si="'+esc(m.n)+'" style="--lc:#315a8f" aria-pressed="'+(siName===m.n)+'"><span>'+esc(m.n)+'</span><small>Management</small></button>'}).join("");
   $("si_pinrow").hidden=!siName;$("si_name").textContent=siName||"";
   $("si_cancel").hidden=!(siSwitching&&ME);
 }
-$("si_list").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-si]"):null;if(!b||b.disabled)return;
+$("si_list").onclick=$("si_mlist").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-si]"):null;if(!b||b.disabled)return;
   siName=b.getAttribute("data-si");$("si_pin").value="";$("si_err").textContent="";renderSignIn();try{$("si_pin").focus()}catch(x){}};
 async function siGo(){
   var nm=siName,pin=$("si_pin").value.trim();if(!nm)return;
-  var k=nm.toLowerCase(),adm=isAdminName(nm);
-  if(adm?await pinHash(ADMIN_NAME,pin)!==ADMIN_HASH:(!RPIN[k]||await pinHash(nm,pin)!==RPIN[k])){$("si_err").textContent="Wrong PIN.";$("si_pin").value="";$("si_pin").focus();return}
+  var k=nm.toLowerCase(),adm=isAdminName(nm),mg=!adm&&!rosterName(nm)?mgmtOf(nm):null;
+  if(adm?await pinHash(ADMIN_NAME,pin)!==ADMIN_HASH:mg?(!mg.p||await pinHash(mg.n,pin)!==mg.p):(!RPIN[k]||await pinHash(nm,pin)!==RPIN[k])){$("si_err").textContent="Wrong PIN.";$("si_pin").value="";$("si_pin").focus();return}
   try{localStorage.setItem(USER_KEY,nm)}catch(e){}
-  if(!adm)rememberLoader(nm);siSwitching=false;siName=null;$("si_pin").value="";$("si_err").textContent="";
+  if(!adm&&!mg)rememberLoader(nm);siSwitching=false;siName=null;$("si_pin").value="";$("si_err").textContent="";
   applyAuth();refresh();
 }
 $("si_go").onclick=siGo;
@@ -2807,7 +2871,7 @@ function askAct(q){
   if(/^(please\s+)?(start|begin)\b/.test(q)){var st=status(o);
     if(st==="loading")return {h:'Already loading',d:'<p class="asn">'+esc(nm)+' started at '+T(o.startAt)+'.</p>'};
     if(st==="done")return {h:'Already finished',d:'<p class="asn">'+esc(nm)+' finished at '+T(o.endAt)+'. Use Reopen on the board if it needs to go back to loading.</p>'};
-    type="start";desc="Start loading <b>"+esc(nm)+"</b> now"+(!o.loader&&ME&&!ME.admin?" with you as the loader":"")+".";}
+    type="start";desc="Start loading <b>"+esc(nm)+"</b> now"+(!o.loader&&ME&&!ME.admin&&!ME.mgr?" with you as the loader":"")+".";}
   else if(/\bheel\b/.test(q)&&/(remove|clear|delete|take off|\bno\b)/.test(q)){if(!heelOf(o))return {h:'No heel saved',d:'<p class="asn">'+esc(nm)+' has no heel to remove.</p>'};patch={heelGal:null,heelProd:null};desc="Remove the heel from <b>"+esc(nm)+"</b>.";}
   else if(/\bheel\b/.test(q)){
     var p=askProd(rest),hp=p&&HEEL_PRODS.indexOf(p.key)>=0?p.key:null,g=pick("gal"),lw=pick("lw"),sy=pick("sys");
@@ -2946,7 +3010,7 @@ function presOn(name){var k=String(name||"").toLowerCase();return presList().som
 function renderPres(){
   var L=presList(),el=$("onl");if(!el)return;
   if(!L.length||DEMO){el.hidden=true}
-  else{var seen={},anon=0,items=[];L.forEach(function(x){if(!x.n){anon++;return}var k=x.n.toLowerCase();if(seen[k])return;seen[k]=1;items.push('<span><i class="ondot" style="margin:0 4px 0 0"></i><b>'+esc(x.n)+'</b>'+(x.me?' <small>(you)</small>':'')+(x.v?' <small>· '+esc(x.v)+'</small>':'')+'</span>')});
+  else{var seen={},anon=0,items=[];L.forEach(function(x){if(!x.n){anon++;return}var k=x.n.toLowerCase();if(seen[k])return;seen[k]=1;items.push('<span><i class="ondot" style="margin:0 4px 0 0'+(mgmtOf(x.n)&&!rosterName(x.n)?';background:#315a8f':'')+'"></i><b>'+esc(x.n)+'</b>'+(mgmtOf(x.n)&&!rosterName(x.n)?' <small>(management)</small>':'')+(x.me?' <small>(you)</small>':'')+(x.v?' <small>· '+esc(x.v)+'</small>':'')+'</span>')});
     if(anon)items.push('<span><i class="ondot" style="margin:0 4px 0 0;background:var(--mute)"></i>'+anon+' not signed in</span>');
     el.innerHTML='<span>Online now:</span>'+items.join("");el.hidden=false}
   crewHtml="";crewBoard();
