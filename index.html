@@ -1133,8 +1133,10 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>Tap the round Tarquino button at the bottom right of the Load Log, or open the menu and tap <span class="kb">Ask Tarquino</span>. Type a question and tap <span class="kb">Send</span>, or tap one of the examples.</li>
       <li>It answers gallons loaded from light and heavy weights, acid and water for any gallons and product, heel from the scale light weight and the system light weight, how much fits for Texas, NM or Third Party, what gallons weigh, and lb per gallon.</li>
       <li>It also answers about the board: what's loading or waiting, loads done and acid pulled this shift, who's on shift, and finding a trailer or ticket. Ask about a load by trailer or ticket, like "how much fits on trailer 707", "what does 880 need", "heel on 880 lw 35800 system 32800" or "gallons loaded on 707 hw 76000". It uses that load's product, gallons, light weight, chems, heel and state. Follow up with "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" and it reuses your last question.</li>
-      <li>He can change a load for you after you tap <span class="kb">Confirm</span>: "set lw 34000 on 707", "set hw 76000 on 707", "put a 347 gal 20% heel on 880", "remove the heel on 880", "start 707", "assign 707 to Tony", "mark 880 third party".</li>
-      <li>Leads can add an order by message: "add trailer 512, 5000 gal 15%, ticket 19131, NM, leave by 3pm, Tony". If something's missing he asks for it, and you can just send it ("5000 gal of 15%"). He shows the order and adds it when you tap <span class="kb">Confirm</span>. Add a heel or Halliburton chems afterward with Edit.</li>
+      <li>He can change a load for you after you tap <span class="kb">Confirm</span>: "set lw 34000 on 707", "set hw 76000 on 707", "put a 347 gal 20% heel on 880", "remove the heel on 880", "start 707", "assign 707 to Tony", "mark 880 third party", "BOL 88120 on 707", "ticket 4412 on 707", "leave by 3:30 pm on 707", "set 707 to 4500 gal", "note on 707: top off only", "clear notes on 707", "end 707".</li>
+      <li>Ask "notes on 707" or "any special instructions?" to read notes, and "what's the BOL on 707" for its ticket, BOL, leave-by and heel.</li>
+      <li>Schedule: "who's on tonight", "who's off tomorrow", "when do I work next", "is Tony on Saturday night", "my schedule". History (for people who can see the Shift Report): "what did 707 load last time", "how many loads yesterday", "acid pulled this week", "how many loads did Tony do today". History keeps 7 days.</li>
+      <li>Leads can add an order by message: "add trailer 512, 5000 gal 15%, ticket 19131, NM, leave by 3pm, Tony". If something's missing he asks for it, and you can just send it ("5000 gal of 15%"). He shows the order and adds it when you tap <span class="kb">Confirm</span>. You can put a heel, BOL and notes in the same message: "…, BOL 88120, 300 gal 20% heel, note top off only" (put the note last). Add Halliburton chems afterward with Edit.</li>
       <li>Ask about time: "how long has 707 been loading", "what's late", "what's due in the next 2 hours", "average load time this shift". And about the latest turnover: "how many Y007 totes", "east tank sonar", "what equipment is down", "rail cars".</li>
       <li>He's got some personality too: say hi, thank him, ask how he's doing or ask for a joke. He answers like a yard hand who's been around a while, but the numbers always come straight from the charts.</li>
       <li>Tap the microphone to say your question instead of typing. It uses your phone's voice typing, which usually needs a signal. "How do I…" questions are answered from this Help page. The chat stays while the app is open and clears when you close it.</li>
@@ -3009,7 +3011,7 @@ function showView(k){
 /* Ask box: answers typed questions with the app's own charts, weights and board data.
    No AI and no network: it picks the numbers and product out of the question and runs the
    same functions the rest of the app uses (splitOf, wtFor, wtLim, heelOf...). */
-var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","How much fits on trailer 707","What does trailer 707 need","Set lw 34000 on trailer 707","Add trailer 512, 5000 gal 15%, ticket 19131","What's late","How many Y007 totes","What's loading right now"];
+var ASK_EX=["Gallons loaded from LW 32000 to HW 58000 of 32%","Acid and water for a 3250 gal load of 20%","Heel if LW is 35800 but system light weight is 32800, 15%","How much 15% fits with a light weight of 33000 NM","How much does 5000 gal of 28% weigh","How much fits on trailer 707","What does trailer 707 need","Set lw 34000 on trailer 707","BOL 88120 on trailer 707","Note on 707: top off only","Add trailer 512, 5000 gal 15%, ticket 19131, 300 gal 20% heel","What's late","Who's on tonight","When do I work next","What did 707 load last time","How many loads yesterday","How many Y007 totes"];
 var ASK_PRODS={"36":"acid","32":"32","28":"28","20":"20","15":"15","10":"10","7.5":"7.5","5":"5"};
 function askEx(){$("ask_ex").innerHTML=ASK_EX.map(function(t){return '<button type="button" data-ask="'+esc(t)+'">'+esc(t)+'</button>'}).join("")}
 /* Product named in the question: a saved recipe, CableShield, or an HCl strength */
@@ -3138,7 +3140,7 @@ function askCore(raw){
    so "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" reuse it. */
 var ASK_CTX=null,ASK_LAST=null;
 var ASK_FW=/^(what about|how about|and|what if|make it|instead|same|now|try|then|ok|okay|also)\b/;
-var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing|tote|y007|sonar|strap|battery|tank|equipment|rail|transloader|turnover|handoff|\bdue\b|\blate\b|how long|\btook\b|average|\bstart\b|assign)/;
+var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing|tote|y007|sonar|strap|battery|tank|equipment|rail|transloader|turnover|handoff|\bdue\b|\blate\b|how long|\btook\b|average|\bstart\b|assign|note|instruction|schedule|tonight|tomorrow|yesterday|\bweek\b|last time|history|\bend\b|finish|\bwork|\boff\b|\blbt\b|leave by)/;
 function askPStr(p){if(!p)return "";if(p.name)return p.name;if(p.key==="acid")return "36%";if(p.key==="cs100")return "cableshield 100";if(p.key==="cs33")return "cableshield 33";return p.key+"%"}
 function askSynth(c){var P=askPStr(c.p);
   if(c.kind==="loaded")return "gallons loaded lw "+c.lw+" hw "+c.hw+" of "+P;
@@ -3160,6 +3162,8 @@ function askFindLoad(q){
   return hits.length?{o:hits[0],ref:m[0]}:(loose?null:{o:null,ref:m[0]});
 }
 function askLoadSub(q){
+  if(/\b(notes?|instructions?|special)\b/.test(q))return "notes";
+  if(/\b(bol|ticket|leave ?by|lbt|who.?s loading|loader|info|details)\b/.test(q)&&!/\b(late|how long|need|fit|fits)\b/.test(q))return "info";
   if(/how long|been loading|loading for|\btook\b|time on|how much time/.test(q))return "time";
   if(/\bheel\b|left (in|over)|leftover/.test(q))return "heel";
   if(/\bloaded\b|\bhw\b|heavy|gross|scale ?out/.test(q))return "loaded";
@@ -3171,6 +3175,10 @@ function askLoadAns(o,sub,ov){
   var L=ov.lw!=null?ov.lw:(parseFloat(o.lightWt)||null),nm=esc(o.name||"This load"),og=parseFloat(o2.gal)||0,wi=wtFor(o2.prod,o2);
   var head='<p class="asn"><b>'+nm+'</b> · '+(og?num(og)+' gal ':'')+esc(prodName(o2))+' · '+(o2.state==="TP"?"Third party driver":stLabel(o2))+(halHas(o2)?' · Halliburton chems':'')+(heelOf(o2)?' · heel':'')+'</p>';
   var ctx={kind:"load",id:o.id,sub:sub,lw:ov.lw,hw:ov.hw,sys:ov.sys,st:ov.st};
+  var nbox=o.notes?'<div class="ntb"><p class="ntl">Special instructions</p><p class="nt">'+esc(o.notes)+'</p></div>':'',go='<div class="acts"><button type="button" data-askgo="'+esc(o.id)+'">Open on the Load Log</button></div>';
+  if(sub==="notes")return {ctx:ctx,h:o.notes?'Special instructions':'No notes',d:head+(nbox||'<p class="asn">'+nm+' has no notes. Add one like "note on '+nm+': top off only".</p>')+go};
+  if(sub==="info"){var hl0=heelOf(o2),r=function(k,v){return '<tr><td>'+k+'</td><td>'+v+'</td></tr>'};
+    return {ctx:ctx,h:'Ticket '+(o.ticket?esc(o.ticket):'–')+' <small>· BOL '+(o.bol?esc(o.bol):'–')+'</small>',d:head+'<table>'+r("Loader",o.loader?esc(canonName(o.loader)):'–')+r("Ticket",o.ticket?esc(o.ticket):'–')+r("BOL",o.bol?esc(o.bol):'–')+r("Leave by",o.lbtAt?T(o.lbtAt):'–')+r("Heel",hl0?gf(hl0.gal)+' gal '+esc(pname(hl0.prod)):'None')+r("Status",status(o)==="loading"?'Loading since '+T(o.startAt):status(o)==="done"?'Done '+T(o.endAt):'Waiting')+'</table>'+nbox+go}}
   if(sub==="time"){var stt=status(o),now=Date.now();
     if(stt==="loading")return {ctx:ctx,h:hms(now-o.startAt)+' <small>loading</small>',d:head+'<p class="asn">Started '+T(o.startAt)+(o.lbtAt?' · leave by '+T(o.lbtAt)+(o.lbtAt<now?' (<b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>)':' ('+hm(o.lbtAt-now)+' left)'):'')+'.</p>'};
     if(stt==="done")return {ctx:ctx,h:hm(o.endAt-(o.startAt||o.endAt))+' <small>to load</small>',d:head+'<p class="asn">'+(o.startAt?T(o.startAt)+' to ':'Ended ')+T(o.endAt)+'.</p>'};
@@ -3208,7 +3216,7 @@ function askLoadAns(o,sub,ov){
   return null;
 }
 function askLoad(q){
-  var f=askFindLoad(q);if(!f||!f.o)return null;
+  var f=askTgt(q);if(!f||!f.o)return null;
   var sub=askLoadSub(q.replace(f.ref," "));
   if(!sub&&ASK_CTX&&ASK_CTX.kind==="load"&&ASK_FW.test(q))sub=ASK_CTX.sub;
   if(!sub)return null;
@@ -3269,6 +3277,187 @@ function askTurn(q){
   var lo=d.lo.filter(Boolean),eq2=d.eq.filter(function(r){return r.e||r.c});
   return {h:'Latest turnover',d:from+'<p class="asn">Supervisor '+v(d.sup)+' · '+v(tvShift(d.sh))+' shift · trailers loaded '+v(d.tot)+(lo.length?' · loaders '+lo.map(esc).join(", "):'')+(eq2.length?' · '+eq2.length+' maintenance concern'+(eq2.length===1?'':'s'):'')+'</p>'+(d.nt?'<p class="asn">Notes: '+esc(d.nt)+'</p>':'')+(src&&!(src.d.sg&&src.d.sg.i)?'<p class="asw">Not signed by the incoming supervisor yet.</p>':'')+open};
 }
+/* ---- v84: more by message. Change BOL, ticket, leave-by, gallons or notes, or end a load (same
+   Confirm step as askAct), read a load's notes, and answer schedule and history questions. ---- */
+/* The load a message names: askFindLoad first, then any word that is exactly a trailer name ("T-110") */
+function askTgt(s){
+  var f=askFindLoad(s);if(f&&f.o)return f;
+  var w=String(s).match(/[a-z0-9][a-z0-9-]*/g)||[],o=null,ref="";
+  w.forEach(function(t){if(o||/^(on|for|to|from|of|the|set|change|make|update|put|trailer|truck|unit|load|it)$/.test(t))return;
+    ORD.forEach(function(x){var n=String(x.name||"").toLowerCase();if(!o&&(n===t||n.replace(/^(trailer|truck|unit)\s*#?\s*/,"")===t)){o=x;ref=t}})});
+  return o?{o:o,ref:ref}:null;
+}
+/* A clock time from "3pm", "3:30 pm", "1530", "15:30" or "in 2 hours". With no am/pm, the sooner one. */
+function askClock(s){
+  var m=/\bin\s+(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hours?)\b/.exec(s);if(m)return Math.ceil((Date.now()+parseFloat(m[1])*36e5)/3e5)*3e5;
+  m=/^\s*(\d{1,2})(?::(\d{2})|(\d{2}))?(?:\s*(a\.?m\.?|p\.?m\.?)|([ap])\b)?/.exec(s);if(!m)return null;
+  var h=+m[1],mi=+(m[2]||m[3]||0),ap=(m[4]||m[5]||"").charAt(0);if(h>23||mi>59)return null;
+  if(ap==="p"&&h<12)h+=12;if(ap==="a"&&h===12)h=0;
+  var c=!ap&&h>=1&&h<=12?[h%12,h%12+12]:[h],best=null;
+  c.forEach(function(x){var t=lbtFrom(pad(x)+":"+pad(mi));if(t&&(best==null||t<best))best=t});return best;
+}
+function askPendUpd(o,type,patch,desc){
+  if(!can())return {miss:1,h:'Can\'t change loads here',d:'<p class="asn">This phone can\'t make changes right now (no signal, or view only).</p>'};
+  var pid="p"+(++askPid);ASK_PEND[pid]={oid:o.id,type:type,patch:patch,desc:desc,nm:o.name||"this load"};
+  return {pend:pid,h:'Confirm this change',d:'<p class="asn">'+desc+'</p>'};
+}
+function askNoLoad(){return {miss:1,h:'Which load?',d:'<p class="asn">I couldn\'t find that load on the board. Say the trailer or ticket, like "BOL 88120 on trailer 707".</p>'}}
+function askSet(q,raw){
+  var verb=/^(please\s+)?(set|put|enter|save|update|add|change|make|fix|correct)\b/.test(q),m,f,o,nm;
+  /* End a load: "end 707", "finish trailer 707", "707 is done" */
+  if((m=/^(?:please\s+)?(?:end|finish|complete|close out)\s+(?:loading\s+|the load\s+(?:on|for)\s+|load\s+)?(.+)$/.exec(q))||(m=/^(.+?)\s+(?:is|its)\s+(?:done|finished|full)$/.exec(q))){
+    if(/\b(water|timer|shift|turnover|handoff)\b/.test(q))return null;
+    f=askTgt("on "+m[1]);if(!f||!f.o)return /^(please\s+)?(end|finish|complete|close)/.test(q)?askNoLoad():null;
+    o=f.o;nm=esc(o.name||"this load");var st=status(o);
+    if(st==="waiting")return {h:'Not started yet',d:'<p class="asn">'+nm+' hasn\'t been started. Say "start '+nm+'" first.</p>'};
+    if(st==="done")return {h:'Already finished',d:'<p class="asn">'+nm+' finished at '+T(o.endAt)+'.</p>'};
+    return askPendUpd(o,"end",null,"End the load on <b>"+nm+"</b> now (started "+T(o.startAt)+"). The load weight window opens so you can enter what went in.");
+  }
+  /* Notes: "note on 707: top off only", "add a note to 707 driver waits", "clear notes on 707" */
+  if((m=/^(?:please\s+)?(?:clear|remove|delete|erase|take off)\s+(?:the\s+|all\s+)?(?:special\s+)?(?:notes?|instructions?)\s+(?:on|from|for|off(?:\s+of)?)\s+(.+)$/.exec(q))){
+    f=askTgt("on "+m[1]);if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");
+    if(!o.notes)return {h:'No notes',d:'<p class="asn">'+nm+' has no notes to clear.</p>'};
+    return askPendUpd(o,"upd",{notes:""},"Clear the notes on <b>"+nm+"</b>: \u201c"+esc(o.notes)+"\u201d");
+  }
+  if((m=/^(?:please\s+)?(add|put|set|leave|write|change|update|make)?\s*(?:an?\s+|the\s+)?(?:special\s+)?(notes?|instructions?)\s+(?:on|to|for)\s+((?:trailer|truck|unit|ticket|load)\s*#?\s*)?([a-z0-9][a-z0-9-]*)(?:\s*(to\s+|saying\s+|that says\s+|[:,])\s*|\s+([\-\u2013])\s+|\s+)(.+)$/i.exec(raw))){
+    var nv=(m[1]||"").toLowerCase(),txt=m[7].trim().slice(0,1000);
+    if(txt&&(nv||m[5]||m[6]||/^note$/i.test(m[2]))){
+      f=askTgt("on "+(m[3]||"").toLowerCase()+m[4].toLowerCase());if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");
+      var add=nv==="add"&&o.notes,nt=add?o.notes+"\n"+txt:txt;
+      return askPendUpd(o,"upd",{notes:nt},(add?"Add to the notes on <b>"+nm+"</b>. They'll read:":"Set the notes on <b>"+nm+"</b> to:")+'</p><div class="ntb"><p class="ntl">Special instructions</p><p class="nt">'+esc(nt)+'</p></div><p class="asw">Shows in blue on the load so the loader sees it.');
+    }
+  }
+  /* BOL or ticket: "BOL 88120 on 707", "set ticket on 707 to 4412" */
+  if(/\b(bol|ticket)\b/.test(q)&&!/\b(heel|lw|hw|weight|need|fits?|what|whats|how)\b/.test(q)){
+    var b1=/\b(bol|ticket)\b(?:\s*(?:#|number|no\.?))?\s+(?:on|for)\s+(.+?)\s+(?:to|is|=|as|:)\s*#?\s*([a-z0-9][a-z0-9-]*)\s*$/.exec(q);
+    var b2=!b1&&/\b(bol|ticket)\b(?:\s*(?:#|number|no\.?))?\s*(?:to|is|=|as|:)?\s*#?\s*([a-z0-9-]*\d[a-z0-9-]*)\b/.exec(q);
+    if(b1||(b2&&(verb||/^(the\s+)?(bol|ticket)\b/.test(q)))){
+      var fld=(b1||b2)[1],val=(b1?b1[3]:b2[2]).toUpperCase(),rest=b1?"on "+b1[2]:q.slice(0,b2.index)+" "+q.slice(b2.index+b2[0].length);
+      f=askTgt(rest);if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");
+      var lb=fld==="bol"?"BOL":"ticket";
+      if(String(o[fld]||"").toUpperCase()===val)return {h:'Already set',d:'<p class="asn">The '+lb+' on '+nm+' is already '+esc(val)+'.</p>'};
+      var pb={};pb[fld]=val;
+      return askPendUpd(o,"upd",pb,"Set the "+lb+" on <b>"+nm+"</b> to <b>"+esc(val)+"</b>"+(o[fld]?" (was "+esc(o[fld])+")":"")+".");
+    }
+  }
+  /* Leave-by: "leave by 3pm on 707", "lbt on 707 to 15:30", "707 leaves at 4", "clear lbt on 707" */
+  var LK="(?:lbt|leave ?by|leave-by|leave time|leaving|leaves|leave at|due)";
+  if(new RegExp("\\b"+LK+"\\b").test(q)&&!/\b(late|how long|what|whats|when|how|which|next)\b/.test(q)){
+    if((m=new RegExp("^(?:please\\s+)?(?:clear|remove|delete|take off|no)\\s+(?:the\\s+)?"+LK+"\\b(?:\\s+time)?\\s*(?:on|for|from)?\\s*(.+)$").exec(q))){
+      f=askTgt("on "+m[1]);if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");
+      if(!o.lbtAt)return {h:'No leave-by set',d:'<p class="asn">'+nm+' has no leave-by time.</p>'};
+      return askPendUpd(o,"upd",{lbtAt:null},"Clear the leave-by time on <b>"+nm+"</b> (was "+T(o.lbtAt)+").");
+    }
+    var TM="(in\\s+\\d+(?:\\.\\d+)?\\s*(?:h|hr|hrs|hours?)\\b|\\d{1,2}(?::\\d{2}|\\d{2})?(?:\\s*(?:a\\.?m\\.?|p\\.?m\\.?)|[ap]\\b)?)";
+    var l1=new RegExp("\\b"+LK+"\\b\\s*(?:on|for)\\s+(.+?)\\s+(?:to|at|is|=|:)\\s*"+TM+"\\s*$").exec(q);
+    var l2=!l1&&new RegExp("\\b"+LK+"\\b\\s*(?:by|at|to|is|=|:)?\\s*"+TM).exec(q);
+    if(l1||(l2&&(verb||/^(lbt|leave|leaving|due)\b/.test(q)||/\b(leaves|leaving) at\b/.test(q)))){
+      var t=askClock(l1?l1[2]:l2[1]),rs=l1?"on "+l1[1]:q.slice(0,l2.index)+" "+q.slice(l2.index+l2[0].length);
+      f=askTgt(rs);if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");
+      if(!t)return {miss:1,h:'What time?',d:'<p class="asn">Say the time, like "leave by 3:30 pm on '+nm+'" or "leave by in 2 hours on '+nm+'".</p>'};
+      return askPendUpd(o,"upd",{lbtAt:t},"Set the leave-by on <b>"+nm+"</b> to <b>"+T(t)+"</b>"+(t-Date.now()>12*36e5?" tomorrow":"")+(o.lbtAt?" (was "+T(o.lbtAt)+")":"")+".");
+    }
+  }
+  /* Ticket gallons: "set 707 to 4500 gal", "change gallons on 707 to 4500" */
+  if(/\b(gal|gals|gallons?)\b/.test(q)&&!/\b(heel|fit|fits|weigh|weighs|how|what|whats|acid|water|lw|hw|loaded|it)\b/.test(q)){
+    var g1=/\b(?:gal|gals|gallons?)\b\s*(?:on|for)\s+(.+?)\s+(?:to|is|=|:)\s*(\d[\d,]*(?:\.\d+)?)\s*(?:gal|gals|gallons?)?\s*$/.exec(q);
+    var g2=!g1&&verb&&/(\d[\d,]*(?:\.\d+)?)\s*(?:gal|gals|gallons?)\b/.exec(q);
+    if(g1||g2){
+      var gv=parseFloat((g1?g1[2]:g2[1]).replace(/,/g,"")),gr=g1?"on "+g1[1]:q.slice(0,g2.index)+" "+q.slice(g2.index+g2[0].length);
+      f=askTgt(gr);if(!f||!f.o)return g1?askNoLoad():null;o=f.o;nm=esc(o.name||"this load");
+      if(!(gv>0))return {miss:1,h:'How many gallons?',d:'<p class="asn">Say the gallons, like "set '+nm+' to 4500 gal".</p>'};
+      if(gv===(parseFloat(o.gal)||0))return {h:'Already set',d:'<p class="asn">'+nm+' is already '+num(gv)+' gal.</p>'};
+      return askPendUpd(o,"upd",{gal:gv},"Change the ticket gallons on <b>"+nm+"</b> to <b>"+num(gv)+" gal</b>"+(o.gal?" (was "+num(o.gal)+")":"")+". Needs and the weight check follow.");
+    }
+  }
+  return null;
+}
+/* "Any special instructions?", "which loads have notes" */
+function askNotes(q){
+  if(!/\b(notes?|special instructions?|instructions?)\b/.test(q))return null;
+  var L=ORD.filter(function(o){return o.notes&&status(o)!=="done"});
+  return {h:L.length?L.length+' <small>open load'+(L.length===1?' has':'s have')+' notes</small>':'No notes',d:L.length?L.map(function(o){return '<div class="ntb"><p class="ntl">'+esc(o.name||"Unnamed order")+' · '+(status(o)==="loading"?'loading':'waiting')+'</p><p class="nt">'+esc(o.notes)+'</p></div>'}).join("")+'<div class="acts"><button type="button" data-askgo="'+esc(L[0].id)+'">Open '+esc(L[0].name||"it")+' on the Load Log</button></div>':'<p class="asn">None of the open loads have special instructions.</p>'};
+}
+/* ---- Schedule questions ---- */
+function askPerson(q){
+  var who=null;ROSTER.forEach(function(n){var k=n.toLowerCase();if(!who&&k!=="admin"&&new RegExp("\\b"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"s?\\b").test(q))who=n});
+  if(!who&&/\b(i|me|my|im)\b/.test(q)&&ME&&!ME.admin&&!ME.mgr)who=ME.name;return who;
+}
+function askShiftOn(day,s){var hr=SCHED.hrs,d=new Date(),x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+day);x.setMinutes(s==="D"?hr.d:hr.n);return curShift(x.getTime()+60000)}
+function askWhen(q){
+  var day=null,s=null,m;
+  if(/\btonight\b/.test(q)){day=0;s="N"}else if(/\btomorrow\b/.test(q))day=1;else if(/\btoday\b/.test(q))day=0;
+  else if((m=/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/.exec(q))){day=(["sun","mon","tue","wed","thu","fri","sat"].indexOf(m[1])-new Date().getDay()+7)%7}
+  if(/\b(night|nights|overnight)\b/.test(q))s="N";else if(!s&&/\b(day shift|days|morning|day)\b/.test(q))s="D";
+  if(day==null&&!s)return null;if(day==null)day=0;
+  return s?[askShiftOn(day,s)]:[askShiftOn(day,"D"),askShiftOn(day,"N")];
+}
+function askShLbl(c){
+  var cur=curShift();if(c.start===cur.start)return "this "+(c.s==="D"?"day":"night")+" shift";
+  var d0=new Date();d0.setHours(0,0,0,0);var ds=new Date(c.start);ds.setHours(0,0,0,0);var off=Math.round((ds-d0)/864e5),sh=c.s==="D"?"day shift":"night shift";
+  return off===0?(c.s==="N"?"tonight":"today's day shift"):off===1?"tomorrow's "+sh:WD[ds.getDay()]+" "+sh;
+}
+function askOnAt(n,c){var cur=curShift();if(c.start===cur.start)return shiftState(n,cur);var p=patOf(n);return p?{on:p.charAt(c.wd)===c.s}:{on:true,none:true}}
+function askSched(q){
+  if(!SCHED||/\b(load|loads|trailer|truck|ticket|bol|gal|heel|loading)\b/.test(q))return null;
+  var crew=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"}),who=askPerson(q),W=askWhen(q),off=/\boff\b/.test(q),open='<div class="acts"><button type="button" data-askview="sched">Open Schedule</button></div>';
+  var hrs=function(c){return clockAt(c.s==="D"?SCHED.hrs.d:SCHED.hrs.n)+" to "+clockAt(c.s==="D"?SCHED.hrs.n:SCHED.hrs.d)};
+  if(!who&&/\b(i|me|my|im)\b/.test(q)&&/\b(work|working|schedule|shift|on|off)\b/.test(q)&&!/\bwho/.test(q))return {miss:1,h:'Who are you?',d:'<p class="asn">Sign in with your name to ask about your own shifts, or ask by name, like "when does Tony work next".</p>'};
+  if(/\bwho(s|se)?\b/.test(q)&&/\b(on shift|working|work|works|scheduled|on|off|in)\b/.test(q)){
+    var shs=W||[curShift()];
+    var sch=crew.filter(function(n){return patOf(n)||askOnAt(n,shs[0]).manual});
+    return {h:!sch.length?'No schedule set':shs.length===1?crew.filter(function(n){var s=askOnAt(n,shs[0]);return off?!s.on:s.on&&!s.none}).length+' <small>'+(off?'off ':'on ')+askShLbl(shs[0])+'</small>':'Schedule for '+(askShLbl(shs[0]).replace(/'s day shift$/,"")),
+      d:shs.map(function(c){var on=[],of=[],no=[];crew.forEach(function(n){var s=askOnAt(n,c);(s.none?no:s.on?on:of).push(n)});
+        return '<p class="asn"><b>'+esc(askShLbl(c).replace(/^\w/,function(x){return x.toUpperCase()}))+'</b> ('+hrs(c)+'): '+(off?(of.length?'off: '+of.map(esc).join(", "):'nobody off'):(on.length?on.map(esc).join(", "):'nobody scheduled'))+'.</p>'+(no.length?'<p class="asw">No schedule set (always shown): '+no.map(esc).join(", ")+'.</p>':'')}).join("")+open};
+  }
+  if(who&&/\bwhen\b/.test(q)&&/\b(work|working|on|back|shift|in|next)\b/.test(q)){
+    var me=ME&&who===ME.name,nmw=me?"You":esc(who),c=curShift(),s0=askOnAt(who,c);
+    if(s0.none&&!patOf(who))return {h:'No schedule set',d:'<p class="asn">No schedule is set for '+(me?'you':esc(who))+', so the app shows '+(me?'you':esc(who))+' on every shift.</p>'+open};
+    var now=s0.on?'<p class="asn">'+nmw+(me?' are':' is')+' on now (this '+(c.s==="D"?"day":"night")+' shift, until '+T(c.end)+').</p>':'';
+    for(var i=0;i<21;i++){c=curShift(c.end+60000);if(askOnAt(who,c).on)return {h:esc(askShLbl(c).replace(/^\w/,function(x){return x.toUpperCase()}))+' <small>'+hrs(c)+'</small>',d:now+'<p class="asn">'+(s0.on?'After that, ':'')+(me?(s0.on?'your':'Your'):esc(who)+'\u2019s')+' next shift is '+askShLbl(c)+', '+new Date(c.start).toLocaleDateString([],{weekday:"long",month:"numeric",day:"numeric"})+', '+hrs(c)+'.</p>'+open}}
+    return {h:'Nothing in the next 10 days',d:now+'<p class="asn">No shifts on the schedule for '+(me?'you':esc(who))+' in the next 10 days.</p>'+open};
+  }
+  if(who&&W&&/^(is|am|are|does|do|will|did)\b/.test(q)){
+    var me2=ME&&who===ME.name;
+    return {h:W.map(function(c){var s=askOnAt(who,c);return (s.on?(off?'No':'Yes'):(off?'Yes':'No'))}).join(" / "),d:W.map(function(c){var s=askOnAt(who,c);return '<p class="asn">'+(me2?'You':esc(who))+(s.none?' have no schedule set, so the app shows '+(me2?'you':esc(who))+' on '+askShLbl(c):(s.on?(me2?' are':' is')+' on '+askShLbl(c)+' ('+hrs(c)+')':(me2?' are':' is')+' off '+askShLbl(c)))+(s.manual?' (marked by hand)':'')+'.</p>'}).join("")+open};
+  }
+  if(who&&/\b(schedule|my days|rotation|this week|days on)\b/.test(q)){
+    var p=patOf(who),me3=ME&&who===ME.name;if(!p)return {h:'No schedule set',d:'<p class="asn">No weekly schedule is set for '+(me3?'you':esc(who))+'.</p>'+open};
+    var L={D:"Day",N:"Night",O:"Off"};
+    return {h:(me3?'Your':esc(who)+'\u2019s')+' week',d:'<table>'+WD.map(function(d,i){return '<tr><td>'+d+'</td><td>'+L[p.charAt(i)]+'</td></tr>'}).join("")+'</table><p class="asw">Day shift '+clockAt(SCHED.hrs.d)+' to '+clockAt(SCHED.hrs.n)+', night shift '+clockAt(SCHED.hrs.n)+' to '+clockAt(SCHED.hrs.d)+'. A night shift counts toward the day it starts.</p>'+open};
+  }
+  return null;
+}
+/* ---- History questions (the last 7 days of finished loads) ---- */
+function askRange(q){
+  var d=new Date(),mid=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+  if(/\byesterday\b/.test(q))return {a:mid-864e5,b:mid,l:"yesterday"};
+  if(/\btoday\b/.test(q))return {a:mid,b:Infinity,l:"today"};
+  if(/\bthis week\b/.test(q))return {a:mid-d.getDay()*864e5,b:Infinity,l:"this week (since Sunday)"};
+  if(/\b(last|past)\s+(7 days|seven days|week)\b/.test(q))return {a:Date.now()-7*864e5,b:Infinity,l:"in the last 7 days"};
+  if(/\blast (shift|night)\b/.test(q)){var p=curShift(curShift().start-60000);return {a:p.start,b:p.end,l:"last shift"}}
+  return null;
+}
+function askHistLine(o){return '<b>'+esc(o.name||"Unnamed order")+'</b> · '+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+(o.loader?' · '+esc(canonName(o.loader)):'')+' · '+rpDT(o.endAt)+((o.acidGal||o.waterGal)?' · acid '+num(o.acidGal||0)+', water '+num(o.waterGal||0):' · <i>no amounts</i>')+(o.ticket?' · ticket '+esc(o.ticket):'')+(o.bol?' · BOL '+esc(o.bol):'')}
+function askHist(q){
+  var lt=/\b(last time|last load|previous|previously|history|last loaded|loaded last|last had)\b/.test(q),R=askRange(q);
+  if(!lt&&!(R&&/\b(how many|loads|load count|acid|water|pulled|loaded|did|done|finished|gallons|count)\b/.test(q)))return null;
+  if(!perm("rep"))return {miss:1,h:'History is for leads',d:'<p class="asn">Only people who can see the Shift Report can look back at past loads. Ask a lead.</p>'};
+  var all=allDone().sort(function(a,b){return b.endAt-a.endAt}),open='<div class="acts"><button type="button" data-askview="hist">Open History</button></div>';
+  if(lt){
+    var m=/(?:trailer|truck|unit|ticket|bol|on|for|did|of)\s*#?\s*([a-z0-9-]*\d[a-z0-9-]*)/.exec(q);
+    if(m){var t=m[1],eq=function(v){v=String(v||"").toLowerCase();return v===t||v.replace(/^(trailer|truck|unit)\s*#?\s*/,"")===t};
+      var hits=all.filter(function(o){return eq(o.name)||eq(o.ticket)||eq(o.bol)});
+      if(!hits.length)return {h:'Not in the last 7 days',d:'<p class="asn">No finished load matches "'+esc(t)+'". History keeps 7 days.</p>'+open};
+      return {h:'Last load on '+esc(hits[0].name||t),d:'<ul>'+hits.slice(0,3).map(function(o){return '<li>'+askHistLine(o)+'</li>'}).join("")+'</ul>'+(hits.length>3?'<p class="asw">'+(hits.length-3)+' more in History.</p>':'')+open};
+    }
+    if(!R)return null;
+  }
+  var who=askPerson(q),L=all.filter(function(o){return o.endAt>=R.a&&o.endAt<R.b&&(!who||canonName(o.loader)===who)});
+  var acid=0,water=0,miss=0;L.forEach(function(o){var a=parseFloat(o.acidGal),w=parseFloat(o.waterGal);if(a>0)acid+=a;if(w>0)water+=w;if(!(a>0)&&!(w>0))miss++});
+  return {h:L.length+' <small>load'+(L.length===1?'':'s')+' finished '+R.l+(who?' by '+esc(who):'')+'</small>',
+    d:'<p class="asn">'+num(Math.round(acid))+' gal of 36% acid and '+num(Math.round(water))+' gal of water loaded'+(miss?'. '+miss+' still missing amounts':'')+'.</p>'+(L.length?'<ul>'+L.slice(0,10).map(function(o){return '<li>'+askHistLine(o)+'</li>'}).join("")+'</ul>':'')+(L.length>10?'<p class="asw">'+(L.length-10)+' more in History.</p>':'')+'<p class="asw">History keeps 7 days.</p>'+open};
+}
 /* ---- Changes to a load, made only after the person taps Confirm ---- */
 var ASK_PEND={},askPid=0;
 var ASK_VERB=/^(please\s+)?(set|put|enter|save|record|log|update|add|start|begin|assign|give|mark|change|make|remove|clear|delete|take off)\b/;
@@ -3307,8 +3496,19 @@ function askAct(q){
 /* ---- Adding an order by message ("add trailer 707, 5000 gal 15%, ticket 19130, NM, leave by 3pm, Tony") ----
    Missing pieces are asked for and the next message fills them in; nothing saves until Confirm. */
 var ASK_ADD=/^(please\s+)?(add|new|create|enter|put in|make)\s+(an?\s+|the\s+)?(new\s+)?(order|load|trailer|truck)\b/;
-function askAddParse(q,d){
+function askAddParse(q,d,raw){
   d=d||{};var r=q,m;
+  /* Notes take the rest of the message: "..., note top off only" (kept as typed, from raw) */
+  var NR=/\b(?:notes?|special instructions?|instructions?)\b\s*[:,\-]?\s*/i;
+  if((m=NR.exec(r))){var rm=raw?NR.exec(raw):null,tx=rm?raw.slice(rm.index+rm[0].length).trim():r.slice(m.index+m[0].length).trim();if(tx)d.notes=tx.slice(0,1000);r=r.slice(0,m.index)}
+  /* Heel: "with a 300 gal 20% heel" or "heel 300 gal 20%" */
+  if(/\bno heel\b/.test(r)){delete d.heelGal;delete d.heelProd;delete d.heelBad;r=r.replace(/\bno heel\b/," ")}
+  else if(/\bheel\b/.test(r)){
+    var hm1=/\b(?:with\s+)?(?:an?\s+)?(\d[\d,]*(?:\.\d+)?)\s*(?:gal(?:lons?)?\s*)?(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)\s*(?:hcl\s*)?heel\b/.exec(r),
+      hm2=!hm1&&/\b(?:with\s+)?(?:an?\s+)?heel\s*(?:of\s*|is\s*|:)?\s*(\d[\d,]*(?:\.\d+)?)\s*(?:gal(?:lons?)?\s*)?(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:%|percent)/.exec(r),hx=hm1||hm2,hk=hx?ASK_PRODS[String(parseFloat(hx[2]))]:null;
+    if(hx&&hk&&HEEL_PRODS.indexOf(hk)>=0&&parseFloat(hx[1].replace(/,/g,""))>0){d.heelGal=parseFloat(hx[1].replace(/,/g,""));d.heelProd=hk;delete d.heelBad;r=r.replace(hx[0]," ")}
+    else{d.heelBad=true;r=r.replace(/\b(?:with\s+)?(?:an?\s+)?heel\b/," ")}
+  }
   if((m=/\b(?:trailer|truck|unit)\s*#?\s*([a-z0-9][a-z0-9-]*)/.exec(r))&&!/^(for|with|of|to)$/.test(m[1])){d.name="Trailer "+m[1].toUpperCase();r=r.replace(m[0]," ")}
   else if((m=/\b(?:customer|for)\s+([a-z][a-z0-9 &.'-]{1,30}?)(?=,|$|\s+(?:\d|ticket|bol|lbt|leave|nm|tx|texas|new mexico|third|loader))/.exec(r))&&!ROSTER.some(function(n){return n.toLowerCase()===m[1].trim()})){d.name=m[1].trim().replace(/\b\w/g,function(c){return c.toUpperCase()});r=r.replace(m[0]," ")}
   if((m=/\bticket\s*#?\s*([a-z0-9-]+)/.exec(r))){d.ticket=m[1].toUpperCase();r=r.replace(m[0]," ")}
@@ -3323,16 +3523,16 @@ function askAddParse(q,d){
   return d;
 }
 function askAddCard(d){
-  var need=[];if(!d.name)need.push("the trailer or customer");if(!d.prod)need.push("the product");if(!(d.gal>0))need.push("the gallons");
+  var need=[];if(!d.name)need.push("the trailer or customer");if(!d.prod)need.push("the product");if(!(d.gal>0))need.push("the gallons");if(d.heelBad)need.push('the heel gallons and product (like "300 gal 20% heel")');
   var row=function(k,v){return '<tr><td>'+k+'</td><td>'+v+'</td></tr>'};
   var t='<table>'+row("Trailer",d.name?esc(d.name):'<i>needed</i>')+row("Product",d.prod?esc(d.cname||pname(d.prod)):'<i>needed</i>')+row("Gallons",d.gal>0?num(d.gal)+' gal':'<i>needed</i>')+
-    row("Delivering to",stName(d.state||"TX"))+row("Third party driver",d.tp?"Yes (80,000 lb limit)":"No")+row("Loader",d.loader?esc(d.loader):'–')+row("Ticket",d.ticket?esc(d.ticket):'–')+row("BOL",d.bol?esc(d.bol):'–')+row("Leave by",d.lbt?T(lbtFrom(d.lbt)):'–')+'</table>';
+    row("Delivering to",stName(d.state||"TX"))+row("Third party driver",d.tp?"Yes (80,000 lb limit)":"No")+row("Loader",d.loader?esc(d.loader):'–')+row("Ticket",d.ticket?esc(d.ticket):'–')+row("BOL",d.bol?esc(d.bol):'–')+row("Leave by",d.lbt?T(lbtFrom(d.lbt)):'–')+row("Heel",d.heelGal>0?gf(d.heelGal)+' gal '+esc(pname(d.heelProd)):d.heelBad?'<i>needed</i>':'None')+row("Notes",d.notes?esc(d.notes):'–')+'</table>';
   return {need:need,t:t};
 }
-function askAdd(q){
-  var cont=ASK_CTX&&ASK_CTX.kind==="add"&&!ASK_ADD.test(q)&&!/^(how|what|whats|when|where|who|which|is|are|do|does|did|can|will|should|show|find|set|start|assign|mark|remove|put|clear)\b/.test(q)&&!/(heel|loaded|\bfit|weigh|\blate\b|\bdue\b|tote|sonar|\btank|equipment|\brail|turnover|loading|waiting|pulled)/.test(q);
+function askAdd(q,raw){
+  var cont=ASK_CTX&&ASK_CTX.kind==="add"&&!ASK_ADD.test(q)&&!/^(how|what|whats|when|where|who|which|is|are|do|does|did|can|will|should|show|find|set|start|assign|mark|remove|put|clear|end|finish)\b/.test(q)&&!/(\bheel (on|for|if)\b|loaded|\bfit|weigh|\blate\b|\bdue\b|tote|sonar|\btank|equipment|\brail|turnover|loading|waiting|pulled|schedule|tonight|tomorrow|yesterday|history|last time|^notes? (on|for|to)\b)/.test(q);
   if(!ASK_ADD.test(q)&&!cont)return null;
-  var d=askAddParse(q,cont?Object.assign({},ASK_CTX.d):{});
+  var d=askAddParse(q,cont?Object.assign({},ASK_CTX.d):{},raw);
   if(cont&&JSON.stringify(d)===JSON.stringify(ASK_CTX.d))return null;
   if(!perm("add"))return {miss:1,h:"You can't add orders",d:'<p class="asn">Ask a lead to add it, or to give you permission in the Lead Panel.</p>'};
   var c=askAddCard(d),ctx={kind:"add",d:d};
@@ -3341,7 +3541,8 @@ function askAdd(q){
   var dup=ORD.filter(function(o){return status(o)!=="done"&&String(o.name||"").toLowerCase()===d.name.toLowerCase()});
   var sp=splitOf(d.prod,d.gal);
   var pid="p"+(++askPid);ASK_PEND[pid]={type:"add",d:d,nm:d.name,desc:"Add "+esc(d.name)};
-  return {pend:pid,ctx:{kind:"addDone"},h:"Add this order?",d:c.t+(sp?splitHtml(d.prod,d.gal,d.prod==="acid"?"Requested":"Needs"):'')+(dup.length?'<p class="asn" style="color:var(--warn)">'+esc(d.name)+' is already on the board and not finished. Confirm only if this is a second load.</p>':'')+'<p class="asw">Add a heel or Halliburton chems afterward with Edit on the load.</p>'};
+  var ahl=d.heelGal>0?heelOf({heelGal:d.heelGal,heelProd:d.heelProd}):null;
+  return {pend:pid,ctx:{kind:"addDone"},h:"Add this order?",d:c.t+(sp?splitHtml(d.prod,d.gal,d.prod==="acid"?"Requested":"Needs",ahl):'')+(dup.length?'<p class="asn" style="color:var(--warn)">'+esc(d.name)+' is already on the board and not finished. Confirm only if this is a second load.</p>':'')+'<p class="asw">Add Halliburton chems afterward with Edit on the load.</p>'};
 }
 function askDo(pid,ok){
   var pd=ASK_PEND[pid];if(!pd||pd.done)return;pd.done=ok?"ok":"no";
@@ -3350,12 +3551,13 @@ function askDo(pid,ok){
   else if(pd.type!=="add"&&!can())msg='<p>I couldn\'t save that. Check your signal and try again.</p>';
   else if(pd.type==="add"){
     if(!perm("add")||!can()||!DL)msg='<p>I couldn\'t add it. Check your signal and that you have permission to add orders.</p>';
-    else{var d=pd.d,data={loader:canonName(d.loader||""),name:d.name,prod:d.prod,gal:d.gal,ticket:d.ticket||"",bol:d.bol||"",notes:"",lbtAt:d.lbt?lbtFrom(d.lbt):null,startAt:null,endAt:null,state:d.state||"TX",onSheet:true,createdAt:Date.now()};if(d.tp)data.tp=true;
+    else{var d=pd.d,data={loader:canonName(d.loader||""),name:d.name,prod:d.prod,gal:d.gal,ticket:d.ticket||"",bol:d.bol||"",notes:d.notes||"",lbtAt:d.lbt?lbtFrom(d.lbt):null,startAt:null,endAt:null,state:d.state||"TX",onSheet:true,createdAt:Date.now()};if(d.tp)data.tp=true;
+      if(d.heelGal>0){data.heelGal=d.heelGal;data.heelProd=d.heelProd}
       if(cxOf(d.prod))data.cname=d.cname||"Custom blend";
       var nid=DL.newId();enqueue(nid,function(){return DL.set(nid,data)});if(data.loader)rememberLoader(data.loader);
       msg='<p class="tql2">'+tqPick("added",["On the board.","Done. Fresh order's up.","Added. Somebody go grab it."])+'</p><p class="ash">Added</p><p class="asn"><b>'+esc(d.name)+'</b> · '+num(d.gal)+' gal '+esc(d.cname||pname(d.prod))+' is on the board.</p><div class="acts"><button type="button" data-askgo="'+esc(nid)+'">Open on the Load Log</button></div>'}}
   else if(!o)msg='<p>That load isn\'t on the board anymore.</p>';
-  else{if(pd.type==="start")doAct("start",pd.oid);else upd(pd.oid,pd.patch);msg='<p class="tql2">'+tqPick("done",["Done and done.","Took care of it.","All set."])+'</p><p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
+  else{if(pd.type==="start"||pd.type==="end")doAct(pd.type,pd.oid);else upd(pd.oid,pd.patch);msg='<p class="tql2">'+tqPick("done",["Done and done.","Took care of it.","All set."])+'</p><p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
   ASK_LOG.push({html:msg});ASK_LOG=ASK_LOG.slice(-40);tqRender();
 }
 /* ---- Tarquino's personality: a seasoned yard hand. Friendly, dependable, a little dry, safety-minded.
@@ -3372,7 +3574,7 @@ function tqTalk(q){
   if(/\b(bye|goodnight|good night|see ya|see you|later|heading home|im out|clocking out)\b/.test(q))return tqPick("bye",["Get home safe"+nm+". I'll keep an eye on the board.","Good work today. Don't forget the turnover.","See you next shift. Drive careful."]);
   if(/\b(joke|laugh|funny|something fun)\b/.test(q))return tqPick("joke",TQ_JOKES);
   if(/\b(how are you|hows it going|how you doing|how ya doing|whats up|sup|you good)\b/.test(q))return night?tqPick("how",["Running on coffee and the dilution chart. You?","Can't complain. Quiet nights are the good ones."]):tqPick("how",["Doing alright. Board's moving, nobody's yelling. What do you need?","Can't complain. What can I figure for you?"]);
-  if(/\b(who are you|what are you|your name|what can you do|what do you do|help me|how do i use you)\b/.test(q))return "I'm Tarquino. I've got the dilution chart, the product weights and the board memorized. Ask me about gallons loaded, acid and water, heels, what fits, what's late, the turnover, or tell me to change a load. Tap the mic if your hands are busy.";
+  if(/\b(who are you|what are you|your name|what can you do|what do you do|help me|how do i use you)\b/.test(q))return "I'm Tarquino. I've got the dilution chart, the product weights and the board memorized. Ask me about gallons loaded, acid and water, heels, what fits, what's late, the turnover, the schedule, past loads, or tell me to change a load. Tap the mic if your hands are busy.";
   if(/\b(tired|exhausted|long shift|long night|coffee|sleepy|beat)\b/.test(q))return tqPick("tired",["Long one, huh? Grab some water and take five when you can. I'll watch the board.","Hang in there. Coffee's not a food group, but it helps.","Hydrate. Seriously. Then we'll knock out the next load."]);
   if(/\b(safety|ppe|be safe|careful)\b/.test(q))return tqPick("safe",["Face shield, gloves, apron. Acid doesn't give second chances.","Always. Check your hoses and couplings before you open a valve.","Safety first, loads second. Every time."]);
   if(/^(hi|hey|hello|howdy|yo|hiya|morning|evening|afternoon|good (morning|afternoon|evening))\b/.test(q))return tqPick("hi",part==="morning"?["Morning"+nm+". Coffee first, or loads first?","Morning. What are we figuring?"]:part==="late"?["Hey"+nm+". Late one, huh? What do you need?","Evening. "+(night?"Night shift's got me on my third coffee. ":"")+"What do you need?"]:["Hey"+nm+". What can I figure for you?","Howdy. What do you need?"]);
@@ -3397,10 +3599,15 @@ function tqLead(a){
 function askAnswer(raw){
   var q=String(raw||"").toLowerCase().replace(/[’']/g,"").replace(/\s+/g," ").trim();if(!q)return null;
   if(!/\d/.test(q)&&!ASK_INT.test(q)&&!ASK_VERB.test(q)&&!ASK_ADD.test(q)){var tk=tqTalk(q);if(tk)return {talk:1,h:"",d:'<p>'+tk+'</p>'}}
-  var r=askAdd(q);if(r)return r;
+  var rw=String(raw||"").replace(/\s+/g," ").trim();
+  var r=askAdd(q,rw);if(r)return r;
+  r=askSet(q,rw);if(r)return r;
   r=askAct(q);if(r)return r;
   r=askFollow(q);if(r)return r;
+  r=askSched(q);if(r)return r;
+  r=askHist(q);if(r)return r;
   r=askLoad(q);if(r)return r;
+  r=askNotes(q);if(r)return r;
   r=askTime(q);if(r)return r;
   r=askTurn(q);if(r)return r;
   ASK_LAST=null;r=askCore(raw);r.ctx=ASK_LAST;
@@ -3414,7 +3621,7 @@ function tqHi(){
   var n=tqName(),k=n+"|"+tqPart();if(TQ_HI&&TQ_HI_K===k)return TQ_HI;TQ_HI_K=k;
   var part=tqPart(),night=curShift().s==="N",nm=n?" "+esc(n):"";
   var open=part==="morning"?tqPick("ghi",["Morning"+nm+".","Mornin'"+nm+". Coffee's on, board's up."]):part==="afternoon"?tqPick("ghi",["Afternoon"+nm+".","Hey"+nm+". Halfway there."]):part==="evening"?tqPick("ghi",["Evening"+nm+".","Hey"+nm+". "+(night?"Night shift's starting up.":"Home stretch.")]):tqPick("ghi",["Hey"+nm+". Late one, huh?","Evening"+nm+". Night shift's got me on my third coffee."]);
-  TQ_HI='<p>'+open+' I\'m Tarquino. I know the charts, the weights and the board. Ask me about gallons, acid and water, heels, what fits, what\'s late, the turnover, or tell me to change a load. Tap an example to get going.</p>';
+  TQ_HI='<p>'+open+' I\'m Tarquino. I know the charts, the weights and the board. Ask me about gallons, acid and water, heels, what fits, what\'s late, the turnover, the schedule and past loads, or tell me to change a load. Tap an example to get going.</p>';
   return TQ_HI;
 }
 function tqMsg(x){
