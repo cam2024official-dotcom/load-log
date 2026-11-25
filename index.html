@@ -744,6 +744,12 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .orl3 b{margin-right:7px;font:700 13px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--note)}
 .ord.open .orl3{display:none}
 .qch{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Heel in plain sight (v83): full-width Heel box under the ✎ boxes; solid when there is one */
+.qcb.qhl{grid-column:1/-1}
+.qcb.qhl:not(.on) b{font:600 15px var(--body);color:var(--mute)}
+.qcb.qhl.on{border:2px solid var(--ink);background:var(--card)}
+.heelt{background:var(--ink);color:var(--card);border-color:var(--ink)}
+#qcm_p{width:100%;margin-bottom:10px}#qcm_x{margin-top:10px;width:100%}
 </style>
 </head>
 <body>
@@ -830,12 +836,12 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <div><label class="f" for="a_state">Delivering to</label><select id="a_state"><option value="TX">Texas</option><option value="NM">New Mexico</option></select></div>
       <div><label class="f" for="a_ld">Loader</label><input id="a_ld" type="text" autocomplete="off" list="crewlist" placeholder="Pick or type"></div>
       <div class="full"><label class="chk"><input id="a_tp" type="checkbox"> Third party driver (80,000 lb limit)</label></div>
+      <div class="full"><label class="chk"><input id="a_heel" type="checkbox"> Heel? (product left in the trailer)</label></div>
+      <div class="full halw" id="a_heelw" hidden><div><label class="f" for="a_heelp">Heel product</label><select id="a_heelp"></select></div><div><label class="f" for="a_heelg">Heel (gal)</label><input id="a_heelg" type="number" inputmode="decimal" min="0" step="any"></div></div>
       <p class="note full" id="a_nmh" hidden style="background:#f5c400;color:#1a1400;border-radius:8px;padding:8px 10px;font-weight:700">New Mexico load. Max 80,000 lb. After you save, enter the scale-in light weight on the load to see how much product fits.</p>
       <div class="full" id="a_split"></div>
       <div class="full"><label class="f" for="a_nt">Notes / special instructions</label><textarea id="a_nt" placeholder="Special instructions for this load. They show on the load so they aren't missed."></textarea></div>
-      <details class="full wck amore" id="a_more"><summary><span class="wst">More</span><span class="wsm"><span class="wsn" id="a_moresum">Heel, Halliburton, loadout sheet, past times</span></span></summary><div class="nmc"><div class="g2">
-        <div class="full"><label class="chk"><input id="a_heel" type="checkbox"> Heel? (product left in the trailer)</label></div>
-        <div class="full halw" id="a_heelw" hidden><div><label class="f" for="a_heelp">Heel product</label><select id="a_heelp"></select></div><div><label class="f" for="a_heelg">Heel (gal)</label><input id="a_heelg" type="number" inputmode="decimal" min="0" step="any"></div></div>
+      <details class="full wck amore" id="a_more"><summary><span class="wst">More</span><span class="wsm"><span class="wsn" id="a_moresum">Halliburton, loadout sheet, past times</span></span></summary><div class="nmc"><div class="g2">
         <div class="full"><label class="chk"><input id="a_hal" type="checkbox"> Halliburton chems</label></div>
         <div class="full halw" id="a_halw" hidden></div>
         <div class="full"><label class="chk"><input id="a_sh" type="checkbox" checked> Include on loadout sheet</label></div>
@@ -903,7 +909,9 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 <div id="qcm" class="pinm" hidden><div class="pinb" role="dialog" aria-modal="true" aria-labelledby="qcm_t">
   <b id="qcm_t">Change</b>
   <p id="qcm_s" class="note" style="margin:4px 0 10px"></p>
-  <input id="qcm_in" type="text" autocomplete="off">
+  <label class="f" for="qcm_p" id="qcm_pl" hidden>Heel product</label><select id="qcm_p" hidden></select>
+  <label class="f" for="qcm_in" id="qcm_il" hidden>Heel (gal)</label><input id="qcm_in" type="text" autocomplete="off">
+  <button id="qcm_x" type="button" class="small" hidden>No heel</button>
   <div class="lbq" id="qcm_q" data-for="qcm_in" hidden><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div>
   <div class="pinr"><button id="qcm_c" type="button">Cancel</button><button id="qcm_ok" class="go" type="button">Save</button></div>
 </div></div>
@@ -1037,7 +1045,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     </ol>
   </details>
   <details><summary>Starting a load</summary>
-    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="qch"><button type="button" class="qcb" tabindex="-1"><small>Gallons ✎</small><b>5,000</b></button><button type="button" class="qcb" tabindex="-1"><small>Leave by ✎</small><b>3:45 PM</b></button><button type="button" class="qcb" tabindex="-1"><small>Ticket ✎</small><b>4412</b></button><button type="button" class="qcb" tabindex="-1"><small>BOL ✎</small><b>88120</b></button></div><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 35:48</b><small>3,060 gal ÷ 75 gpm − 5 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="qch"><button type="button" class="qcb" tabindex="-1"><small>Gallons ✎</small><b>5,000</b></button><button type="button" class="qcb" tabindex="-1"><small>Leave by ✎</small><b>3:45 PM</b></button><button type="button" class="qcb" tabindex="-1"><small>Ticket ✎</small><b>4412</b></button><button type="button" class="qcb" tabindex="-1"><small>BOL ✎</small><b>88120</b></button><button type="button" class="qcb qhl" tabindex="-1"><small>Heel ✎</small><b>No heel · tap to add</b></button></div><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 35:48</b><small>3,060 gal ÷ 75 gpm − 5 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
@@ -1085,6 +1093,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
     <ol>
       <li><span class="kb">Edit</span> and <span class="kb">Remove</span> are under <b>Details</b> at the bottom of the load, with the loader, Delivering to and On loadout sheet. Edit changes the trailer, product, gallons, times, ticket, BOL and Halliburton chems.</li>
       <li>To change just the gallons, leave-by, ticket or BOL, open the load and tap that box at the top (the ones with ✎). Type the new one and tap <span class="kb">Save</span>.</li>
+      <li>Trailer has a heel? Tap the wide <b>Heel ✎</b> box, pick the heel product, enter its gallons and tap <span class="kb">Save</span>. Needs and the weight check update right away. Tap <span class="kb">No heel</span> to take it off.</li>
       <li>A load with notes shows a blue <b>Note</b> line on the list and a blue <b>Special instructions</b> box at the top when you open it. Read it before you start loading.</li>
       <li><span class="kb">Reopen</span> puts a finished load back to loading.</li>
     </ol>
@@ -1148,10 +1157,10 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>Same kind of load as one you just did? Tap one of the <b>Repeat a recent load</b> buttons at the top of the form. It fills in the product, gallons, state, third party and Halliburton chems. Then type the trailer and ticket.</li>
       <li>Tap <span class="kb">+1 h</span>, <span class="kb">+2 h</span>, <span class="kb">+3 h</span> or <span class="kb">+4 h</span> under Leave by to set it that far from now.</li>
       <li>BOL # goes next to Ticket #. Put special instructions in <b>Notes / special instructions</b>: they show in blue on the load so the loader sees them.</li>
-      <li>Heel, Halliburton chems, the loadout sheet box and start and end times for a load that already happened are under <b>More</b>. When it's closed, the More bar shows anything filled in there.</li>
+      <li>Halliburton chems, the loadout sheet box and start and end times for a load that already happened are under <b>More</b>. When it's closed, the More bar shows anything filled in there.</li>
       <li>To add another load like one on the board, open it, tap <b>Details</b>, then <span class="kb">Copy</span>. Add order opens filled in from it, so you only type the new trailer, ticket and leave-by.</li>
       <li>Blended order, like a CableShield batch cut with water? Pick <b>Custom blend</b> under Product. Enter a blend name, the base batch product and gallons, and the water added after. Needs shows the water, acid and chemicals for the whole load. Tap <span class="kb">Save as recipe</span> to keep it: next time pick it under <b>Saved recipe</b> and it scales to the total gallons. If the load is too heavy, every part is cut back evenly.</li>
-      <li>Trailer came back with product in it? Open <b>More</b> and tick <b>Heel?</b>, pick the heel product and enter its gallons. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
+      <li>Trailer came back with product in it? Tick <b>Heel?</b> under Third party driver, pick the heel product and enter its gallons. Found a heel after the order was added? Open the load and tap the <b>Heel ✎</b> box under the other ✎ boxes. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
       <li>Halliburton load? Open <b>More</b>, tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
       <li>Pick New Mexico under Delivering to for NM loads. If a third party company's driver is hauling it, tick <b>Third party driver</b>. Both use the 80,000 lb limit. You can change either later under <b>Details</b> on the load.</li>
       <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
@@ -1450,7 +1459,10 @@ function viewCard(o){
   if(w)b+='<div class="qch"><button type="button" class="qcb" data-act="qc" data-q="gal" data-id="'+id+'"><small>Gallons ✎</small><b>'+(o.gal?num(o.gal):'–')+'</b></button>'+
     '<button type="button" class="qcb" data-act="qc" data-q="lbt" data-id="'+id+'"><small>Leave by ✎</small><b>'+(o.lbtAt?T(o.lbtAt):'–')+'</b></button>'+
     '<button type="button" class="qcb" data-act="qc" data-q="ticket" data-id="'+id+'"><small>Ticket ✎</small><b>'+(o.ticket?esc(o.ticket):'–')+'</b></button>'+
-    '<button type="button" class="qcb" data-act="qc" data-q="bol" data-id="'+id+'"><small>BOL ✎</small><b>'+(o.bol?esc(o.bol):'–')+'</b></button></div>';
+    '<button type="button" class="qcb" data-act="qc" data-q="bol" data-id="'+id+'"><small>BOL ✎</small><b>'+(o.bol?esc(o.bol):'–')+'</b></button>'+
+    /* Heel in plain sight (v83): tap to add, change or clear it without opening Edit */
+    '<button type="button" class="qcb qhl'+(hl?' on':'')+'" data-act="qc" data-q="heel" data-id="'+id+'"><small>Heel ✎</small><b>'+(hl?gf(hl.gal)+' gal '+esc(pname(hl.prod)):'No heel · tap to add')+'</b></button></div>';
+  else if(hl)b+='<div class="qch"><div class="qcb qhl on"><small>Heel</small><b>'+gf(hl.gal)+' gal '+esc(pname(hl.prod))+'</b></div></div>';
   /* 1. What goes in the trailer */
   if(o.state==="NM")b+='<p class="nmb">NM'+(isTP(o)?' · third party driver':'')+' · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
   else if(isTP(o))b+='<p class="nmb tpb">Third party driver · Max '+num(NM_MAX)+' lb · Aim '+num(NM_TARGET)+'</p>';
@@ -2035,11 +2047,10 @@ document.addEventListener("click",function(e){
 function halFromForm(){var o={};HAL_N.forEach(function(k){o["hn"+k]=$("a_hn"+k).value;o["ha"+k]=$("a_ha"+k).value});return o}
 function addMoreSum(){
   var s=[],hg=parseFloat($("a_heelg").value),st=$("a_st").value;
-  if($("a_heel").checked&&hg>0)s.push("Heel "+gf(hg)+" gal");
   if($("a_hal").checked){var ht=halText(halFromForm());s.push(ht?"HAL "+ht:"HAL")}
   if(!$("a_sh").checked)s.push("Not on loadout sheet");
   if(st)s.push("Started "+T(pastTime(st)));
-  $("a_moresum").textContent=s.length?s.join(" · "):"Heel, Halliburton, loadout sheet, past times";
+  $("a_moresum").textContent=s.length?s.join(" · "):"Halliburton, loadout sheet, past times";
   $("a_moresum").classList.toggle("set",!!s.length);
 }
 $("addp").addEventListener("input",addMoreSum);$("addp").addEventListener("change",addMoreSum);
@@ -2080,10 +2091,13 @@ function copyLoad(id){
 var QC=null;
 function qcOpen(id,q){
   var o=find(id);if(!o||!can())return;QC={id:id,q:q};var inp=$("qcm_in");
-  $("qcm_t").textContent=q==="gal"?"Change gallons":q==="ticket"?"Change ticket":q==="bol"?"Change BOL":"Change leave-by";
-  $("qcm_s").textContent=(o.name||"Unnamed order")+" · "+(o.gal?num(o.gal)+" gal ":"")+prodName(o);
-  inp.type=q==="lbt"?"time":q==="gal"?"number":"text";inp.setAttribute("inputmode",q==="gal"?"decimal":"text");if(q==="lbt")inp.removeAttribute("inputmode");
-  inp.value=q==="gal"?(o.gal||""):q==="ticket"?(o.ticket||""):q==="bol"?(o.bol||""):tval(o.lbtAt);
+  var hq=q==="heel",hl=heelOf(o);
+  $("qcm_t").textContent=q==="gal"?"Change gallons":q==="ticket"?"Change ticket":q==="bol"?"Change BOL":hq?(hl?"Change heel":"Add a heel"):"Change leave-by";
+  $("qcm_s").textContent=(o.name||"Unnamed order")+" · "+(o.gal?num(o.gal)+" gal ":"")+prodName(o)+(hq?". Product left in the trailer comes off what the load needs.":"");
+  ["qcm_p","qcm_pl","qcm_il"].forEach(function(k){$(k).hidden=!hq});$("qcm_x").hidden=!(hq&&hl);
+  if(hq)$("qcm_p").innerHTML=heelOpts(hl?hl.prod:"20");
+  inp.type=q==="lbt"?"time":(q==="gal"||hq)?"number":"text";inp.setAttribute("inputmode",(q==="gal"||hq)?"decimal":"text");if(q==="lbt")inp.removeAttribute("inputmode");
+  inp.value=q==="gal"?(o.gal||""):q==="ticket"?(o.ticket||""):q==="bol"?(o.bol||""):hq?(hl?hl.gal:""):tval(o.lbtAt);
   $("qcm_q").hidden=q!=="lbt";$("qcm").hidden=false;
   setTimeout(function(){inp.focus();if(q!=="lbt"&&inp.select)try{inp.select()}catch(e){}},40);
 }
@@ -2093,10 +2107,14 @@ function qcSave(){
   if(QC.q==="gal"){var g=parseFloat(v);if(!(g>0)){toast("Enter the gallons.");return}if(g===(parseFloat(o.gal)||0)){qcClose();return}p.gal=g}
   else if(QC.q==="ticket"){var t=String(v).trim();if(t===(o.ticket||"")){qcClose();return}p.ticket=t}
   else if(QC.q==="bol"){var bl=String(v).trim();if(bl===(o.bol||"")){qcClose();return}p.bol=bl}
+  else if(QC.q==="heel"){var hg=parseFloat(v),hp=$("qcm_p").value,ho=heelOf(o);
+    if(hg>0){if(ho&&ho.gal===hg&&ho.prod===hp){qcClose();return}p.heelGal=hg;p.heelProd=hp}
+    else{if(!ho){qcClose();return}p.heelGal=null;p.heelProd=null}}
   else{var l=lbtFrom(v);if((o.lbtAt||null)===(l||null)){qcClose();return}p.lbtAt=l}
   upd(QC.id,p);qcClose();toast("Saved");
 }
 $("qcm_c").onclick=qcClose;$("qcm_ok").onclick=qcSave;
+$("qcm_x").onclick=function(){if(!QC)return;var o=find(QC.id);if(o&&can()&&heelOf(o)){upd(QC.id,{heelGal:null,heelProd:null});toast("Heel removed")}qcClose()};
 $("qcm").onclick=function(e){if(e.target===this)qcClose()};
 $("qcm_in").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();qcSave()}else if(e.key==="Escape")qcClose()};
 $("addbtn").onclick=function(){if($("addp").hidden){openAdd();$("a_name").focus()}else $("addp").hidden=true};
