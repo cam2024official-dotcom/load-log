@@ -792,6 +792,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .dcs textarea{width:100%}
 @media (max-width:520px){.dcer{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dcer .chk{grid-column:1}.dcer .dcx{justify-self:end}}
 .myeq{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:10px 0 12px;padding:10px 12px;background:var(--card);border:2px solid var(--warn);border-left-width:6px;border-radius:4px}
+.myeq[hidden],.rail[hidden]{display:none}
 .myeq.ok{border-color:var(--ok)}.myeq.bad{border-color:var(--bad)}
 .mqt{display:flex;flex-direction:column;gap:1px;min-width:0}
 .mqt small{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
@@ -809,6 +810,29 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .insb .iok.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
 .insb .ibad.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
 .insprev{margin:8px 0 0}
+/* Railcar timer (v88) */
+.rail{margin:10px 0 4px}
+.rlh{display:flex;align-items:center;gap:10px;padding:6px 0}
+.rlh b{font:700 15px/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase}
+.rlh span{flex:1;font-size:13px;color:var(--mute)}
+.rlh button{flex:none}
+.rlc{margin:0 0 8px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-left:6px solid #2c6384;border-radius:4px}
+.rlc.over{border-color:#eca03f;border-left-color:#eca03f;box-shadow:0 0 0 2px #eca03f;animation:wtpulse 1.4s infinite}
+@media (prefers-reduced-motion:reduce){.rlc.over{animation:none}}
+.rlm{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rlt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rlt b{font:700 19px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.rlt small{font-size:13px;color:var(--mute)}
+.rlx{flex:none;text-align:right;display:flex;flex-direction:column}
+.rlx b{font:700 26px/1 var(--display);font-variant-numeric:tabular-nums}
+.rlx small{font-size:12px;color:var(--mute)}
+.rlc.over .rlx b,.rlc.over .rlx small{color:var(--warn)}
+.rla{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rla button{flex:1;min-height:40px;padding:4px 8px;font-size:14px}
+.rlq span{flex-basis:100%;font-weight:700;font-size:14px}
+.rltk{display:flex;gap:6px;margin-bottom:4px}
+.rltk button{flex:1;min-height:40px}
+.rltk button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--accink);font-weight:700}
 .wtc{padding:1px 6px;border-radius:3px;background:#2c6384;color:#fff;font:700 13px/1.5 var(--display);letter-spacing:.05em}
 .wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
 /* Quicker adding and changing (v80) */
@@ -913,6 +937,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
+  <div id="rail" class="rail" hidden></div>
 
   <button id="addbtn" class="add" type="button">Add an order</button>
   <div id="addp" class="panel" hidden>
@@ -1012,6 +1037,16 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <button id="qcm_x" type="button" class="small" hidden>No heel</button>
   <div class="lbq" id="qcm_q" data-for="qcm_in" hidden><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div>
   <div class="pinr"><button id="qcm_c" type="button">Cancel</button><button id="qcm_ok" class="go" type="button">Save</button></div>
+</div></div>
+<div id="rlm" class="pinm" hidden><div class="pinb" role="dialog" aria-modal="true" aria-labelledby="rlm_t">
+  <b id="rlm_t">Start railcar</b>
+  <label class="f" for="rlm_car" style="margin-top:10px">Car #</label><input id="rlm_car" type="text" autocomplete="off" maxlength="20" placeholder="e.g. TILX 290114">
+  <label class="f">Tank</label><div class="rltk" id="rlm_tk" role="group" aria-label="Tank"><button type="button" data-tk="East">East</button><button type="button" data-tk="West">West</button><button type="button" data-tk="">Not set</button></div>
+  <label class="f" id="rlm_dl">How long to offload?</label>
+  <div class="lbq" id="rlm_q"><button type="button" data-m="60">1 h</button><button type="button" data-m="120">2 h</button><button type="button" data-m="180">3 h</button><button type="button" data-m="240">4 h</button><button type="button" data-m="300">5 h</button></div>
+  <div class="g2" style="margin-top:8px"><div><label class="f" for="rlm_h">Hours</label><input id="rlm_h" type="number" inputmode="numeric" min="0" max="48"></div><div><label class="f" for="rlm_m">Minutes</label><input id="rlm_m" type="number" inputmode="numeric" min="0" max="59"></div></div>
+  <p id="rlm_err" class="note" style="color:var(--bad)" hidden></p>
+  <div class="pinr"><button id="rlm_c" type="button">Cancel</button><button id="rlm_ok" class="go" type="button">Start timer</button></div>
 </div></div>
 <div id="insp" class="pinm fin" hidden><div class="pinb finb" role="dialog" aria-modal="true" aria-labelledby="insp_t">
   <b id="insp_t">Inspection</b>
@@ -1173,6 +1208,14 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>When a lead gives you a truck for the shift, it shows at the top of the Load Log. Tap <span class="kb">Inspect</span>.</li>
       <li>Mark each point <span class="kb">OK</span> or <span class="kb">Problem</span>, or tap <span class="kb">All OK</span> if everything checks out. If something's wrong, say what in the notes. Then tap <span class="kb">Save inspection</span>.</li>
       <li>The strip turns green when it's done (red if you reported a problem), and your lead sees it on the Daily Checklist. You can inspect a forklift or other equipment from the same window by picking it in the Equipment box.</li>
+    </ol>
+  </details>
+  <details><summary>Railcar timer</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="rail"><div class="rlh"><b>Railcars</b><span>1 offloading</span><button type="button" class="small" tabindex="-1" data-n="1">+ Start railcar</button></div><div class="rlc"><div class="rlm"><div class="rlt"><b>Car TILX 290114</b><small>East tank · Started 6:10 AM by Tony · done by 9:10 AM</small></div><div class="rlx"><b>2:41:07</b><small>left</small></div></div><div class="rla"><button type="button" tabindex="-1">+30 min</button><button type="button" tabindex="-1">Change</button><button type="button" class="go" tabindex="-1" data-n="2">Done</button></div></div></div></div></figure>
+    <ol>
+      <li>Starting to offload a railcar into the tank? Tap <span class="kb">+ Start railcar</span> under the Loading / Waiting / Done boxes on the Load Log. Enter the car number, pick the tank, and set how long it takes (tap <span class="kb">3 h</span> or type hours and minutes). Tap <span class="kb">Start timer</span>.</li>
+      <li>Everyone sees the countdown. When time's up the car turns orange, every phone shows a message, and the phone that started it (and leads' phones) buzz. Need longer? Tap <span class="kb">+30 min</span>, or <span class="kb">Change</span> to set the time left.</li>
+      <li>When the car's finished, tap <span class="kb">Done</span>, then <span class="kb">Car empty</span>, or <span class="kb">Stopped, not empty</span> if it has to be picked back up later. On the Shift Handoff, <span class="kb">Fill from Load Log</span> fills South rail car status and Rail cars moved to empty line from these.</li>
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
@@ -1794,7 +1837,7 @@ function tick(){
       ch.className=cls;ch.textContent=tx;
     }
   });
-  crewBoard();
+  crewBoard();railTick(now);
   $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
   $("gal").textContent=num(gal)+" gal acid pulled"+(noAcid?" · "+noAcid+" finished load"+(noAcid===1?"":"s")+" missing acid":"");
 }
@@ -2318,14 +2361,14 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null,pr=null,mgo=null,hso=null,dly=null;
-  list.forEach(function(o){if(o.id===DAILY_ID)dly=o;else if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null,mgo=null,hso=null,dly=null,rlo=null;
+  list.forEach(function(o){if(o.id===RAIL_ID)rlo=o;else if(o.id===DAILY_ID)dly=o;else if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();
+  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();setRail(rlo);
   /* A new chat message or someone coming online doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID}));
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID&&o.id!==RAIL_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -2561,9 +2604,9 @@ function hoFill(){
   h+='<div class="tvh">Trailers currently being loaded<button type="button" data-hofill="tr">Fill from Load Log</button></div>';
   h+=tvRowsHtml("tr",function(i){return tvL("Trailer #",tvIn("tr."+i+".t"))+tvL("Product",tvIn("tr."+i+".p"))+tvL("Location",tvIn("tr."+i+".l"))+tvL("Status",tvIn("tr."+i+".s"))},"trailer");
   h+='<div class="tvh">Loaders on shift<button type="button" data-hofill="lo">Fill from Schedule</button></div><div class="tvg">'+d.lo.map(function(n,i){return tvIn("lo."+i,"text","Name",' list="crewlist" aria-label="Loader '+(i+1)+'"')}).join("")+'</div>';
-  h+='<div class="tvh">South rail car status</div>';
+  h+='<div class="tvh">South rail car status<button type="button" data-hofill="src">Fill from Load Log</button></div>';
   h+=tvRowsHtml("src",function(i){return tvL("Car #",tvIn("src."+i+".c"))+tvL("Status",tvIn("src."+i+".s","text","Running, Venting…",' list="tv_rcst"'))},"rail car");
-  h+='<div class="tvh">Rail cars moved to empty line</div>';
+  h+='<div class="tvh">Rail cars moved to empty line<button type="button" data-hofill="mv">Fill from Load Log</button></div>';
   h+=tvRowsHtml("mv",function(i){return tvL("Car #",tvIn("mv."+i+".c"))+tvL("Time",tvIn("mv."+i+".t","time"))},"rail car");
   h+='<div class="tvh">Transloader status</div><textarea data-ho="tl" maxlength="600" placeholder="Status / notes">'+esc(d.tl)+'</textarea>';
   h+='<div class="tvh">Blend station levels (acid)</div><table class="tvt"><tr><th></th><th>Level</th></tr>'+
@@ -2597,6 +2640,14 @@ $("ho_form").addEventListener("click",function(e){
   if(fill==="lo"){var cs=curShift(),on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});if(!on.length){toast("No one is on the schedule for this shift.");return}
     while(on.length<5)on.push("");HO.d.lo=on;hoFill();hoSave();return}
   if(fill==="tot"){HO.d.tot=String(hoLoads().dn);hoFill();hoSave();return}
+  /* Railcar timers (v88): running cars and cars stopped this shift; cars marked empty this shift */
+  if(fill==="src"||fill==="mv"){var cs2=curShift(),cars=Object.keys(RAIL).map(function(k){return RAIL[k]});
+    var lst=fill==="src"?cars.filter(function(x){return !x.done||(!x.done.e&&+x.done.t>=cs2.start)}).map(function(x){return {c:String(x.car),s:(x.done?"Stopped":"Running")+(x.tk?" ("+x.tk+" tank)":"")}})
+      :cars.filter(function(x){return x.done&&x.done.e&&+x.done.t>=cs2.start}).sort(function(a,b){return a.done.t-b.done.t}).map(function(x){var d=new Date(+x.done.t);return {c:String(x.car),t:pad(d.getHours())+":"+pad(d.getMinutes())}});
+    if(!lst.length){toast(fill==="src"?"No railcar timers running on the Load Log.":"No railcars marked empty this shift.");return}
+    var kp=HO.d[fill].filter(function(r){return r.c||r.s||r.t}),at={};kp.forEach(function(r,i){at[String(r.c).toLowerCase()]=i});
+    lst.forEach(function(r){var i=at[r.c.toLowerCase()];if(i!=null)kp[i]=Object.assign({},kp[i],r);else kp.push(r)});
+    while(kp.length<TV_N[fill])kp.push(Object.assign({},TV_ROW[fill]));HO.d[fill]=kp;hoFill();hoSave();return}
 });
 $("ho_latest").addEventListener("click",tvPostClick);$("ho_past").addEventListener("click",tvPostClick);
 function tvPostClick(e){
@@ -4046,6 +4097,65 @@ function myEq(){var b=$("myeq");var e=dcMine();if(!e||DEMO){b.hidden=true;b.inne
   b.innerHTML='<div class="mqt"><small>Your '+esc(e.t.toLowerCase())+' this shift</small><b>'+esc(e.n)+'</b><span>'+(x?(x.ok?'✓ Inspected '+T(x.t)+(x.n&&ME&&x.n!==ME.name?' by '+esc(x.n):''):'Problem: '+esc(dcBad(x)||"see notes")+' · '+T(x.t)):(e.os?'Marked out of service. Check with your lead.':'Not inspected yet'))+'</span></div><button type="button" id="myeq_go"'+(x?'':' class="go"')+'>'+(x?'Inspect again':'Inspect')+'</button>';
   b.hidden=false}
 $("myeq").addEventListener("click",function(ev){if(ev.target.closest&&ev.target.closest("#myeq_go")){var e=dcMine();inspOpen(e?e.id:null)}});
+/* ---- Railcar timer (v88): a countdown for offloading a railcar to the tank, on the Load Log
+   under the summary tiles. One fixed key beside the orders:
+   _rail = {c:{rID:{car, tk ("East"|"West"|""), by, at (start ms), min (minutes from start to done),
+     done:{t,by,e} (e true = car empty, false = stopped, not empty)}}}
+   Running cars show on the Load Log; finished ones are kept 7 days so the Shift Handoff can
+   fill South rail car status and Rail cars moved to empty line from them. ---- */
+var RAIL_ID="_rail",RAIL={},RL_ARM={},RL_FIRED={},RL_KEEP=7*864e5,rlPruned=0,RLM=null,RL_LAST="tcw-rail-min";
+function setRail(o){var s=JSON.stringify(o||null);if(s===setRail.sig)return;setRail.sig=s;var c=o&&o.c&&typeof o.c==="object"?o.c:{};RAIL={};
+  Object.keys(c).forEach(function(k){var x=c[k];if(x&&x.car&&+x.at)RAIL[k]=x});
+  var now=Date.now();if(DL&&can()&&now-rlPruned>36e5){rlPruned=now;var p={},n=0;Object.keys(RAIL).forEach(function(k){var x=RAIL[k];if(x.done&&now-(+x.done.t||0)>RL_KEEP){p["c/"+k]=null;n++}});if(n)upd(RAIL_ID,p)}
+  renderRail()}
+function rlEnd(x){return +x.at+(+x.min||0)*60000}
+function rlRun(){return Object.keys(RAIL).map(function(k){return Object.assign({id:k},RAIL[k])}).filter(function(x){return !x.done}).sort(function(a,b){return rlEnd(a)-rlEnd(b)})}
+function rlLeft(x,now){var r=rlEnd(x)-now;return r>=0?mmss(r):"+"+mmss(-r)}
+function renderRail(){var b=$("rail");if(!b)return;var run=DEMO?[]:rlRun(),w=can()&&!!DL&&!DEMO,now=Date.now();
+  var h='<div class="rlh"><b>Railcars</b><span>'+(run.length?run.length+' offloading':'None offloading')+'</span>'+(w?'<button type="button" class="small" data-rl="new">+ Start railcar</button>':'')+'</div>';
+  h+=run.map(function(x){var id=esc(x.id),over=rlEnd(x)<=now;
+    return '<div class="rlc'+(over?' over':'')+'" id="rl-'+id+'"><div class="rlm"><div class="rlt"><b>Car '+esc(x.car)+'</b><small>'+(x.tk?esc(x.tk)+' tank · ':'')+'Started '+T(+x.at)+(x.by?' by '+esc(x.by):'')+' · done by '+T(rlEnd(x))+'</small></div>'+
+      '<div class="rlx"><b id="rlx-'+id+'">'+rlLeft(x,now)+'</b><small id="rll-'+id+'">'+(over?'past · check the car':'left')+'</small></div></div>'+
+      (w?(RL_ARM[x.id]?'<div class="rla rlq"><span>Car '+esc(x.car)+' done?</span><button type="button" class="go" data-rl="empty" data-id="'+id+'">Car empty</button><button type="button" data-rl="stop" data-id="'+id+'">Stopped, not empty</button><button type="button" data-rl="no" data-id="'+id+'">Cancel</button></div>':
+        '<div class="rla"><button type="button" data-rl="add" data-id="'+id+'">+30 min</button><button type="button" data-rl="edit" data-id="'+id+'">Change</button><button type="button" class="go" data-rl="end" data-id="'+id+'">Done</button></div>'):'')+'</div>'}).join("");
+  if(h!==renderRail.h){renderRail.h=h;b.innerHTML=h}b.hidden=false}
+/* Every second from tick(): countdowns, and a buzz when a car's time is up */
+function railTick(now){rlRun().forEach(function(x){var e=$("rlx-"+x.id),over=rlEnd(x)<=now;if(e)e.textContent=rlLeft(x,now);
+    var c=$("rl-"+x.id);if(c&&c.classList.contains("over")!==over){c.classList.toggle("over",over);var l=$("rll-"+x.id);if(l)l.textContent=over?"past · check the car":"left"}
+    var fk=x.id+":"+rlEnd(x);if(over&&now-rlEnd(x)<120000&&!RL_FIRED[fk]&&!DEMO){RL_FIRED[fk]=1;toast("Railcar "+x.car+" should be done. Go check it.");
+      var mine=ME&&(ME.lead||(x.by&&ME.name===x.by));if(mine)try{if(navigator.vibrate)navigator.vibrate([400,150,400,150,400])}catch(err){}}})}
+$("rail").addEventListener("click",function(e){var b=e.target.closest?e.target.closest("button[data-rl]"):null;if(!b)return;var a=b.getAttribute("data-rl"),id=b.getAttribute("data-id"),x=id?RAIL[id]:null;
+  if(!can()||!DL){toast("Not connected. Changes need a signal.");return}
+  if(a==="new"){rlmOpen(null);return}
+  if(!x)return;var p={};
+  if(a==="add"){p["c/"+id+"/min"]=(+x.min||0)+30;upd(RAIL_ID,p);return}
+  if(a==="edit"){rlmOpen(id);return}
+  if(a==="end"){RL_ARM[id]=1;renderRail();setTimeout(function(){if(RL_ARM[id]){delete RL_ARM[id];renderRail()}},8000);return}
+  if(a==="no"){delete RL_ARM[id];renderRail();return}
+  if(a==="empty"||a==="stop"){delete RL_ARM[id];p["c/"+id+"/done"]={t:Date.now(),by:ME&&!ME.admin?ME.name:"",e:a==="empty"};upd(RAIL_ID,p);toast(a==="empty"?"Car "+x.car+" marked empty.":"Car "+x.car+" stopped.");return}
+});
+/* Start / change window */
+function rlmOpen(id){var x=id?RAIL[id]:null;RLM={id:id,tk:x?x.tk||"":""};
+  $("rlm_t").textContent=x?"Change car "+x.car:"Start railcar";$("rlm_ok").textContent=x?"Save":"Start timer";
+  $("rlm_car").value=x?x.car:"";$("rlm_dl").textContent=x?"Time left from now":"How long to offload?";
+  var m;if(x)m=Math.max(0,Math.round((rlEnd(x)-Date.now())/60000));else{try{m=+localStorage.getItem(RL_LAST)||0}catch(e){m=0}}
+  rlmSetMin(m);rlmTk();$("rlm_err").hidden=true;$("rlm").hidden=false;try{(x?$("rlm_h"):$("rlm_car")).focus()}catch(e){}}
+function rlmSetMin(m){$("rlm_h").value=m?Math.floor(m/60):"";$("rlm_m").value=m?m%60:""}
+function rlmTk(){var bs=$("rlm_tk").querySelectorAll("button");for(var i=0;i<bs.length;i++)bs[i].setAttribute("aria-pressed",String(bs[i].getAttribute("data-tk")===RLM.tk))}
+$("rlm_tk").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-tk]"):null;if(!b||!RLM)return;RLM.tk=b.getAttribute("data-tk");rlmTk()};
+$("rlm_q").onclick=function(e){var b=e.target.closest?e.target.closest("button[data-m]"):null;if(b)rlmSetMin(+b.getAttribute("data-m"))};
+$("rlm_c").onclick=function(){$("rlm").hidden=true;RLM=null};
+$("rlm").addEventListener("click",function(e){if(e.target===this){this.hidden=true;RLM=null}});
+$("rlm_ok").onclick=function(){if(!RLM)return;var car=$("rlm_car").value.trim(),m=(parseInt($("rlm_h").value,10)||0)*60+(parseInt($("rlm_m").value,10)||0),err=function(t){$("rlm_err").textContent=t;$("rlm_err").hidden=false};
+  if(!car){err("Enter the car number.");$("rlm_car").focus();return}
+  if(!(m>0)){err("Enter how long, or tap one of the time buttons.");return}
+  if(!can()||!DL){err("Not connected. Try again when you have a signal.");return}
+  var p={},now=Date.now();
+  if(RLM.id){var x=RAIL[RLM.id];if(!x){$("rlm").hidden=true;return}p["c/"+RLM.id+"/car"]=car;p["c/"+RLM.id+"/tk"]=RLM.tk||null;p["c/"+RLM.id+"/min"]=Math.round((now-x.at)/60000+m)}
+  else{if(rlRun().some(function(r){return r.car.toLowerCase()===car.toLowerCase()})){err("Car "+car+" already has a timer running.");return}
+    p["c/r"+now.toString(36)]={car:car,tk:RLM.tk||null,by:ME&&!ME.admin?ME.name:"",at:now,min:m};try{localStorage.setItem(RL_LAST,String(m))}catch(e){}}
+  upd(RAIL_ID,p);$("rlm").hidden=true;RLM=null;toast(p["c/r"+now.toString(36)]?"Railcar timer started. Done at "+T(now+m*60000)+".":"Saved.")};
+$("rlm").addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("rlm_ok").click()}});
 var HIST_ID="_hist",HIST={},HIST_KEEP=7*864e5,histPruned={};
 function setHist(o){
   var m={},old={},now=Date.now();
