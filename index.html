@@ -677,6 +677,9 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .rpf{display:inline-block;margin:0 3px 2px 0;padding:0 5px;border-radius:3px;font:700 11px/1.6 var(--display);letter-spacing:.05em;background:var(--hl);color:var(--ink);border:1px solid var(--line)}
 .rpf.late,.rpf.cut{border-color:var(--bad);color:var(--bad);background:transparent}
 .rpt td.lo{color:var(--bad);font-weight:700}
+.hssh{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.hssh small{font:500 13px var(--body);letter-spacing:0;text-transform:none;color:var(--mute)}
+.hssh span{margin-left:auto;font:600 13px var(--body);letter-spacing:0;text-transform:none;color:var(--mute)}
 .rpls{margin-bottom:12px}
 .rpls .rpt th,.rpls .rpt td{white-space:nowrap}
 .rpnote{margin:4px 0 0;font-size:12px;color:var(--mute)}
@@ -1161,7 +1164,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div id="rpv_wrap"><div id="rpv_sheet"></div></div>
 </div>
 <main id="v-hist" hidden><div class="wrap hist">
-  <div class="hsbar"><input id="hs_q" type="search" autocomplete="off" placeholder="Search trailer, ticket, BOL, loader or product" aria-label="Search history"><select id="hs_day" aria-label="Day"></select></div>
+  <div class="hsbar"><input id="hs_q" type="search" autocomplete="off" placeholder="Search trailer, ticket, BOL, loader or product" aria-label="Search history"><select id="hs_day" aria-label="Shift"></select></div>
   <div id="hs_body"></div>
   <p class="note">Loads moved here by Clear finished orders are kept for 7 days, then drop off by themselves.</p>
 </div></main>
@@ -1344,7 +1347,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <details><summary>History</summary>
     <ol>
       <li><span class="kb">Clear finished orders</span> moves finished loads to <b>History</b> instead of deleting them. They're kept for 7 days.</li>
-      <li>Open the menu and tap <span class="kb">History</span> (same people who can see the Shift Report). Search by trailer, ticket, BOL, loader or product, or pick a day. Tap a load to see everything about it.</li>
+      <li>Open the menu and tap <span class="kb">History</span> (same people who can see the Shift Report). Loads are grouped by shift (day shift 6 AM to 6 PM, night shift 6 PM to 6 AM, filed under the day it started), with the number of loads and gallons for each. Search by trailer, ticket, BOL, loader or product, or pick a shift. Tap a load to see everything about it.</li>
       <li>Cleared one by mistake? Open it and tap <span class="kb">Put back on the board</span> (anyone with Paperwork access).</li>
       <li><span class="kb">Remove</span> on a load still deletes it for good, since that's for mistakes.</li>
     </ol>
@@ -4167,21 +4170,25 @@ function setHist(o){
 }
 function allDone(){var seen={},out=[];ORD.forEach(function(o){if(o.endAt){seen[o.id]=1;out.push(o)}});Object.keys(HIST).forEach(function(k){if(!seen[k]&&HIST[k].endAt)out.push(HIST[k])});return out}
 var HS_OPEN={};
-function hsDayKey(ms){var d=new Date(ms);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+/* History is grouped by shift (v89): the start of the shift a load finished in. A night shift
+   counts toward the day it started, same as the Schedule. */
+function hsShKey(o){return String(curShift(o.endAt||o.clearedAt).start)}
+function hsShName(k,long){var c=curShift(+k+60000);return (c.s==="D"?"Day":"Night")+" shift · "+new Date(c.start).toLocaleDateString([],long?{weekday:"long",month:"short",day:"numeric"}:{weekday:"short",month:"numeric",day:"numeric"})+(long?' <small>'+T(c.start)+' – '+T(c.end)+'</small>':'')}
 function renderHist(){
   if(curView!=="hist")return;
   var all=Object.keys(HIST).map(function(k){return HIST[k]}).sort(function(a,b){return (b.endAt||b.clearedAt)-(a.endAt||a.clearedAt)});
-  var days={};all.forEach(function(o){days[hsDayKey(o.endAt||o.clearedAt)]=1});
-  var sel=$("hs_day").value,dk=Object.keys(days).sort().reverse();
-  $("hs_day").innerHTML='<option value="">All 7 days ('+all.length+')</option>'+dk.map(function(k){var p=k.split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+d.toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"})+'</option>'}).join("");
+  var days={};all.forEach(function(o){var k=hsShKey(o);days[k]=(days[k]||0)+1});
+  var sel=$("hs_day").value,dk=Object.keys(days).sort(function(a,b){return b-a});
+  $("hs_day").innerHTML='<option value="">All 7 days ('+all.length+')</option>'+dk.map(function(k){return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+hsShName(k)+' ('+days[k]+')</option>'}).join("");
   if(sel&&!days[sel])sel="";
   var q=$("hs_q").value.trim().toLowerCase();
-  var rows=all.filter(function(o){if(sel&&hsDayKey(o.endAt||o.clearedAt)!==sel)return false;if(!q)return true;return [o.name,o.ticket,o.bol,canonName(o.loader),prodName(o)].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})});
+  var rows=all.filter(function(o){if(sel&&hsShKey(o)!==sel)return false;if(!q)return true;return [o.name,o.ticket,o.bol,canonName(o.loader),prodName(o)].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})});
   if(!all.length){$("hs_body").innerHTML='<p class="gn">Nothing in History yet. Finished loads land here when someone taps Clear finished orders in the Lead Panel.</p>';return}
   if(!rows.length){$("hs_body").innerHTML='<p class="gn">No loads match.</p>';return}
   var h="",cur="",canRestore=perm("paper")&&can();
-  rows.forEach(function(o){var k=hsDayKey(o.endAt||o.clearedAt);
-    if(k!==cur){cur=k;var p=k.split("-");h+='<h2>'+new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString([],{weekday:"long",month:"short",day:"numeric"})+'</h2>'}
+  var gs={};rows.forEach(function(o){var k=hsShKey(o),g=gs[k]||(gs[k]={n:0,g:0});g.n++;g.g+=parseFloat(o.gal)||0});
+  rows.forEach(function(o){var k=hsShKey(o);
+    if(k!==cur){cur=k;h+='<h2 class="hssh">'+hsShName(k,true)+'<span>'+gs[k].n+' load'+(gs[k].n===1?'':'s')+(gs[k].g?' · '+num(gs[k].g)+' gal':'')+'</span></h2>'}
     var row=function(l,v){return v!=null&&v!==""?'<tr><td>'+l+'</td><td>'+v+'</td></tr>':''};
     var hl=heelOf(o),chem=halHas(o)?esc(halText(o)):"";
     h+='<details class="hsr" data-hid="'+esc(o.id)+'"'+(HS_OPEN[o.id]?' open':'')+'><summary><span class="hsn">'+esc(o.name||"Unnamed order")+'</span><span class="hst">'+T(o.endAt||o.clearedAt)+'</span><span class="hsm">'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+' · '+esc(canonName(o.loader)||"No loader")+(o.ticket?' · Ticket '+esc(o.ticket):'')+'</span><span class="hsf">'+rpFlags(o)+'</span></summary>'+
