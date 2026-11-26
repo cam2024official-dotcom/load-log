@@ -728,6 +728,81 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .pzt{padding:0 5px;border-radius:3px;background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);font:700 13px var(--display);letter-spacing:.06em}
 .rsx.pz{color:var(--warn);font-weight:700}
 .ctl.ld.pz b{color:var(--warn)}
+/* Daily Checklist & Assignment (v86) */
+.dc .dch{margin:4px 0 10px;color:var(--mute);font-size:14px}
+.dc .dch b{font:700 16px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.dcs{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin:0 0 12px}
+.dcs h2{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:0 0 10px;font:700 18px/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.dcs h3{margin:14px 0 6px;font:700 15px/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.dcs h4{margin:12px 0 4px;font:700 15px/1.2 var(--display);letter-spacing:.04em}
+.dcs h4 small{color:var(--mute);font-weight:600}
+.dcn{font:600 14px var(--body);letter-spacing:0;text-transform:none;color:var(--mute)}
+.dcl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.dcl li{display:flex;gap:6px;align-items:stretch}
+.dci{flex:1;display:flex;gap:12px;align-items:center;text-align:left;min-height:52px;padding:8px 12px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:var(--r)}
+.dci:disabled{opacity:1;cursor:default}
+.dcb{flex:none;display:grid;place-items:center;width:28px;height:28px;border:2px solid var(--line);border-radius:4px;font-weight:800;font-size:18px;color:#fff}
+.dci.on{background:var(--okbg);border-color:var(--ok)}
+.dci.on .dcb{background:var(--ok);border-color:var(--ok)}
+.dct{display:flex;flex-direction:column;gap:1px;min-width:0}
+.dct b{font:700 17px/1.15 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.dct small{font-size:13px;color:var(--mute)}
+.dcx{flex:none;min-width:44px;padding:0 10px;font-size:22px;line-height:1;background:transparent;border:1px solid var(--line);color:var(--mute)}
+.dcadd{display:flex;gap:8px;margin-top:10px}
+.dcadd input{flex:1;min-width:0}
+.dcadd button{flex:none}
+.dcas{display:grid;gap:8px}
+.dcar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:4px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.dcar:first-child{border-top:0}
+.dcan{display:flex;align-items:center;gap:8px;font-weight:700}
+.dcan i{flex:none;width:12px;height:12px;border-radius:50%}
+.dcan small{font-weight:500;color:var(--mute)}
+.dcai{grid-column:1/-1;font-size:13px}
+.dcok{color:var(--ok);font-weight:700}
+.dcbad{color:var(--bad);font-weight:700}
+.dcno{color:var(--warn);font-weight:700}
+.dcnt{display:block;color:var(--ink);font-size:13px;font-style:italic}
+.dceql{list-style:none;margin:0;padding:0}
+.dceql li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0 8px 10px;border-top:1px solid var(--line);border-left:4px solid var(--line)}
+.dceql li:first-child{border-top:0}
+.dceql li.ok{border-left-color:var(--ok)}.dceql li.bad{border-left-color:var(--bad)}.dceql li.os{border-left-color:var(--mute);opacity:.75}
+.dcen{display:flex;flex-direction:column;gap:1px;min-width:0;font-size:13px}
+.dcen b{font:700 17px/1.15 var(--display);letter-spacing:.04em}
+.dcen small{color:var(--mute);font-size:13px}
+.dceql button{flex:none}
+.dcd>summary{cursor:pointer;font:700 17px/1.2 var(--display);letter-spacing:.08em;text-transform:uppercase;padding:2px 0}
+.dcd[open]>summary{margin-bottom:8px}
+.dclog{margin:0;padding-left:18px;font-size:13px}
+.dclog li{margin:3px 0}
+.dcrt{width:100%;border-collapse:collapse;font-size:14px}
+.dcrt th,.dcrt td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+.dcrt th{font-size:12px;color:var(--mute);font-weight:600}
+.dcrt .n{text-align:right}.dcrt td.lo{color:var(--bad);font-weight:700}
+.dceqe{display:grid;gap:6px}
+.dcer{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto auto;gap:6px;align-items:center}
+.dcer .chk{font-size:13px;gap:6px;white-space:nowrap}
+.dcits{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.dcits li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0 4px 10px;border:1px solid var(--line);border-radius:var(--r)}
+.dcs textarea{width:100%}
+@media (max-width:520px){.dcer{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dcer .chk{grid-column:1}.dcer .dcx{justify-self:end}}
+.myeq{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:10px 0 12px;padding:10px 12px;background:var(--card);border:2px solid var(--warn);border-left-width:6px;border-radius:4px}
+.myeq.ok{border-color:var(--ok)}.myeq.bad{border-color:var(--bad)}
+.mqt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.mqt small{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.mqt b{font:700 22px/1.1 var(--display);letter-spacing:.04em}
+.mqt span{font-size:14px;font-weight:600;color:var(--warn)}
+.myeq.ok .mqt span{color:var(--ok)}.myeq.bad .mqt span{color:var(--bad)}
+.myeq button{flex:none}
+.insph{display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;font-size:13px;color:var(--mute)}
+.insl{display:grid;gap:6px;margin-bottom:10px}
+.insr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:4px}
+.insr.ok{border-left-color:var(--ok)}.insr.bad{border-left-color:var(--bad);background:var(--badbg)}
+.insr>span{font-weight:600;min-width:0}
+.insb{flex:none;display:flex;gap:4px}
+.insb button{min-height:40px;min-width:64px;padding:2px 10px;font-size:14px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.insb .iok.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
+.insb .ibad.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
+.insprev{margin:8px 0 0}
 .wtc{padding:1px 6px;border-radius:3px;background:#2c6384;color:#fff;font:700 13px/1.5 var(--display);letter-spacing:.05em}
 .wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
 /* Quicker adding and changing (v80) */
@@ -828,6 +903,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
   <p class="onl" id="onl" hidden></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
+  <div id="myeq" class="myeq" hidden></div>
   <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
   <p class="gal" id="gal"></p>
@@ -931,6 +1007,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div class="lbq" id="qcm_q" data-for="qcm_in" hidden><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div>
   <div class="pinr"><button id="qcm_c" type="button">Cancel</button><button id="qcm_ok" class="go" type="button">Save</button></div>
 </div></div>
+<div id="insp" class="pinm fin" hidden><div class="pinb finb" role="dialog" aria-modal="true" aria-labelledby="insp_t">
+  <b id="insp_t">Inspection</b>
+  <p id="insp_s" class="note" style="margin:2px 0 10px"></p>
+  <div id="insp_body"></div>
+  <p id="insp_err" class="note" style="color:var(--bad)" hidden></p>
+  <div class="pinr"><button id="insp_c" type="button">Cancel</button><button id="insp_ok" class="go" type="button">Save inspection</button></div>
+</div></div>
 <div id="fin" class="pinm fin" hidden><div class="pinb finb" role="dialog" aria-modal="true" aria-labelledby="fin_t">
   <b id="fin_t">Load weight</b>
   <p id="fin_s" class="note" style="margin:2px 0 12px"></p>
@@ -1018,6 +1101,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   </section>
   <div id="ho_past"></div>
 </div></main>
+<main id="v-dc" hidden><div class="wrap dc"><div id="dc_body"></div></div></main>
 <main id="v-ask" hidden><div class="wrap ask">
   <div class="tqh"><img src="icon-192.png" alt="" class="tqa"><div><b>Tarquino</b><span>Yard hand · knows the charts · works offline</span></div></div>
   <div id="ask_out" class="tql" role="log" aria-live="polite"></div>
@@ -1075,6 +1159,14 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>Have to leave a load to tend to something else? Open it and tap <span class="kb">Pause load</span>. The load clock stops, and so does a running water timer, so shut the water off before you walk away. Pick why if you want (Another load, Truck/driver, Equipment, Break or Other). You can skip it.</li>
       <li>Back on it? Tap <span class="kb">Resume load</span>. The clock and the water timer pick up where they left off. You can still hold to end the load while it's paused.</li>
       <li>Paused loads show a yellow <b>PAUSED</b> tag on the board and the crew board. The paused time is left out of the load time, and the Shift Report, History and Turnover show the pauses. You can also tell Tarquino "pause 707 for equipment" or "resume 707".</li>
+    </ol>
+  </details>
+  <details><summary>Inspecting your truck</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="myeq"><div class="mqt"><small>Your truck this shift</small><b>Truck 12</b><span>Not inspected yet</span></div><button type="button" class="go" tabindex="-1" data-n="1">Inspect</button></div></div></figure>
+    <ol>
+      <li>When a lead gives you a truck for the shift, it shows at the top of the Load Log. Tap <span class="kb">Inspect</span>.</li>
+      <li>Mark each point <span class="kb">OK</span> or <span class="kb">Problem</span>, or tap <span class="kb">All OK</span> if everything checks out. If something's wrong, say what in the notes. Then tap <span class="kb">Save inspection</span>.</li>
+      <li>The strip turns green when it's done (red if you reported a problem), and your lead sees it on the Daily Checklist. You can inspect a forklift or other equipment from the same window by picking it in the Equipment box.</li>
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
@@ -1240,6 +1332,17 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>South rail cars, transloader, levels, tote counts and maintenance concerns not yet reported carry over for the next shift to update. The rest starts fresh.</li>
     </ol>
   </details>
+  <details><summary>Daily Checklist &amp; Assignment</summary>
+    <ol>
+      <li>Open the menu and tap <b>Daily Checklist &amp; Assignment</b> under Lead. It starts fresh every shift.</li>
+      <li><b>Shift checklist:</b> tap Trailer List or any item to check it off. It records who and when. <b>Turnover</b> checks itself when the incoming lead signs the turnover, and <b>Equipment Inspection</b> checks itself once every assigned truck is inspected. Add one-off jobs under <b>Special tasks this shift</b>.</li>
+      <li><b>Truck assignments:</b> everyone on the schedule this shift is listed. Pick a truck for each loader. A truck can only go to one person. <span class="kb">Same trucks as last time</span> gives each loader the truck they had last.</li>
+      <li><b>Equipment inspection</b> shows every piece of equipment and whether it's been inspected, by whom and any problems. You can inspect from here too.</li>
+      <li><b>Equipment use, last 7 days</b> shows who had each truck and whether it was inspected, plus how often each loader inspected their own truck.</li>
+      <li><b>Equipment list</b> (at the bottom): add your trucks, forklifts and other equipment, mark something out of service, change the inspection points for each type, and add your own checklist items for every shift.</li>
+      <li>Crew members who aren't leads can be given this page under Permissions (<b>Daily checklist</b>).</li>
+    </ol>
+  </details>
   <details><summary>Setting the schedule</summary>
     <ol>
       <li>Open <span class="kb">Schedule</span> from the menu. Tap a day under someone's name to switch it between Day, Night and Off. It repeats every week.</li>
@@ -1280,6 +1383,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
   <button type="button" data-view="ho">Shift Handoff</button>
+  <button type="button" data-view="dc" id="nav_dc" hidden>Daily Checklist &amp; Assignment</button>
   <button type="button" data-view="rep" id="nav_rep" hidden>Shift Report</button>
   <button type="button" data-view="hist" id="nav_hist" hidden>History</button>
   <button type="button" id="nav_demo" hidden>Demo Board</button>
@@ -2208,14 +2312,14 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null,pr=null,mgo=null,hso=null;
-  list.forEach(function(o){if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null,mgo=null,hso=null,dly=null;
+  list.forEach(function(o){if(o.id===DAILY_ID)dly=o;else if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);
+  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();
   /* A new chat message or someone coming online doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID}));
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -2314,7 +2418,7 @@ $("sc_hsave").onclick=function(){
 /* Names come and go from the crew board and loader list as shifts change */
 function onShiftChange(force){
   var s=onShiftSig();if(!force&&s===shiftSig)return;shiftSig=s;
-  crewList();crewHtml="";crewBoard();renderSched();
+  crewList();crewHtml="";crewBoard();renderSched();renderDC();myEq();
   if(!$("signin").hidden)renderSignIn();
 }
 setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
@@ -2353,7 +2457,7 @@ function setHO(o){
   /* Don't overwrite what this lead is typing; their save goes out shortly */
   if(!hoSaveT)HO.d=hoNorm(o&&o.d);
   HO.p=(o&&o.p&&typeof o.p==="object")?o.p:{};
-  renderHO();
+  renderHO();renderDC();
 }
 function hoErr(t){$("ho_err").textContent=t||"";$("ho_err").hidden=!t}
 function hoCanEdit(){return perm("ho")&&!!DL&&can()}
@@ -2769,7 +2873,7 @@ function isLead(){return !!(ME&&ME.lead)}
 function canManage(){return isLead()||!needSignIn()}
 /* Permissions a lead can grant to a crew member (saved with the roster as perms:{n0:{add:true}}).
    Leads, managers and Admin have them all; before any logins exist, everyone does. */
-var PERMS=[["add","Add orders"],["rm","Remove orders"],["ho","Turnover"],["sched","Schedule"],["rep","Shift Report"],["paper","Paperwork"]],RPERM={};
+var PERMS=[["add","Add orders"],["rm","Remove orders"],["ho","Turnover"],["sched","Schedule"],["rep","Shift Report"],["paper","Paperwork"],["dc","Daily checklist"]],RPERM={};
 function perm(k){if(canManage())return true;if(!ME)return false;var p=RPERM[ME.name.toLowerCase()];return !!(p&&p[k])}
 async function checkLeadPin(pin){
   if(!pin)return false;if(await pinHash(LEAD_NAME,pin)===LEAD_HASH)return true;
@@ -2793,6 +2897,8 @@ function applyAuth(){
   if(curView==="help")$("hp_lead").hidden=!canManage();
   $("nav_rep").hidden=!perm("rep");if(curView==="rep"&&!perm("rep"))showView("log");
   $("nav_hist").hidden=!perm("rep");if(curView==="hist"&&!perm("rep"))showView("log");
+  $("nav_dc").hidden=!perm("dc");if(curView==="dc"&&!perm("dc"))showView("log");
+  myEq();renderDC();
   $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
   if(ME&&ME.name!==was)presSoon();
   renderSched();renderHO();
@@ -3034,7 +3140,7 @@ $("wg").oninput=function(e){var k=e.target.getAttribute("data-k"),v=parseFloat(e
 tabs();calc();
 })();
 
-var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],rep:["v-rep","Shift Report","Loads, gallons and times for management"],hist:["v-hist","History","Finished loads from the last 7 days"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],help:["v-help","Help","How to use the loader hub"]};
+var VIEWS={log:["v-log","Load Log","Tarquin Coolpro current orders, shared live"],rep:["v-rep","Shift Report","Loads, gallons and times for management"],hist:["v-hist","History","Finished loads from the last 7 days"],ask:["v-ask","Tarquino","Ask about gallons, weights, splits and loads"],dil:["v-dil","Acid Dilution","Acid and CableShield batch calculator"],lw:["v-lw","Load Weight","Gallons loaded from scale weights"],lead:["v-lead","Lead Panel","Paperwork and shift tools, PIN protected"],chat:["v-chat","Crew Chat","Shift talk for the crew, clears after 24 hours"],sched:["v-sched","Schedule","Who works day and night shift"],ho:["v-ho","Shift Handoff","Tanks, totes, railcars and loads for the next shift"],dc:["v-dc","Daily Checklist","Checklist, trucks and inspections"],help:["v-help","Help","How to use the loader hub"]};
 var LEAD_NAME="Backup lead",LEAD_HASH="2d7c4f62ce62d72ffe9cc4d804f4c89f36efc5ef42412c1f6eb37c0034d596df",curView="log";
 var wideMQ=window.matchMedia?window.matchMedia("(min-width:1000px)"):{matches:false};
 function syncNav(){if(wideMQ.matches)$("drawer").removeAttribute("aria-hidden");else $("drawer").setAttribute("aria-hidden",String(!$("drawer").classList.contains("open")))}
@@ -3055,6 +3161,7 @@ function showView(k){
   if(k==="help")$("hp_lead").hidden=!canManage();
   if(k==="sched")setTimeout(renderSched,0);
   if(k==="ho")setTimeout(renderHO,0);
+  if(k==="dc")setTimeout(renderDC,0);
   if(k==="rep")setTimeout(renderRep,0);
   if(k==="hist")setTimeout(renderHist,0);
   if(k==="ask")setTimeout(function(){askEx();tqRender();try{$("ask_in").focus()}catch(e){}},0);
@@ -3761,6 +3868,178 @@ window.addEventListener("pagehide",function(){if(DL&&DL.presence&&!DEMO){try{DL.
 
 /* ---- History: finished loads moved off the board by Clear finished orders, kept 7 days ----
    Saved beside the orders under a fixed key: {orderId: <the order> + clearedAt, clearedBy}. */
+/* ---- Daily Checklist & Assignment (v86), under Lead. One fixed key beside the orders:
+   _daily = {eq:{eID:{n,t,os}} equipment (name, type, out of service),
+     pt:{<skey type>:"Tires|Lights|..."} inspection points per type (DC_PTS when not set),
+     it:{iID:{n}} the lead's own standing checklist items (besides DC_BUILT),
+     s:{<shift start ms>:{c:{key:{n,t}} items checked off, sp:{spID:{n,by,t,dn:{n,t}}} special tasks,
+        as:{<skey name>:{n,e,by,t}} truck for the shift, in:{eID:{n,t,ok,p:{i0:{n,ok}},nt}} inspections}}
+   Writes use slash paths so two phones don't overwrite each other. Shifts are kept 7 days.
+   Loaders inspect their truck from the strip on the Load Log (myEq) through the inspection window. ---- */
+var DAILY_ID="_daily",DC={eq:{},pt:{},it:{},s:{}},DC_KEEP=7*864e5,dcPruned=0,dcHold=false,DC_OPEN={};
+var DC_BUILT=[["tl","Trailer List"],["to","Turnover"],["ei","Equipment Inspection"]];
+var DC_TYPES=["Truck","Forklift","Other"];
+var DC_PTS={Truck:"Tires|Lights|Horn|Brakes|Mirrors|Seat belt|Fluids and leaks|Fire extinguisher",Forklift:"Tires|Forks and chains|Mast and hydraulics|Leaks|Horn|Lights|Brakes|Seat belt|Battery or fuel",Other:"General condition|Leaks|Damage"};
+function dcObj(v){return v&&typeof v==="object"?v:{}}
+function dcKey(){return "k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function dcW(p){upd(DAILY_ID,p)}
+function setDaily(o){var s=JSON.stringify(o||null);if(s===setDaily.sig)return;setDaily.sig=s;
+  o=dcObj(o);DC={eq:dcObj(o.eq),pt:dcObj(o.pt),it:dcObj(o.it),s:dcObj(o.s)};dcPrune()}
+function dcPrune(){var now=Date.now();if(!DL||!can()||now-dcPruned<36e5)return;var p={},n=0;
+  Object.keys(DC.s).forEach(function(k){if(now-(+k||0)>DC_KEEP){p["s/"+k]=null;n++}});dcPruned=now;if(n)dcW(p)}
+function dcS(cs){return dcObj(DC.s[(cs||curShift()).start])}
+function dcP(cs){return "s/"+(cs||curShift()).start+"/"}
+function dcType(t){t=String(t||"").trim();for(var i=0;i<DC_TYPES.length;i++)if(DC_TYPES[i].toLowerCase()===t.toLowerCase())return DC_TYPES[i];return t||"Other"}
+function dcEqOf(k){var e=DC.eq[k];return e&&e.n?{id:k,n:String(e.n),t:dcType(e.t),os:!!e.os}:null}
+function dcEq(){return Object.keys(DC.eq).map(dcEqOf).filter(Boolean).sort(function(a,b){var ta=DC_TYPES.indexOf(a.t),tb=DC_TYPES.indexOf(b.t);return (ta<0?9:ta)-(tb<0?9:tb)||a.t.localeCompare(b.t)||a.n.localeCompare(b.n,undefined,{numeric:true,sensitivity:"base"})})}
+function dcPts(t){var v=DC.pt[skey(t)];if(typeof v!=="string"||!v.trim())v=DC_PTS[t]||DC_PTS.Other;return v.split("|").map(function(x){return x.trim()}).filter(Boolean)}
+function dcOn(cs){cs=cs||curShift();return ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on})}
+function dcAs(cs){var a=dcObj(dcS(cs).as),m={};Object.keys(a).forEach(function(k){var x=a[k];if(x&&x.n&&x.e)m[skey(x.n)]=x});return m}
+function dcIn(cs){var a=dcObj(dcS(cs).in),m={};Object.keys(a).forEach(function(k){var x=a[k];if(x&&x.t)m[k]=x});return m}
+function dcMine(){if(!ME||ME.admin||ME.mgr)return null;var x=dcAs()[skey(ME.name)];return x?dcEqOf(x.e):null}
+function dcBad(x){var b=[];Object.keys(dcObj(x&&x.p)).forEach(function(k){var r=x.p[k];if(r&&r.n&&!+r.ok)b.push(String(r.n))});return b.join(", ")}
+function dcInsTxt(x,mine){if(!x)return '<span class="dcno">Not inspected</span>';
+  var by=x.n&&x.n!==mine?' by '+esc(x.n):'';
+  if(x.ok)return '<span class="dcok">✓ Inspected '+T(x.t)+by+'</span>';
+  return '<span class="dcbad">Problem: '+esc(dcBad(x)||"see notes")+' · '+T(x.t)+by+'</span>'+(x.nt?'<span class="dcnt">'+esc(x.nt)+'</span>':'')}
+/* Turnover checks itself when the incoming lead signs a turnover this shift (or up to an hour before it starts) */
+function dcTurn(cs){var g=null;Object.keys(HO.p||{}).forEach(function(k){var p=HO.p[k],s=p&&p.d&&p.d.sg&&p.d.sg.i;if(s&&+s.t>=cs.start-36e5&&+s.t<cs.end&&(!g||+s.t>+g.t))g=s});return g}
+function dcInspCount(cs){var as=dcAs(cs),ins=dcIn(cs),need=0,done=0,seen={};
+  Object.keys(as).forEach(function(k){var e=as[k].e;if(seen[e]||!dcEqOf(e))return;seen[e]=1;need++;if(ins[e])done++});return {need:need,done:done}}
+function dcItems(){return DC_BUILT.concat(Object.keys(DC.it).map(function(k){var x=DC.it[k];return x&&x.n?["i_"+k,String(x.n)]:null}).filter(Boolean))}
+function dcItem(key,cs){var c=dcObj(dcS(cs).c)[key],man=c&&c.t?(c.n?esc(c.n)+' · ':'')+T(c.t):"";
+  if(key==="to"){var g=dcTurn(cs);if(g)return {done:true,auto:true,sub:'Incoming signature: '+esc(g.n||"")+' · '+T(+g.t)};return man?{done:true,sub:man}:{done:false,sub:'Checks itself when the incoming lead signs the turnover'}}
+  if(key==="ei"){var n=dcInspCount(cs);if(n.need&&n.done>=n.need)return {done:true,auto:true,sub:'All '+n.need+' assigned truck'+(n.need===1?'':'s')+' inspected'};
+    var cnt=n.need?n.done+' of '+n.need+' assigned trucks inspected':'Assign trucks below to track inspections';return man?{done:true,sub:man+' · '+cnt}:{done:false,sub:cnt}}
+  return man?{done:true,sub:man}:{done:false,sub:""}}
+function dcCanEdit(){return perm("dc")&&!!DL&&can()}
+function dcBusy(){var a=document.activeElement;return !!(a&&$("v-dc").contains(a)&&/^(INPUT|TEXTAREA)$/.test(a.tagName))}
+function dcSecOpen(k,def){return DC_OPEN[k]!=null?DC_OPEN[k]:def}
+function renderDC(){
+  if(curView!=="dc")return;if(dcBusy()){dcHold=true;return}dcHold=false;
+  var cs=curShift(),S=dcS(cs),w=dcCanEdit(),eq=dcEq(),as=dcAs(cs),ins=dcIn(cs),on=dcOn(cs),h='',now=Date.now();
+  var who={};Object.keys(as).forEach(function(k){who[as[k].e]=as[k].n});
+  h+='<p class="dch"><b>'+esc(shiftLabel(cs))+'</b>'+(w?'':' · view only')+'</p>';
+  /* 1. Checklist */
+  var items=dcItems(),dn=0,rows=items.map(function(it){var st=dcItem(it[0],cs);if(st.done)dn++;
+    return '<li><button type="button" class="dci'+(st.done?' on':'')+(st.auto?' auto':'')+'" data-dcc="'+esc(it[0])+'"'+(w&&!st.auto?'':' disabled')+' aria-pressed="'+st.done+'"><span class="dcb" aria-hidden="true">'+(st.done?'✓':'')+'</span><span class="dct"><b>'+esc(it[1])+'</b>'+(st.sub?'<small>'+st.sub+'</small>':'')+'</span></button></li>'});
+  var sp=dcObj(S.sp),spk=Object.keys(sp).filter(function(k){return sp[k]&&sp[k].n}).sort(function(a,b){return (+sp[a].t||0)-(+sp[b].t||0)});
+  spk.forEach(function(k){if(sp[k].dn)dn++});
+  h+='<section class="dcs"><h2>Shift checklist <span class="dcn">'+dn+' of '+(items.length+spk.length)+' done</span></h2><ul class="dcl">'+rows.join("")+'</ul>';
+  h+='<h3>Special tasks this shift</h3>';
+  h+=spk.length?'<ul class="dcl">'+spk.map(function(k){var x=sp[k],d=x.dn&&x.dn.t;return '<li class="dcsp"><button type="button" class="dci'+(d?' on':'')+'" data-dcsp="'+esc(k)+'"'+(w?'':' disabled')+' aria-pressed="'+!!d+'"><span class="dcb" aria-hidden="true">'+(d?'✓':'')+'</span><span class="dct"><b>'+esc(x.n)+'</b><small>'+(d?'Done · '+(x.dn.n?esc(x.dn.n)+' · ':'')+T(x.dn.t):'Added'+(x.by?' by '+esc(x.by):'')+' · '+T(+x.t))+'</small></span></button>'+(w?'<button type="button" class="dcx" data-dcspx="'+esc(k)+'" aria-label="Remove task">×</button>':'')+'</li>'}).join("")+'</ul>':'<p class="note">Nothing special yet.</p>';
+  if(w)h+='<div class="dcadd"><input id="dc_spn" type="text" autocomplete="off" maxlength="120" placeholder="Add a special task, e.g. Wash out trailer 512"><button type="button" class="go" id="dc_spa">Add</button></div>';
+  h+='</section>';
+  /* 2. Truck assignments: everyone on shift, one truck each */
+  var trucks=eq.filter(function(e){return e.t==="Truck"});
+  var names=on.slice();Object.keys(as).forEach(function(k){if(!names.some(function(n){return skey(n)===k}))names.push(as[k].n)});
+  h+='<section class="dcs"><h2>Truck assignments</h2>';
+  if(!names.length)h+='<p class="note">No one is on the schedule this shift. The list fills in from the Schedule.</p>';
+  else if(!trucks.length)h+='<p class="note">No trucks in the equipment list yet. Add them under <b>Equipment list</b> at the bottom.</p>';
+  if(names.length&&trucks.length){
+    h+='<div class="dcas">'+names.map(function(n){var k=skey(n),a=as[k],e=a?dcEqOf(a.e):null,off=on.indexOf(n)<0;
+      var ctl=w?'<select data-dcas="'+esc(n)+'" aria-label="Truck for '+esc(n)+'"><option value="">No truck</option>'+trucks.map(function(t){var tk=who[t.id]&&skey(who[t.id])!==k;return '<option value="'+esc(t.id)+'"'+(a&&a.e===t.id?' selected':'')+(tk||(t.os&&!(a&&a.e===t.id))?' disabled':'')+'>'+esc(t.n)+(t.os?' (out of service)':tk?' · '+esc(who[t.id]):'')+'</option>'}).join("")+'</select>':'<b>'+(e?esc(e.n):'No truck')+'</b>';
+      return '<div class="dcar"><span class="dcan"><i style="background:'+colOf(n)+'"></i>'+esc(n)+(off?' <small>(not on schedule)</small>':'')+'</span>'+ctl+'<span class="dcai">'+(e?dcInsTxt(ins[e.id],n):'')+'</span></div>'}).join("")+'</div>';
+    if(w)h+='<div class="acts"><button type="button" id="dc_same">Same trucks as last time</button></div>'}
+  h+='</section>';
+  /* 3. Equipment inspection */
+  h+='<section class="dcs"><h2>Equipment inspection</h2>';
+  h+=eq.length?'<ul class="dceql">'+eq.map(function(e){var x=ins[e.id];return '<li class="'+(e.os?'os':x?(x.ok?'ok':'bad'):'')+'"><div class="dcen"><b>'+esc(e.n)+'</b><small>'+esc(e.t)+(who[e.id]?' · '+esc(who[e.id]):'')+(e.os?' · <span class="dcbad">Out of service</span>':'')+'</small>'+dcInsTxt(x)+'</div>'+(DL&&can()?'<button type="button" class="small" data-dcin="'+esc(e.id)+'">'+(x?'Inspect again':'Inspect')+'</button>':'')+'</li>'}).join("")+'</ul>':'<p class="note">No equipment yet. Add trucks, forklifts and anything else under <b>Equipment list</b> at the bottom.</p>';
+  h+='</section>';
+  /* 4. Use over the last 7 days, and who checks their own truck */
+  var shifts=Object.keys(DC.s).map(Number).filter(function(k){return k&&k<=cs.start&&now-k<=DC_KEEP}).sort(function(a,b){return b-a}),rate={};
+  var logs=eq.map(function(e){var r=[];shifts.forEach(function(k){var c2={start:k},a2=dcAs(c2),x=dcIn(c2)[e.id],nm=null;Object.keys(a2).forEach(function(q){if(a2[q].e===e.id)nm=a2[q].n});
+      if(nm){var rk=skey(nm),rr=rate[rk]||(rate[rk]={n:nm,a:0,s:0,o:0});rr.a++;if(x){if(x.n&&skey(x.n)===rk)rr.s++;else rr.o++}}
+      if(nm||x)r.push('<li><b>'+esc(shiftLabel(curShift(k+60000)))+'</b> · '+(nm?esc(nm):'Not assigned')+' · '+dcInsTxt(x,nm)+'</li>')});
+    return r.length?'<h4>'+esc(e.n)+' <small>'+esc(e.t)+'</small></h4><ul class="dclog">'+r.join("")+'</ul>':''}).join("");
+  var rk=Object.keys(rate).sort(function(a,b){return rate[a].n.localeCompare(rate[b].n)});
+  h+='<details class="dcs dcd" data-dco="log"'+(dcSecOpen("log",false)?' open':'')+'><summary>Equipment use, last 7 days</summary>';
+  h+=rk.length?'<h3>Who checks their own truck</h3><table class="dcrt"><tr><th>Loader</th><th class="n">Shifts with a truck</th><th class="n">Inspected it</th><th class="n">Someone else did</th></tr>'+rk.map(function(k){var r=rate[k];return '<tr><td>'+esc(r.n)+'</td><td class="n">'+r.a+'</td><td class="n'+(r.s<r.a?' lo':'')+'">'+r.s+'</td><td class="n">'+r.o+'</td></tr>'}).join("")+'</table>':'';
+  h+=logs||'<p class="note">Nothing yet. Assignments and inspections show here for 7 days.</p>';
+  h+='</details>';
+  /* 5. Setup (leads) */
+  if(w){
+    var types=DC_TYPES.slice();eq.forEach(function(e){if(types.indexOf(e.t)<0)types.push(e.t)});
+    h+='<details class="dcs dcd" data-dco="set"'+(dcSecOpen("set",!eq.length)?' open':'')+'><summary>Equipment list</summary>';
+    h+='<datalist id="dc_types">'+types.map(function(t){return '<option>'+esc(t)+'</option>'}).join("")+'</datalist>';
+    h+=eq.length?'<div class="dceqe">'+eq.map(function(e){var k=esc(e.id);return '<div class="dcer"><input type="text" data-dceqn="'+k+'" value="'+esc(e.n)+'" aria-label="Name" maxlength="40"><input type="text" list="dc_types" data-dceqt="'+k+'" value="'+esc(e.t)+'" aria-label="Type" maxlength="24"><label class="chk"><input type="checkbox" data-dceqos="'+k+'"'+(e.os?' checked':'')+'> Out of service</label><button type="button" class="dcx" data-dceqx="'+k+'" aria-label="Remove '+esc(e.n)+'">×</button></div>'}).join("")+'</div>':'';
+    h+='<div class="dcadd"><input id="dc_eqn" type="text" autocomplete="off" maxlength="40" placeholder="Name, e.g. Truck 12"><input id="dc_eqt" type="text" list="dc_types" autocomplete="off" maxlength="24" placeholder="Type" value="Truck"><button type="button" class="go" id="dc_eqa">Add</button></div>';
+    h+='<h3>Inspection points</h3><p class="note">One per line. Loaders mark each one OK or Problem. Clear a box to go back to the standard list.</p>';
+    h+=types.filter(function(t){return DC_TYPES.indexOf(t)>=0||eq.some(function(e){return e.t===t})}).map(function(t){return '<label class="f" for="dc_pt_'+esc(skey(t))+'">'+esc(t)+'</label><textarea id="dc_pt_'+esc(skey(t))+'" data-dcpt="'+esc(t)+'" rows="4">'+esc(dcPts(t).join("\n"))+'</textarea>'}).join("");
+    h+='<h3>Checklist items</h3><p class="note">Trailer List, Turnover and Equipment Inspection are always on it. Add your own for every shift here.</p>';
+    var its=Object.keys(DC.it).filter(function(k){return DC.it[k]&&DC.it[k].n});
+    h+=its.length?'<ul class="dcits">'+its.map(function(k){return '<li><span>'+esc(DC.it[k].n)+'</span><button type="button" class="dcx" data-dcitx="'+esc(k)+'" aria-label="Remove">×</button></li>'}).join("")+'</ul>':'';
+    h+='<div class="dcadd"><input id="dc_itn" type="text" autocomplete="off" maxlength="80" placeholder="e.g. Walk the rail line"><button type="button" class="go" id="dc_ita">Add</button></div>';
+    h+='</details>'}
+  $("dc_body").innerHTML=h;
+}
+function dcSet(path,v){if(!dcCanEdit()){toast(can()?"Only leads can change this.":"Not connected. Changes need a signal.");return false}var p={};p[path]=v;dcW(p);return true}
+function dcSame(){var cs=curShift(),on=dcOn(cs),as=dcAs(cs),taken={},p={},n=0;Object.keys(as).forEach(function(k){taken[as[k].e]=1});
+  var past=Object.keys(DC.s).map(Number).filter(function(k){return k&&k<cs.start}).sort(function(a,b){return b-a});
+  on.forEach(function(nm){var k=skey(nm);if(as[k])return;for(var i=0;i<past.length;i++){var a=dcAs({start:past[i]})[k];if(a){var e=dcEqOf(a.e);if(e&&!e.os&&e.t==="Truck"&&!taken[a.e]){taken[a.e]=1;p[dcP(cs)+"as/"+k]={n:nm,e:a.e,by:ME?ME.name:"",t:Date.now()};n++}break}}});
+  if(n)dcW(p);toast(n?n+" truck"+(n===1?"":"s")+" assigned like last time.":"Nothing to copy. No one on shift had a free truck last time.")}
+$("dc_body").addEventListener("click",function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var v,cs=curShift();
+  if((v=b.getAttribute("data-dcin"))){inspOpen(v);return}
+  if(!dcCanEdit()){toast(can()?"Only leads can change this.":"Not connected. Changes need a signal.");return}
+  if((v=b.getAttribute("data-dcc"))){var c=dcObj(dcS(cs).c)[v];dcSet(dcP(cs)+"c/"+v,c&&c.t?null:{n:ME?ME.name:"",t:Date.now()});return}
+  if((v=b.getAttribute("data-dcsp"))){var x=dcObj(dcS(cs).sp)[v];if(x)dcSet(dcP(cs)+"sp/"+v+"/dn",x.dn?null:{n:ME?ME.name:"",t:Date.now()});return}
+  if((v=b.getAttribute("data-dcspx"))){dcSet(dcP(cs)+"sp/"+v,null);return}
+  if((v=b.getAttribute("data-dcitx"))){dcSet("it/"+v,null);return}
+  if((v=b.getAttribute("data-dceqx"))){var eo=dcEqOf(v);if(eo)askPin("Remove "+eo.n+" from the equipment list? Its past inspections stay in the 7-day log.","Remove",function(){dcSet("eq/"+v,null)},true);return}
+  if(b.id==="dc_same"){dcSame();return}
+  var inp,t;
+  if(b.id==="dc_spa"){inp=$("dc_spn");t=inp.value.trim();if(!t){inp.focus();return}inp.value="";inp.blur();dcSet(dcP(cs)+"sp/"+dcKey(),{n:t,by:ME?ME.name:"",t:Date.now()});return}
+  if(b.id==="dc_ita"){inp=$("dc_itn");t=inp.value.trim();if(!t){inp.focus();return}inp.value="";inp.blur();dcSet("it/"+dcKey(),{n:t});return}
+  if(b.id==="dc_eqa"){inp=$("dc_eqn");t=inp.value.trim();if(!t){inp.focus();return}
+    if(dcEq().some(function(o){return o.n.toLowerCase()===t.toLowerCase()})){toast(t+" is already on the list.");return}
+    var ty=dcType($("dc_eqt").value);inp.value="";inp.blur();DC_OPEN.set=true;dcSet("eq/"+dcKey(),{n:t,t:ty});return}
+});
+$("dc_body").addEventListener("change",function(e){var el=e.target,v;
+  if((v=el.getAttribute("data-dcas"))!=null){var cs=curShift(),k=skey(v),id=el.value;dcSet(dcP(cs)+"as/"+k,id?{n:v,e:id,by:ME?ME.name:"",t:Date.now()}:null);return}
+  if((v=el.getAttribute("data-dceqn"))){var t=el.value.trim();if(t)dcSet("eq/"+v+"/n",t);else el.value=(dcEqOf(v)||{}).n||"";return}
+  if((v=el.getAttribute("data-dceqt"))){dcSet("eq/"+v+"/t",dcType(el.value));return}
+  if((v=el.getAttribute("data-dceqos"))){dcSet("eq/"+v+"/os",el.checked?true:null);return}
+  if((v=el.getAttribute("data-dcpt"))){var pts=el.value.split("\n").map(function(x){return x.replace(/\|/g,"/").trim()}).filter(Boolean);dcSet("pt/"+skey(v),pts.length?pts.join("|"):null);return}
+});
+$("dc_body").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var id=e.target.id,m={dc_spn:"dc_spa",dc_itn:"dc_ita",dc_eqn:"dc_eqa",dc_eqt:"dc_eqa"}[id];if(m){e.preventDefault();$(m).click()}});
+$("dc_body").addEventListener("toggle",function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-dco");if(k)DC_OPEN[k]=e.target.open},true);
+$("v-dc").addEventListener("focusout",function(){setTimeout(function(){if(dcHold&&!dcBusy())renderDC()},0)});
+/* Inspection window: every point OK or Problem, a note when something's wrong */
+var INSP=null;
+function inspOpen(id){var eq=dcEq();if(!eq.length){toast("No equipment on the list yet. A lead adds it under Daily Checklist.");return}
+  if(!DL||!can()){toast("Not connected. Inspections need a signal.");return}
+  INSP={e:dcEqOf(id)?id:eq[0].id,r:{},nt:""};inspDraw();$("insp_err").hidden=true;$("insp").hidden=false;
+  try{$("insp_e").focus({preventScroll:true})}catch(x){}}
+function inspDraw(){var e=dcEqOf(INSP.e),pts=e?dcPts(e.t):[],prev=dcIn()[INSP.e],bad=Object.keys(INSP.r).some(function(k){return INSP.r[k]===0});
+  var mine=dcMine();
+  $("insp_s").textContent=(ME&&!ME.admin?ME.name+" · ":"")+shiftLabel(curShift());
+  var h='<label class="f" for="insp_e">Equipment</label><select id="insp_e">'+dcEq().map(function(o){return '<option value="'+esc(o.id)+'"'+(o.id===INSP.e?' selected':'')+'>'+esc(o.n)+' · '+esc(o.t)+(mine&&mine.id===o.id?' (yours)':'')+(o.os?' (out of service)':'')+'</option>'}).join("")+'</select>';
+  if(prev)h+='<p class="note insprev">Already inspected this shift: '+dcInsTxt(prev)+'. Saving again replaces it.</p>';
+  h+='<div class="insph"><span>'+pts.length+' points</span><button type="button" id="insp_all" class="small">All OK</button></div><div class="insl">';
+  pts.forEach(function(p,i){var v=INSP.r[i];h+='<div class="insr'+(v===0?' bad':v===1?' ok':'')+'"><span>'+esc(p)+'</span><div class="insb" role="group" aria-label="'+esc(p)+'"><button type="button" data-ip="'+i+'" data-iv="1" class="iok'+(v===1?' on':'')+'" aria-pressed="'+(v===1)+'">OK</button><button type="button" data-ip="'+i+'" data-iv="0" class="ibad'+(v===0?' on':'')+'" aria-pressed="'+(v===0)+'">Problem</button></div></div>'});
+  h+='</div><label class="f" for="insp_nt">'+(bad?'What\'s wrong? (needed)':'Notes (optional)')+'</label><textarea id="insp_nt" rows="2" maxlength="300">'+esc(INSP.nt)+'</textarea>';
+  $("insp_body").innerHTML=h;$("insp_t").textContent=e?"Inspect "+e.n:"Inspection"}
+function inspClose(){$("insp").hidden=true;INSP=null}
+$("insp_body").addEventListener("click",function(ev){var b=ev.target.closest?ev.target.closest("button"):null;if(!b||!INSP)return;INSP.nt=$("insp_nt").value;
+  if(b.id==="insp_all"){var e=dcEqOf(INSP.e);dcPts(e?e.t:"Other").forEach(function(p,i){INSP.r[i]=1});inspDraw();return}
+  var i=b.getAttribute("data-ip");if(i!=null){INSP.r[+i]=+b.getAttribute("data-iv");$("insp_err").hidden=true;inspDraw()}});
+$("insp_body").addEventListener("change",function(ev){if(ev.target.id==="insp_e"&&INSP){INSP.e=ev.target.value;INSP.r={};INSP.nt=$("insp_nt").value;inspDraw()}});
+$("insp_c").onclick=inspClose;
+$("insp").addEventListener("click",function(ev){if(ev.target===this)inspClose()});
+$("insp_ok").onclick=function(){if(!INSP)return;var e=dcEqOf(INSP.e);if(!e){inspClose();return}
+  var pts=dcPts(e.t),nt=$("insp_nt").value.trim(),err=function(t){$("insp_err").textContent=t;$("insp_err").hidden=false};
+  var left=pts.filter(function(p,i){return INSP.r[i]==null});if(left.length){err("Mark every point. Still open: "+left.join(", ")+".");return}
+  var bad=pts.some(function(p,i){return INSP.r[i]===0});if(bad&&!nt){err("Say what's wrong in the notes.");try{$("insp_nt").focus()}catch(x){}return}
+  if(!DL||!can()){err("Not connected. Try again when you have a signal.");return}
+  var p={},rec={n:ME?ME.name:"",t:Date.now(),ok:!bad,p:{}};pts.forEach(function(x,i){rec.p["i"+i]={n:x,ok:INSP.r[i]}});if(nt)rec.nt=nt;
+  p[dcP()+"in/"+e.id]=rec;dcW(p);inspClose();
+  toast(bad?"Saved. Problem noted on "+e.n+". Let your lead know.":e.n+" inspected. Thanks.")};
+/* Load Log strip: your truck for this shift and whether it's been inspected */
+function myEq(){var b=$("myeq");var e=dcMine();if(!e||DEMO){b.hidden=true;b.innerHTML="";return}
+  var x=dcIn()[e.id];b.className="myeq"+(x?(x.ok?" ok":" bad"):"");
+  b.innerHTML='<div class="mqt"><small>Your '+esc(e.t.toLowerCase())+' this shift</small><b>'+esc(e.n)+'</b><span>'+(x?(x.ok?'✓ Inspected '+T(x.t)+(x.n&&ME&&x.n!==ME.name?' by '+esc(x.n):''):'Problem: '+esc(dcBad(x)||"see notes")+' · '+T(x.t)):(e.os?'Marked out of service. Check with your lead.':'Not inspected yet'))+'</span></div><button type="button" id="myeq_go"'+(x?'':' class="go"')+'>'+(x?'Inspect again':'Inspect')+'</button>';
+  b.hidden=false}
+$("myeq").addEventListener("click",function(ev){if(ev.target.closest&&ev.target.closest("#myeq_go")){var e=dcMine();inspOpen(e?e.id:null)}});
 var HIST_ID="_hist",HIST={},HIST_KEEP=7*864e5,histPruned={};
 function setHist(o){
   var m={},old={},now=Date.now();
