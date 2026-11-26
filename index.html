@@ -712,6 +712,22 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .wtx{display:block;margin:6px 0 0 auto;min-height:32px;padding:2px 12px;font-size:13px;border-color:var(--line);color:var(--mute);background:transparent}
 .wtx[hidden]{display:none}
 .wtx.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+/* Pause a load (v85) */
+.pzb{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:10px;padding:8px 14px;min-height:48px;text-align:left;background:transparent;border:2px solid var(--warn);color:var(--ink);border-radius:var(--r)}
+.pzb b{font:700 18px/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.pzb small{font-size:13px;color:var(--mute)}
+.pzp{margin-top:10px;padding:10px 12px 12px;border:2px solid var(--warn);border-left-width:6px;border-radius:4px;background:var(--warnbg)}
+.pzp .pzl{margin:0;font:700 22px/1.1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.pzp .pzm{margin:3px 0 0;font-size:14px;color:var(--ink)}
+.pzp .pzq{margin:10px 0 4px;font-size:13px;color:var(--mute)}
+.pzw{display:flex;flex-wrap:wrap;gap:6px}
+.pzc{min-height:38px;padding:4px 12px;font-size:14px;background:var(--card);border:1px solid var(--line);color:var(--ink)}
+.pzc.on{background:var(--warn);border-color:var(--warn);color:var(--card);font-weight:700}
+.pzp .pzr{width:100%;margin-top:10px}
+.pzs{margin:6px 0 0;font-size:13px;color:var(--mute)}
+.pzt{padding:0 5px;border-radius:3px;background:var(--warnbg);color:var(--warn);border:1px solid var(--warn);font:700 13px var(--display);letter-spacing:.06em}
+.rsx.pz{color:var(--warn);font-weight:700}
+.ctl.ld.pz b{color:var(--warn)}
 .wtc{padding:1px 6px;border-radius:3px;background:#2c6384;color:#fff;font:700 13px/1.5 var(--display);letter-spacing:.05em}
 .wtc.over{background:#315a8f;box-shadow:0 0 0 2px #eca03f}
 /* Quicker adding and changing (v80) */
@@ -1051,6 +1067,14 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
       <li>Started the wrong one? Open <b>Details</b> at the bottom of the load and tap <span class="kb">Undo start</span>.</li>
       <li>Loads that need water have a blue <b>water timer</b> button. Tap it when the water starts. It counts down the water gallons ÷ 75 gpm, minus 5 minutes so you have time to get back to the water tower. The countdown also shows on the load's row, and your phone buzzes when the water should be done. Water done before the timer, for example because the timer was started late? Tap the timer twice and it ends right away. The status shows <b>Water finished</b>. Started it by mistake? Tap <span class="kb">Cancel timer</span> twice.</li>
+    </ol>
+  </details>
+  <details><summary>Pausing a load</summary>
+    <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc loading open"><div class="obody"><div class="pzp"><p class="pzl">Paused <span>4:37</span></p><p class="pzm">Since 2:31 PM · Tony · water timer on hold</p><p class="pzq">Why? (optional)</p><div class="pzw" data-n="1"><button type="button" class="pzc" tabindex="-1">Another load</button><button type="button" class="pzc on" tabindex="-1">Truck/driver</button><button type="button" class="pzc" tabindex="-1">Equipment</button><button type="button" class="pzc" tabindex="-1">Break</button><button type="button" class="pzc" tabindex="-1">Other</button></div><button type="button" class="go pzr" tabindex="-1" data-n="2">Resume load</button></div></div></div></div></figure>
+    <ol>
+      <li>Have to leave a load to tend to something else? Open it and tap <span class="kb">Pause load</span>. The load clock stops, and so does a running water timer, so shut the water off before you walk away. Pick why if you want (Another load, Truck/driver, Equipment, Break or Other). You can skip it.</li>
+      <li>Back on it? Tap <span class="kb">Resume load</span>. The clock and the water timer pick up where they left off. You can still hold to end the load while it's paused.</li>
+      <li>Paused loads show a yellow <b>PAUSED</b> tag on the board and the crew board. The paused time is left out of the load time, and the Shift Report, History and Turnover show the pauses. You can also tell Tarquino "pause 707 for equipment" or "resume 707".</li>
     </ol>
   </details>
   <details><summary>Ending a load and the load weight window</summary>
@@ -1453,7 +1477,7 @@ function viewCard(o){
     '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span>'+
+    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+(isPz(o)?'<span class="pzt">PAUSED</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span>'+
     (o.notes?'<span class="orl3"><b>Note</b>'+esc(o.notes)+'</span>':'')+'</span><span class="chev" aria-hidden="true">›</span></button>';
   /* 0. Notes / special instructions first, in a box that can't be missed (v82) */
   if(o.notes)b+='<div class="ntb"><p class="ntl">Special instructions</p><p class="nt">'+esc(o.notes)+'</p></div>';
@@ -1485,8 +1509,11 @@ function viewCard(o){
   var btn="";
   if(w)btn=st==="waiting"?'<button type="button" class="go" data-act="start" data-id="'+id+'">Start load</button>':st==="loading"?'<button type="button" class="go hold" data-act="end" data-id="'+id+'"><span>Hold to end load</span></button>':'<button type="button" data-act="reopen" data-id="'+id+'">Reopen</button>';
   b+='<div class="tm2"><span class="tmr" id="t-'+id+'"></span>'+btn+'</div>';
+  /* Pause (v85): the loader has to leave the load for a bit */
+  if(st==="loading"){if(isPz(o))b+=pzBox(o,w);else if(w)b+='<button type="button" class="pzb" data-act="pause" data-id="'+id+'"><b>Pause load</b><small>Stepping away? '+(o.waterAt&&wEnd(o)>Date.now()?'The load clock and water timer stop':'The load clock stops')+' until you resume.</small></button>'}
+  if(pzN(o)&&!isPz(o))b+='<p class="pzs">'+esc(pzSum(o).replace(/^p/,"P"))+(pzWhys(o)?' · '+esc(pzWhys(o)):'')+'</p>';
   if(st!=="done"&&waterNeed(o)>0){b+=w?'<button type="button" class="wtbtn" data-act="water" data-id="'+id+'" id="wt-'+id+'">'+wtLabel(o)+'</button>':'<div class="wtbtn ro" id="wt-'+id+'">'+wtLabel(o)+'</div>';
-    if(w)b+='<button type="button" class="wtx" data-act="watercancel" data-id="'+id+'" id="wx-'+id+'"'+(o.waterAt&&o.waterAt+(+o.waterMin||0)*60000>Date.now()?'':' hidden')+'>Cancel timer</button>'}
+    if(w)b+='<button type="button" class="wtx" data-act="watercancel" data-id="'+id+'" id="wx-'+id+'"'+(o.waterAt&&wEnd(o)>Date.now()?'':' hidden')+'>Cancel timer</button>'}
   if(st==="done"){
     if(w)b+='<div class="amt"><div class="g2"><div><label class="f" for="ac-'+id+'">Acid loaded (gal)</label><input id="ac-'+id+'" data-f="acidGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.acidGal)+'"></div><div><label class="f" for="wa-'+id+'">Water loaded (gal)</label><input id="wa-'+id+'" data-f="waterGal" data-id="'+id+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.waterGal)+'"></div></div><p id="at-'+id+'"></p><button type="button" class="small wbtn" data-act="weigh" data-id="'+id+'">Figure from scale weights</button></div>';
     else if(o.acidGal||o.waterGal)b+='<div class="amt"><p>Acid '+num(o.acidGal||0)+' gal, water '+num(o.waterGal||0)+' gal</p></div>';
@@ -1566,10 +1593,36 @@ function waterNeed(o){
   var hl=heelOf(o);if(hl)w-=hl.water;return Math.max(0,w);
 }
 function waterMins(o){return Math.max(0,waterNeed(o)/WT_GPM-WT_BUF)}
+/* ---- Pause a load (v85): the loader steps away to tend to something else, then picks it back up.
+   Saved on the order: pauseAt (start of the pause going now, null while loading), pauseWhy (optional
+   reason), pauseBy, pausedMs (total of finished pauses) and pz {pKEY:{a,b,w,by}} (finished pauses;
+   Firebase drops it when empty, so it's optional). Load time = end - start - paused time. A running
+   water timer freezes too (the water gets shut off): its end slides while paused, and Resume moves
+   waterAt forward by the paused time. The load still counts as loading everywhere (status()). ---- */
+var PZ_WHY=["Another load","Truck/driver","Equipment","Break","Other"];
+function isPz(o){return !!(o&&o.pauseAt&&o.startAt&&!o.endAt)}
+function pzMs(o,now){return (+o.pausedMs||0)+(isPz(o)?Math.max(0,(now||Date.now())-o.pauseAt):0)}
+function loadMs(o,now){if(!o||!o.startAt)return 0;now=now||Date.now();return Math.max(0,(o.endAt||now)-o.startAt-pzMs(o,now))}
+function wEnd(o,now){var e=o.waterAt+(+o.waterMin||0)*60000;if(isPz(o)&&e>o.pauseAt)e+=Math.max(0,(now||Date.now())-o.pauseAt);return e}
+function pzList(o){var z=o&&o.pz&&typeof o.pz==="object"?o.pz:{};return Object.keys(z).map(function(k){return z[k]}).filter(function(x){return x&&x.a&&x.b}).sort(function(a,b){return a.a-b.a})}
+function pzN(o){return pzList(o).length+(isPz(o)?1:0)}
+function pzSum(o){var n=pzN(o);return n?"paused "+(n>1?n+"× · ":"")+hm(pzMs(o)):""}
+function pzWhys(o){var w=[];pzList(o).concat(isPz(o)?[{w:o.pauseWhy}]:[]).forEach(function(x){if(x.w&&w.indexOf(x.w)<0)w.push(x.w)});return w.join(", ")}
+/* The patch that closes the pause going now (Resume, or End while paused) */
+function pzClose(o,now){if(!isPz(o))return {};var d=Math.max(0,now-o.pauseAt),z={},old=o.pz&&typeof o.pz==="object"?o.pz:{},k;for(k in old)z[k]=old[k];
+  z["p"+o.pauseAt]={a:o.pauseAt,b:now,w:o.pauseWhy||"",by:o.pauseBy||""};
+  var p={pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:(+o.pausedMs||0)+d,pz:z};
+  if(o.waterAt&&!o.waterDone&&o.waterAt+(+o.waterMin||0)*60000>o.pauseAt)p.waterAt=o.waterAt+d;
+  return p}
+function pzBox(o,w){var id=esc(o.id),h='<div class="pzp"><p class="pzl">Paused <span id="pz-'+id+'">'+mmss(Date.now()-o.pauseAt)+'</span></p><p class="pzm">Since '+T(o.pauseAt)+(o.pauseBy?' · '+esc(o.pauseBy):'')+(o.waterAt&&wEnd(o)>Date.now()?' · water timer on hold':'')+'</p>';
+  if(w)h+='<p class="pzq">Why? (optional)</p><div class="pzw">'+PZ_WHY.map(function(r){return '<button type="button" class="pzc'+(o.pauseWhy===r?' on':'')+'" data-act="pzwhy" data-w="'+esc(r)+'" data-id="'+id+'" aria-pressed="'+(o.pauseWhy===r)+'">'+esc(r)+'</button>'}).join("")+'</div><button type="button" class="go pzr" data-act="resume" data-id="'+id+'">Resume load</button>';
+  else if(o.pauseWhy)h+='<p class="pzm"><b>'+esc(o.pauseWhy)+'</b></p>';
+  return h+'</div>'}
 function mmss(ms){var s2=Math.max(0,Math.round(ms/1000)),h=Math.floor(s2/3600),m=Math.floor(s2%3600/60),x=s2%60;return (h?h+":"+pad(m):m)+":"+pad(x)}
 function wtLabel(o){
   var now=Date.now();
-  if(o.waterAt){var end=o.waterAt+(+o.waterMin||0)*60000,rem=end-now;
+  if(o.waterAt){var end=wEnd(o,now),rem=end-now;
+    if(rem>0&&isPz(o))return '<b>Water paused · '+mmss(rem)+' left</b><small>Load is paused. The timer picks up again on Resume.</small>';
     if(rem>0)return '<b>Water '+mmss(rem)+' left</b><small>'+(WT_ARM[o.id]==="end"?'Tap again: water is done now':'Started '+T(o.waterAt)+' · water done early? Tap twice')+'</small>';
     if(o.waterDone)return '<b>Water finished</b><small>Ended at '+T(end)+' · tap to clear</small>';
     return '<b>Water should be done</b><small>'+mmss(now-end)+' past · tap to clear</small>'}
@@ -1583,25 +1636,26 @@ function tick(){
     /* Shift total = actual 36% acid pulled (acid loaded on finished loads), not ticket gallons */
     var st=status(o);c[st]++;if(st==="done"){gal+=parseFloat(o.acidGal)||0;if(missing(o).acid)noAcid++}
     var t=$("t-"+o.id),ch=$("c-"+o.id),wb=$("wt-"+o.id),wr=$("wr-"+o.id);
-    var wx=$("wx-"+o.id);if(wx){var wrun=st!=="done"&&o.waterAt&&o.waterAt+(+o.waterMin||0)*60000>now;wx.hidden=!wrun;wx.textContent=WT_ARM[o.id]==="cancel"?"Tap again to cancel the timer":"Cancel timer";wx.classList.toggle("arm",WT_ARM[o.id]==="cancel")}
-    if(wb){var wo=st!=="done"&&o.waterAt,wend=wo?o.waterAt+(+o.waterMin||0)*60000:0;wb.innerHTML=wtLabel(o);wb.classList.toggle("on",!!wo&&wend>now);wb.classList.toggle("over",!!wo&&wend<=now)}
-    if(wr){if(st!=="done"&&o.waterAt){var we=o.waterAt+(+o.waterMin||0)*60000;wr.hidden=false;wr.textContent=we>now?"Water "+mmss(we-now):"Water done";wr.classList.toggle("over",we<=now)}else wr.hidden=true}
+    var wx=$("wx-"+o.id);if(wx){var wrun=st!=="done"&&o.waterAt&&wEnd(o,now)>now;wx.hidden=!wrun;wx.textContent=WT_ARM[o.id]==="cancel"?"Tap again to cancel the timer":"Cancel timer";wx.classList.toggle("arm",WT_ARM[o.id]==="cancel")}
+    if(wb){var wo=st!=="done"&&o.waterAt,wend=wo?wEnd(o,now):0;wb.innerHTML=wtLabel(o);wb.classList.toggle("on",!!wo&&wend>now);wb.classList.toggle("over",!!wo&&wend<=now)}
+    if(wr){if(st!=="done"&&o.waterAt){var we=wEnd(o,now);wr.hidden=false;wr.textContent=we>now?(isPz(o)?"Water on hold ":"Water ")+mmss(we-now):"Water done";wr.classList.toggle("over",we<=now)}else wr.hidden=true}
     /* Buzz once when the water should be done, on the loader's phone (or every phone if no loader) */
-    if(st!=="done"&&o.waterAt){var fk=o.id+":"+o.waterAt,wd=o.waterAt+(+o.waterMin||0)*60000;
+    if(st!=="done"&&o.waterAt){var fk=o.id+":"+o.waterAt,wd=wEnd(o,now);
       if(wd<=now&&now-wd<120000&&!WT_FIRED[fk]&&!o.waterDone){WT_FIRED[fk]=1;var mine=!o.loader||(ME&&canonName(o.loader).toLowerCase()===ME.name.toLowerCase());
         if(mine){toast("Water should be done on "+(o.name||"this load")+". Head back to the water station.");try{if(navigator.vibrate)navigator.vibrate([400,150,400,150,400])}catch(e){}}}}
     if(t){
       if(st==="waiting")t.textContent="Not started";
-      else if(st==="loading")t.textContent="Loading: "+hms(now-o.startAt);
-      else t.textContent="Took "+hm(o.endAt-(o.startAt||o.endAt));
+      else if(st==="loading")t.textContent=(isPz(o)?"Paused at ":"Loading: ")+hms(loadMs(o,now));
+      else t.textContent="Took "+hm(loadMs(o,now));
+      var pzt=$("pz-"+o.id);if(pzt&&isPz(o))pzt.textContent=mmss(now-o.pauseAt);
     }
     var at=$("at-"+o.id),card=$("o-"+o.id);
     if(card){
       var ms=st==="done"?missing(o):{acid:false,water:false},rs=$("rs-"+o.id);
       if(rs){
         var need=ms.acid&&ms.water?"Needs acid + water":ms.acid?"Needs acid":ms.water?"Needs water":"";
-        rs.className="rsx"+(need?" ms":"");
-        rs.textContent=st==="loading"?"Loading "+hms(now-o.startAt):need;
+        rs.className="rsx"+(need?" ms":"")+(isPz(o)?" pz":"");
+        rs.textContent=st==="loading"?(isPz(o)?"Paused "+mmss(now-o.pauseAt):"Loading "+hms(loadMs(o,now))):need;
       }
       var ai=$("ac-"+o.id),wi=$("wa-"+o.id);
       if(ai)ai.classList.toggle("miss",ms.acid);
@@ -1669,7 +1723,7 @@ function crewBoard(){
     var col=e.nobody?DEFCOL:colOf(e.name),first=e.ld[0]?[e.ld[0].id,0]:e.ms[0]?[e.ms[0].o.id,1]:null,s='<div class="ct" style="--lc:'+col+'">';
     var dot=!e.nobody&&presOn(e.name)?'<i class="ondot" title="Online now" aria-label="online"></i>':'';
     s+=first?'<button type="button" class="ctn" data-goto="'+esc(first[0])+'"'+(first[1]?' data-fix="1"':'')+'>'+esc(e.name)+dot+'</button>':'<div class="ctn">'+esc(e.name)+dot+'</div>';
-    e.ld.forEach(function(o){s+='<button type="button" class="ctl ld" data-goto="'+esc(o.id)+'"><b>Loading</b> '+esc(o.name||"Unnamed order")+' · <span class="ctm" data-tid="'+esc(o.id)+'"></span></button>'});
+    e.ld.forEach(function(o){s+='<button type="button" class="ctl ld'+(isPz(o)?' pz':'')+'" data-goto="'+esc(o.id)+'"><b>'+(isPz(o)?'Paused':'Loading')+'</b> '+esc(o.name||"Unnamed order")+' · <span class="ctm" data-tid="'+esc(o.id)+'"></span></button>'});
     e.ms.forEach(function(x){var what=x.m.acid&&x.m.water?"acid + water":x.m.acid?"acid":"water";
       s+='<button type="button" class="ctl ctx" data-goto="'+esc(x.o.id)+'" data-fix="1">Needs '+what+' · '+esc(x.o.ticket?"Ticket "+x.o.ticket:(x.o.name||"Unnamed order"))+'</button>'});
     if(!first)s+='<p class="cti">Not loading</p>';
@@ -1677,7 +1731,7 @@ function crewBoard(){
   }).join("");
   if(h!==crewHtml){crewHtml=h;$("crewg").innerHTML=h;$("crew").hidden=!h}
   var tm=$("crewg").querySelectorAll(".ctm"),now=Date.now();
-  for(var i=0;i<tm.length;i++){var o=find(tm[i].getAttribute("data-tid"));tm[i].textContent=o&&o.startAt?hms(now-o.startAt):""}
+  for(var i=0;i<tm.length;i++){var o=find(tm[i].getAttribute("data-tid"));tm[i].textContent=o&&o.startAt?(isPz(o)?mmss(now-o.pauseAt)+(o.pauseWhy?" · "+o.pauseWhy:""):hms(loadMs(o,now))):""}
 }
 function openCard(id,open){
   OPEN[id]=open;var c=$("o-"+id);if(!c)return null;
@@ -1745,7 +1799,7 @@ function setField(id,f,v){if(f==="loader")rememberLoader(v);
   deb[k]={id:id,f:f,v:v,t:setTimeout(function(){flushKey(k);if(pendingBuild&&!isEditingNow()&&!hasDeb())build()},600)};
 }
 
-function doAct(a,id){
+function doAct(a,id,why){
   var o=find(id);if(!o||!can())return;
   if(a==="rm"){
     if(!perm("rm"))return;
@@ -1754,11 +1808,14 @@ function doAct(a,id){
     else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
     return}
   rmId=null;
-  if(a==="start"){var sp={startAt:Date.now(),endAt:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
-  else if(a==="end"){upd(id,{endAt:Date.now()});openFin(id)}
+  if(a==="start"){var sp={startAt:Date.now(),endAt:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
+  else if(a==="end"){var ep={endAt:Date.now()};if(isPz(o))Object.assign(ep,pzClose(o,ep.endAt));upd(id,ep);openFin(id)}
+  else if(a==="pause"){if(status(o)!=="loading"||isPz(o))return;delete WT_ARM[id];upd(id,{pauseAt:Date.now(),pauseWhy:why||null,pauseBy:ME&&!ME.admin?ME.name:""})}
+  else if(a==="resume"){if(!isPz(o))return;upd(id,pzClose(o,Date.now()))}
   else if(a==="weigh"){flushAll(id);openFin(id)}
   else if(a==="water"){
-    var wend=o.waterAt?o.waterAt+(+o.waterMin||0)*60000:0;
+    if(isPz(o)){toast("This load is paused. Resume it to use the water timer.");return}
+    var wend=o.waterAt?wEnd(o):0;
     if(!o.waterAt){var wm=waterMins(o);if(!(wm>0))return;upd(id,{waterAt:Date.now(),waterMin:Math.round(wm*100)/100,waterDone:null})}
     else if(wend<=Date.now())upd(id,{waterAt:null,waterMin:null,waterDone:null});
     else if(WT_ARM[id]!=="end"){WT_ARM[id]="end";tick();setTimeout(function(){if(WT_ARM[id]==="end")delete WT_ARM[id];tick()},3000)}
@@ -1769,7 +1826,7 @@ function doAct(a,id){
     if(!o.waterAt)return;
     if(WT_ARM[id]!=="cancel"){WT_ARM[id]="cancel";tick();setTimeout(function(){if(WT_ARM[id]==="cancel")delete WT_ARM[id];tick()},3000);return}
     delete WT_ARM[id];upd(id,{waterAt:null,waterMin:null,waterDone:null});return}
-  else if(a==="undo")upd(id,{startAt:null,endAt:null});
+  else if(a==="undo")upd(id,{startAt:null,endAt:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null});
   else if(a==="reopen")upd(id,{endAt:null});
   else if(a==="edit"){editing[id]=true;OPEN[id]=true;build()}
   else if(a==="doneedit"){flushAll(id);delete editing[id];build()}
@@ -1994,6 +2051,7 @@ function buildText(){
 $("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}
   if(a==="qc"){qcOpen(id,b.getAttribute("data-q"));return}
   if(a==="copy"){copyLoad(id);return}
+  if(a==="pzwhy"){var po=find(id);if(po&&isPz(po)&&can()){var pw=b.getAttribute("data-w");upd(id,{pauseWhy:po.pauseWhy===pw?null:pw})}return}
   /* End load fires from the hold below. A keyboard press (no pointer) still works. */
   if(a==="end"){if(e.detail===0&&!holdDone)doAct(a,id);holdDone=false;return}
   if(a)doAct(a,id)};
@@ -2424,7 +2482,7 @@ $("ho_form").addEventListener("click",function(e){
   if(del){var p=del.split(".");HO.d[p[0]].splice(+p[1],1);if(!HO.d[p[0]].length)HO.d[p[0]].push(Object.assign({},TV_ROW[p[0]]));hoFill();hoSave();return}
   if(fill==="tr"){var run=ORD.filter(function(o){return status(o)==="loading"});if(!run.length){toast("Nothing is loading on the Load Log right now.");return}
     var keep=HO.d.tr.filter(function(r){return r.t||r.p||r.l||r.s}),have={};keep.forEach(function(r){have[String(r.t).toLowerCase()]=1});
-    run.forEach(function(o){var t=o.name||"";if(have[t.toLowerCase()])return;keep.push({t:t,p:(o.gal?num(o.gal)+" gal ":"")+prodName(o),l:"",s:"Loading since "+T(o.startAt)+(o.loader?" ("+canonName(o.loader)+")":"")})});
+    run.forEach(function(o){var t=o.name||"";if(have[t.toLowerCase()])return;keep.push({t:t,p:(o.gal?num(o.gal)+" gal ":"")+prodName(o),l:"",s:"Loading since "+T(o.startAt)+(o.loader?" ("+canonName(o.loader)+")":"")+(isPz(o)?", paused since "+T(o.pauseAt)+(o.pauseWhy?" ("+o.pauseWhy+")":""):"")})});
     while(keep.length<TV_N.tr)keep.push(Object.assign({},TV_ROW.tr));HO.d.tr=keep;hoFill();hoSave();return}
   if(fill==="lo"){var cs=curShift(),on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});if(!on.length){toast("No one is on the schedule for this shift.");return}
     while(on.length<5)on.push("");HO.d.lo=on;hoFill();hoSave();return}
@@ -2473,7 +2531,7 @@ function shiftLabel(cs){return (cs.s==="D"?"Day":"Night")+" shift · "+new Date(
 function hoLoads(){
   var cs=curShift(),run=[],wait=[],miss=[],dn=0,acid=0;
   ORD.forEach(function(o){var st=status(o),b={n:o.name||"Unnamed order",l:canonName(o.loader)||"",p:prodName(o),g:parseFloat(o.gal)||0,tk:o.ticket||""};
-    if(st==="loading"){b.st=o.startAt;run.push(b)}
+    if(st==="loading"){b.st=o.startAt;if(isPz(o)){b.pz=o.pauseAt;if(o.pauseWhy)b.pw=o.pauseWhy}run.push(b)}
     else if(st==="waiting"){b.lbt=o.lbtAt||null;wait.push(b)}
     else{var m=missing(o);if(m.acid||m.water){b.w=m.acid&&m.water?"acid + water":m.acid?"acid":"water";miss.push(b)}
       if(o.endAt>=cs.start){dn++;acid+=parseFloat(o.acidGal)||0}}});
@@ -2484,7 +2542,7 @@ function hoLoadsHtml(ld,at){
   /* Firebase drops empty lists, so an old post can come back without run/wait/miss */
   ld={run:arr(ld&&ld.run),wait:arr(ld&&ld.wait),miss:arr(ld&&ld.miss),dn:+(ld&&ld.dn)||0,acid:+(ld&&ld.acid)||0};
   var li=function(b,extra){return '<li><b>'+esc(b.n)+'</b> · '+(b.g?num(b.g)+' gal ':'')+esc(b.p)+(b.l?' · '+esc(b.l):'')+(extra||'')+'</li>'};
-  var h='<h4>Loading</h4>'+(ld.run.length?'<ul>'+ld.run.map(function(b){return li(b,b.st?' · started '+T(b.st):'')}).join("")+'</ul>':'<p class="none">Nothing loading.</p>');
+  var h='<h4>Loading</h4>'+(ld.run.length?'<ul>'+ld.run.map(function(b){return li(b,(b.st?' · started '+T(b.st):'')+(b.pz?' · <b>paused</b> since '+T(b.pz)+(b.pw?' ('+esc(b.pw)+')':''):''))}).join("")+'</ul>':'<p class="none">Nothing loading.</p>');
   h+='<h4>Waiting</h4>'+(ld.wait.length?'<ul>'+ld.wait.map(function(b){return li(b,b.lbt?' · LBT '+T(b.lbt):'')}).join("")+'</ul>':'<p class="none">Nothing waiting.</p>');
   if(ld.miss.length)h+='<h4>Finished, missing amounts</h4><ul>'+ld.miss.map(function(b){return li(b,' · needs '+b.w+(b.tk?' · ticket '+esc(b.tk):''))}).join("")+'</ul>';
   h+='<h4>Done this shift</h4><p class="none" style="color:var(--ink)">'+ld.dn+' load'+(ld.dn===1?'':'s')+' · '+num(ld.acid)+' gal acid pulled</p>';
@@ -3058,7 +3116,7 @@ function askBoard(q){
   if(/\b(who|on shift|working)\b/.test(q)&&/\b(shift|working|on)\b/.test(q)){var on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});return {h:on.length+' <small>on '+(cs.s==="D"?"day":"night")+' shift</small>',d:'<p class="asn">'+(on.length?on.map(esc).join(", "):"No one on the schedule.")+'</p>'}}
   return null;
 }
-function askLoadLine(o){var st=status(o);return '<b>'+esc(o.name||"Unnamed order")+'</b> · '+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+(o.loader?' · '+esc(canonName(o.loader)):'')+' · '+(st==="loading"?'loading since '+T(o.startAt):st==="done"?'done '+T(o.endAt):(o.lbtAt?'LBT '+T(o.lbtAt):'waiting'))+(o.ticket?' · ticket '+esc(o.ticket):'')}
+function askLoadLine(o){var st=status(o);return '<b>'+esc(o.name||"Unnamed order")+'</b> · '+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+(o.loader?' · '+esc(canonName(o.loader)):'')+' · '+(st==="loading"?'loading since '+T(o.startAt)+(isPz(o)?' · <b>paused</b>'+(o.pauseWhy?' ('+esc(o.pauseWhy)+')':''):''):st==="done"?'done '+T(o.endAt):(o.lbtAt?'LBT '+T(o.lbtAt):'waiting'))+(o.ticket?' · ticket '+esc(o.ticket):'')}
 /* Help page fallback: the best-matching steps */
 var ASK_STOP={the:1,a:1,an:1,i:1,my:1,do:1,how:1,to:1,is:1,it:1,of:1,on:1,in:1,for:1,and:1,what:1,whats:1,can:1,you:1,me:1,where:1,when:1,does:1,with:1,that:1,this:1,are:1,be:1,or:1,if:1,at:1,get:1};
 function askHelp(q){
@@ -3140,7 +3198,7 @@ function askCore(raw){
    so "what about 15%", "make it 4000 gal", "and for NM" or "lw 34000 instead" reuse it. */
 var ASK_CTX=null,ASK_LAST=null;
 var ASK_FW=/^(what about|how about|and|what if|make it|instead|same|now|try|then|ok|okay|also)\b/;
-var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing|tote|y007|sonar|strap|battery|tank|equipment|rail|transloader|turnover|handoff|\bdue\b|\blate\b|how long|\btook\b|average|\bstart\b|assign|note|instruction|schedule|tonight|tomorrow|yesterday|\bweek\b|last time|history|\bend\b|finish|\bwork|\boff\b|\blbt\b|leave by)/;
+var ASK_INT=/(heel|loaded|\bfit|\bmax\b|weigh|acid|water|split|mix|blend|need|loading|waiting|pulled|trailer|truck|ticket|\bbol\b|per gal|density|how do|on shift|missing|tote|y007|sonar|strap|battery|tank|equipment|rail|transloader|turnover|handoff|\bdue\b|\blate\b|how long|\btook\b|average|\bstart\b|assign|note|instruction|schedule|tonight|tomorrow|yesterday|\bweek\b|last time|history|\bend\b|finish|\bwork|\boff\b|\blbt\b|leave by|paus|resume)/;
 function askPStr(p){if(!p)return "";if(p.name)return p.name;if(p.key==="acid")return "36%";if(p.key==="cs100")return "cableshield 100";if(p.key==="cs33")return "cableshield 33";return p.key+"%"}
 function askSynth(c){var P=askPStr(c.p);
   if(c.kind==="loaded")return "gallons loaded lw "+c.lw+" hw "+c.hw+" of "+P;
@@ -3178,10 +3236,10 @@ function askLoadAns(o,sub,ov){
   var nbox=o.notes?'<div class="ntb"><p class="ntl">Special instructions</p><p class="nt">'+esc(o.notes)+'</p></div>':'',go='<div class="acts"><button type="button" data-askgo="'+esc(o.id)+'">Open on the Load Log</button></div>';
   if(sub==="notes")return {ctx:ctx,h:o.notes?'Special instructions':'No notes',d:head+(nbox||'<p class="asn">'+nm+' has no notes. Add one like "note on '+nm+': top off only".</p>')+go};
   if(sub==="info"){var hl0=heelOf(o2),r=function(k,v){return '<tr><td>'+k+'</td><td>'+v+'</td></tr>'};
-    return {ctx:ctx,h:'Ticket '+(o.ticket?esc(o.ticket):'–')+' <small>· BOL '+(o.bol?esc(o.bol):'–')+'</small>',d:head+'<table>'+r("Loader",o.loader?esc(canonName(o.loader)):'–')+r("Ticket",o.ticket?esc(o.ticket):'–')+r("BOL",o.bol?esc(o.bol):'–')+r("Leave by",o.lbtAt?T(o.lbtAt):'–')+r("Heel",hl0?gf(hl0.gal)+' gal '+esc(pname(hl0.prod)):'None')+r("Status",status(o)==="loading"?'Loading since '+T(o.startAt):status(o)==="done"?'Done '+T(o.endAt):'Waiting')+'</table>'+nbox+go}}
+    return {ctx:ctx,h:'Ticket '+(o.ticket?esc(o.ticket):'–')+' <small>· BOL '+(o.bol?esc(o.bol):'–')+'</small>',d:head+'<table>'+r("Loader",o.loader?esc(canonName(o.loader)):'–')+r("Ticket",o.ticket?esc(o.ticket):'–')+r("BOL",o.bol?esc(o.bol):'–')+r("Leave by",o.lbtAt?T(o.lbtAt):'–')+r("Heel",hl0?gf(hl0.gal)+' gal '+esc(pname(hl0.prod)):'None')+r("Status",status(o)==="loading"?'Loading since '+T(o.startAt)+(isPz(o)?', paused since '+T(o.pauseAt)+(o.pauseWhy?' ('+esc(o.pauseWhy)+')':''):''):status(o)==="done"?'Done '+T(o.endAt):'Waiting')+'</table>'+nbox+go}}
   if(sub==="time"){var stt=status(o),now=Date.now();
-    if(stt==="loading")return {ctx:ctx,h:hms(now-o.startAt)+' <small>loading</small>',d:head+'<p class="asn">Started '+T(o.startAt)+(o.lbtAt?' · leave by '+T(o.lbtAt)+(o.lbtAt<now?' (<b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>)':' ('+hm(o.lbtAt-now)+' left)'):'')+'.</p>'};
-    if(stt==="done")return {ctx:ctx,h:hm(o.endAt-(o.startAt||o.endAt))+' <small>to load</small>',d:head+'<p class="asn">'+(o.startAt?T(o.startAt)+' to ':'Ended ')+T(o.endAt)+'.</p>'};
+    if(stt==="loading")return {ctx:ctx,h:hms(loadMs(o,now))+' <small>'+(isPz(o)?'loaded, paused now':'loading')+'</small>',d:head+'<p class="asn">Started '+T(o.startAt)+(isPz(o)?' · paused since '+T(o.pauseAt)+(o.pauseWhy?' ('+esc(o.pauseWhy)+')':''):pzN(o)?' · '+pzSum(o):'')+(o.lbtAt?' · leave by '+T(o.lbtAt)+(o.lbtAt<now?' (<b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>)':' ('+hm(o.lbtAt-now)+' left)'):'')+'.</p>'};
+    if(stt==="done")return {ctx:ctx,h:hm(loadMs(o))+' <small>to load</small>',d:head+'<p class="asn">'+(o.startAt?T(o.startAt)+' to ':'Ended ')+T(o.endAt)+(pzN(o)?', not counting '+hm(pzMs(o))+' paused'+(pzWhys(o)?' ('+esc(pzWhys(o))+')':''):'')+'.</p>'};
     return {ctx:ctx,h:'Not started',d:head+'<p class="asn">'+(o.lbtAt?'Leave by '+T(o.lbtAt)+(o.lbtAt<now?', <b style="color:var(--bad)">'+hm(now-o.lbtAt)+' late</b>':', '+hm(o.lbtAt-now)+' from now')+'.':'No leave-by time set.')+'</p>'}}
   if(sub==="fit"){
     if(!L)return {miss:1,ctx:ctx,h:"What's the light weight?",d:head+'<p class="asn">'+nm+' has no scale-in light weight yet. Ask like "how much fits on '+nm+' with lw 34000".</p>'};
@@ -3257,7 +3315,7 @@ function askTime(q){
     var due=ORD.filter(function(o){return !o.endAt&&o.lbtAt&&o.lbtAt>=now&&o.lbtAt<=until}).sort(function(a,b){return a.lbtAt-b.lbtAt});
     return {h:due.length+' <small>due in the next '+(hrs===1?'hour':hrs+' hours')+'</small>',d:due.length?'<ul>'+due.map(function(o){return '<li><b>'+esc(o.name||"Unnamed order")+'</b> · LBT '+T(o.lbtAt)+' ('+hm(o.lbtAt-now)+') · '+(status(o)==="loading"?'loading':'not started')+'</li>'}).join("")+'</ul>':'<p class="asn">No leave-by times in that window.</p>'}}
   if(/\b(average|avg|mean|fastest|slowest|quickest|longest)\b/.test(q)&&/(load|time|took)/.test(q)){
-    var dn=ORD.filter(function(o){return o.endAt&&o.startAt&&o.endAt>=cs.start}).map(function(o){return {o:o,t:o.endAt-o.startAt}}).sort(function(a,b){return a.t-b.t});
+    var dn=ORD.filter(function(o){return o.endAt&&o.startAt&&o.endAt>=cs.start}).map(function(o){return {o:o,t:loadMs(o)}}).sort(function(a,b){return a.t-b.t});
     if(!dn.length)return {h:'No finished loads yet',d:'<p class="asn">Nothing has finished this shift yet.</p>'};
     var avg=dn.reduce(function(t,x){return t+x.t},0)/dn.length;
     return {h:hm(avg)+' <small>average this shift</small>',d:'<p class="asn">'+dn.length+' finished load'+(dn.length===1?'':'s')+'. Fastest: <b>'+esc(dn[0].o.name||"")+'</b> '+hm(dn[0].t)+'. Slowest: <b>'+esc(dn[dn.length-1].o.name||"")+'</b> '+hm(dn[dn.length-1].t)+'.</p>'}}
@@ -3312,6 +3370,18 @@ function askSet(q,raw){
     if(st==="waiting")return {h:'Not started yet',d:'<p class="asn">'+nm+' hasn\'t been started. Say "start '+nm+'" first.</p>'};
     if(st==="done")return {h:'Already finished',d:'<p class="asn">'+nm+' finished at '+T(o.endAt)+'.</p>'};
     return askPendUpd(o,"end",null,"End the load on <b>"+nm+"</b> now (started "+T(o.startAt)+"). The load weight window opens so you can enter what went in.");
+  }
+  /* Pause / resume a load (v85): "pause 707", "pause 707 for equipment", "resume 707", "707 is back on" */
+  if((m=/^(?:please\s+)?(pause|hold|put on hold|resume|unpause|un-pause|continue)\s+(?:loading\s+(?:on\s+)?|the load\s+(?:on|for)\s+|load\s+)?(.+)$/.exec(q))&&!/\b(water|timer)\b/.test(q)){
+    var rsm=/^(resume|unpause|un-pause|continue)$/.test(m[1]),tg=m[2],why=null;
+    var wm=/\s+(?:for|because(?: of)?|due to|cuz)\s+(.+)$/.exec(tg);if(wm){tg=tg.slice(0,wm.index);var wr=wm[1];
+      why=/(another|other|second|next) (load|trailer|truck)/.test(wr)?"Another load":/\b(truck|driver|trucker)\b/.test(wr)?"Truck/driver":/\b(equipment|pump|hose|valve|tower|meter|scale|leak|broke)/.test(wr)?"Equipment":/\b(break|lunch|dinner|restroom|bathroom)\b/.test(wr)?"Break":"Other"}
+    f=askTgt("on "+tg);if(!f||!f.o)return askNoLoad();o=f.o;nm=esc(o.name||"this load");var st2=status(o);
+    if(st2!=="loading")return {h:st2==="done"?'Already finished':'Not started yet',d:'<p class="asn">'+nm+(st2==="done"?' finished at '+T(o.endAt)+'.':' hasn\'t been started, so there\'s nothing to pause.')+'</p>'};
+    if(rsm){if(!isPz(o))return {h:'Not paused',d:'<p class="asn">'+nm+' is loading, not paused.</p>'};
+      var pr=askPendUpd(o,"resume",null,"Resume <b>"+nm+"</b> (paused since "+T(o.pauseAt)+"). "+(o.waterAt&&wEnd(o)>Date.now()?"The load clock and water timer start":"The load clock starts")+" again.");return pr}
+    if(isPz(o))return {h:'Already paused',d:'<p class="asn">'+nm+' has been paused since '+T(o.pauseAt)+'. Say "resume '+nm+'" when you\'re back on it.</p>'};
+    var pp=askPendUpd(o,"pause",null,"Pause <b>"+nm+"</b>"+(why?" ("+why+")":"")+". "+(o.waterAt&&wEnd(o)>Date.now()?"The load clock and water timer stop":"The load clock stops")+" until you resume.");if(pp.pend)ASK_PEND[pp.pend].why=why;return pp;
   }
   /* Notes: "note on 707: top off only", "add a note to 707 driver waits", "clear notes on 707" */
   if((m=/^(?:please\s+)?(?:clear|remove|delete|erase|take off)\s+(?:the\s+|all\s+)?(?:special\s+)?(?:notes?|instructions?)\s+(?:on|from|for|off(?:\s+of)?)\s+(.+)$/.exec(q))){
@@ -3557,7 +3627,7 @@ function askDo(pid,ok){
       var nid=DL.newId();enqueue(nid,function(){return DL.set(nid,data)});if(data.loader)rememberLoader(data.loader);
       msg='<p class="tql2">'+tqPick("added",["On the board.","Done. Fresh order's up.","Added. Somebody go grab it."])+'</p><p class="ash">Added</p><p class="asn"><b>'+esc(d.name)+'</b> · '+num(d.gal)+' gal '+esc(d.cname||pname(d.prod))+' is on the board.</p><div class="acts"><button type="button" data-askgo="'+esc(nid)+'">Open on the Load Log</button></div>'}}
   else if(!o)msg='<p>That load isn\'t on the board anymore.</p>';
-  else{if(pd.type==="start"||pd.type==="end")doAct(pd.type,pd.oid);else upd(pd.oid,pd.patch);msg='<p class="tql2">'+tqPick("done",["Done and done.","Took care of it.","All set."])+'</p><p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
+  else{if(pd.type==="start"||pd.type==="end"||pd.type==="pause"||pd.type==="resume")doAct(pd.type,pd.oid,pd.why);else upd(pd.oid,pd.patch);msg='<p class="tql2">'+tqPick("done",["Done and done.","Took care of it.","All set."])+'</p><p class="ash">Done</p><p class="asn">'+pd.desc.replace(/^(\w)/,function(c){return c})+'</p><div class="acts"><button type="button" data-askgo="'+esc(pd.oid)+'">Open on the Load Log</button></div>'}
   ASK_LOG.push({html:msg});ASK_LOG=ASK_LOG.slice(-40);tqRender();
 }
 /* ---- Tarquino's personality: a seasoned yard hand. Friendly, dependable, a little dry, safety-minded.
@@ -3720,7 +3790,7 @@ function renderHist(){
     var row=function(l,v){return v!=null&&v!==""?'<tr><td>'+l+'</td><td>'+v+'</td></tr>':''};
     var hl=heelOf(o),chem=halHas(o)?esc(halText(o)):"";
     h+='<details class="hsr" data-hid="'+esc(o.id)+'"'+(HS_OPEN[o.id]?' open':'')+'><summary><span class="hsn">'+esc(o.name||"Unnamed order")+'</span><span class="hst">'+T(o.endAt||o.clearedAt)+'</span><span class="hsm">'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+' · '+esc(canonName(o.loader)||"No loader")+(o.ticket?' · Ticket '+esc(o.ticket):'')+'</span><span class="hsf">'+rpFlags(o)+'</span></summary>'+
-      '<table class="rpt">'+row("Ticket",esc(o.ticket||""))+row("BOL",esc(o.bol||""))+row("Delivering to",esc(stLabel(o)))+row("Started",o.startAt?T(o.startAt):"")+row("Ended",o.endAt?T(o.endAt):"")+row("Load time",o.startAt&&o.endAt?hm(o.endAt-o.startAt):"")+
+      '<table class="rpt">'+row("Ticket",esc(o.ticket||""))+row("BOL",esc(o.bol||""))+row("Delivering to",esc(stLabel(o)))+row("Started",o.startAt?T(o.startAt):"")+row("Ended",o.endAt?T(o.endAt):"")+row("Load time",o.startAt&&o.endAt?hm(loadMs(o)):"")+row("Paused",pzN(o)?esc(pzSum(o).replace(/^paused /,""))+(pzWhys(o)?' · '+esc(pzWhys(o)):''):"")+
       row("Acid loaded",o.acidGal!=null&&o.acidGal!==""?num(o.acidGal)+' gal':"")+row("Water loaded",o.waterGal!=null&&o.waterGal!==""?num(o.waterGal)+' gal':"")+row("Light weight",o.lightWt?num(o.lightWt)+' lb':"")+row("Heavy weight",o.heavyWt?num(o.heavyWt)+' lb':"")+
       row("Heel",hl?gf(hl.gal)+' gal '+esc(pname(hl.prod)):"")+row("Halliburton chems",chem)+row("Notes",o.notes?esc(o.notes):"")+row("Cleared",o.clearedAt?rpDT(o.clearedAt)+(o.clearedBy?' by '+esc(o.clearedBy):''):"")+'</table>'+
       (canRestore?'<div class="acts"><button type="button" data-hsback="'+esc(o.id)+'">Put back on the board</button></div>':'')+'</details>'});
@@ -3751,14 +3821,14 @@ function repHtml(k,forPrint){
   var dn=allDone().filter(function(o){return o.endAt>=P.a&&o.endAt<P.b+1}).sort(function(a,b){return a.endAt-b.endAt});
   var sum=function(a,f){return a.reduce(function(t,o){return t+(parseFloat(f(o))||0)},0)};
   var tg=sum(dn,function(o){return o.gal}),ta=sum(dn,function(o){return o.acidGal}),tw=sum(dn,function(o){return o.waterGal});
-  var tm=dn.filter(function(o){return o.startAt}).map(function(o){return o.endAt-o.startAt}),avg=tm.length?tm.reduce(function(a,b){return a+b},0)/tm.length:0;
+  var tm=dn.filter(function(o){return o.startAt}).map(function(o){return loadMs(o)}),avg=tm.length?tm.reduce(function(a,b){return a+b},0)/tm.length:0;
   var late=dn.filter(function(o){return o.lbtAt&&o.endAt>o.lbtAt}),cut=dn.filter(function(o){return o.lightWt&&wtCut(o,o.lightWt)}),miss=dn.filter(function(o){var m=missing(o);return m.acid||m.water});
   var h='<div class="rph"><b>'+esc(P.t)+'</b><span>'+rpDT(P.a)+' to '+(P.open?'now ('+T(now)+')':rpDT(P.b))+(ME?' · made by '+esc(ME.name):'')+'</span></div>';
   var tile=function(v,l,bad){return '<div'+(bad?' class="bad"':'')+'><b>'+v+'</b><span>'+l+'</span></div>'};
   h+='<div class="rpg">'+tile(dn.length,"Loads finished")+tile(num(tg),"Gallons (tickets)")+tile(num(ta),"Acid loaded (gal)")+tile(num(tw),"Water loaded (gal)")+tile(tm.length?hm(avg):"–","Average load time")+tile(late.length,"Late loads",late.length>0)+tile(cut.length,"Cut for weight")+tile(miss.length,"Missing amounts",miss.length>0)+'</div>';
   if(!dn.length)h+='<p class="rpnone">No loads finished in this period.</p>';
   else{
-    var grp=function(keyf){var m={},order=[];dn.forEach(function(o){var k2=keyf(o);if(!m[k2]){m[k2]={k:k2,n:0,g:0,a:0,w:0,t:0,tc:0};order.push(k2)}var r=m[k2];r.n++;r.g+=parseFloat(o.gal)||0;r.a+=parseFloat(o.acidGal)||0;r.w+=parseFloat(o.waterGal)||0;if(o.startAt){r.t+=o.endAt-o.startAt;r.tc++}});return order.map(function(x){return m[x]}).sort(function(a,b){return b.n-a.n||a.k.localeCompare(b.k)})};
+    var grp=function(keyf){var m={},order=[];dn.forEach(function(o){var k2=keyf(o);if(!m[k2]){m[k2]={k:k2,n:0,g:0,a:0,w:0,t:0,tc:0};order.push(k2)}var r=m[k2];r.n++;r.g+=parseFloat(o.gal)||0;r.a+=parseFloat(o.acidGal)||0;r.w+=parseFloat(o.waterGal)||0;if(o.startAt){r.t+=loadMs(o);r.tc++}});return order.map(function(x){return m[x]}).sort(function(a,b){return b.n-a.n||a.k.localeCompare(b.k)})};
     var gtab=function(title,rows,first){return '<div class="rpc"><h3>'+title+'</h3><div class="rpw"><table class="rpt"><tr><th>'+first+'</th><th class="n">Loads</th><th class="n">Gallons</th><th class="n">Acid</th><th class="n">Water</th><th class="n">Avg time</th></tr>'+rows.map(function(r){return '<tr><td>'+esc(r.k)+'</td><td class="n">'+r.n+'</td><td class="n">'+num(r.g)+'</td><td class="n">'+num(r.a)+'</td><td class="n">'+num(r.w)+'</td><td class="n">'+(r.tc?hm(r.t/r.tc):'–')+'</td></tr>'}).join("")+'<tr class="tot"><td>Total</td><td class="n">'+dn.length+'</td><td class="n">'+num(tg)+'</td><td class="n">'+num(ta)+'</td><td class="n">'+num(tw)+'</td><td class="n">'+(tm.length?hm(avg):'–')+'</td></tr></table></div></div>'};
     h+='<div class="rpcols">';
     h+=gtab("By product",grp(function(o){return prodName(o)}),"Product");
@@ -3766,18 +3836,18 @@ function repHtml(k,forPrint){
     h+=gtab("By destination",grp(function(o){return stName(stOf(o))}),"Delivering to");
     var hc={},hn=0;dn.forEach(function(o){if(halHas(o))hn++;HAL_N.forEach(function(k2){var n=String(o["hn"+k2]||"").trim(),a=parseFloat(o["ha"+k2])||0;if(n||a){var key=n||"Unnamed";hc[key]=(hc[key]||0)+a}})});
     var cnt=function(f){return dn.filter(f).length};
-    h+='<div class="rpc"><h3>Specials</h3><div class="rpw"><table class="rpt"><tr><th>Type</th><th class="n">Loads</th></tr><tr><td>Third party driver</td><td class="n">'+cnt(function(o){return isTP(o)})+'</td></tr><tr><td>Halliburton chems</td><td class="n">'+hn+'</td></tr><tr><td>CableShield (incl. blends)</td><td class="n">'+cnt(function(o){return isCS(o.prod)})+'</td></tr><tr><td>Custom blends</td><td class="n">'+cnt(function(o){return cxOf(o.prod)})+'</td></tr><tr><td>With a heel</td><td class="n">'+cnt(function(o){return heelOf(o)})+'</td></tr><tr><td>Cut for weight</td><td class="n">'+cut.length+'</td></tr><tr><td>Late (finished after leave-by)</td><td class="n">'+late.length+'</td></tr></table></div></div>';
+    h+='<div class="rpc"><h3>Specials</h3><div class="rpw"><table class="rpt"><tr><th>Type</th><th class="n">Loads</th></tr><tr><td>Third party driver</td><td class="n">'+cnt(function(o){return isTP(o)})+'</td></tr><tr><td>Halliburton chems</td><td class="n">'+hn+'</td></tr><tr><td>CableShield (incl. blends)</td><td class="n">'+cnt(function(o){return isCS(o.prod)})+'</td></tr><tr><td>Custom blends</td><td class="n">'+cnt(function(o){return cxOf(o.prod)})+'</td></tr><tr><td>With a heel</td><td class="n">'+cnt(function(o){return heelOf(o)})+'</td></tr><tr><td>Cut for weight</td><td class="n">'+cut.length+'</td></tr><tr><td>Late (finished after leave-by)</td><td class="n">'+late.length+'</td></tr><tr><td>Paused'+(function(){var t=dn.reduce(function(a,o){return a+pzMs(o)},0);return t?' ('+hm(t)+' total)':''})()+'</td><td class="n">'+cnt(function(o){return pzN(o)})+'</td></tr></table></div></div>';
     var hk=Object.keys(hc);if(hk.length)h+='<div class="rpc"><h3>Halliburton chem totals</h3><div class="rpw"><table class="rpt"><tr><th>Chem</th><th class="n">Gallons</th></tr>'+hk.sort().map(function(k2){return '<tr><td>'+esc(k2)+'</td><td class="n">'+gf(hc[k2])+'</td></tr>'}).join("")+'</table></div></div>';
     h+='</div>';
     /* On paper, a long list goes in two columns (without BOL) so it fits one page */
     var split=forPrint&&dn.length>16,fhead='<tr><th>Trailer</th><th>Loader</th><th>Product</th><th class="n">Gal</th><th>Ticket</th>'+(split?'':'<th>BOL</th>')+'<th>Start – end</th><th class="n">Time</th><th class="n">Acid</th><th class="n">Water</th><th></th></tr>';
-    var frow=function(o){return '<tr><td>'+esc(o.name||"–")+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+esc(o.ticket||"–")+'</td>'+(split?'':'<td>'+esc(o.bol||"–")+'</td>')+'<td>'+(o.startAt?T(o.startAt)+' – ':'')+T(o.endAt)+'</td><td class="n">'+(o.startAt?hm(o.endAt-o.startAt):'–')+'</td><td class="n">'+(o.acidGal!=null&&o.acidGal!==""?num(o.acidGal):'–')+'</td><td class="n">'+(o.waterGal!=null&&o.waterGal!==""?num(o.waterGal):'–')+'</td><td>'+rpFlags(o)+'</td></tr>'};
+    var frow=function(o){return '<tr><td>'+esc(o.name||"–")+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+esc(o.ticket||"–")+'</td>'+(split?'':'<td>'+esc(o.bol||"–")+'</td>')+'<td>'+(o.startAt?T(o.startAt)+' – ':'')+T(o.endAt)+'</td><td class="n">'+(o.startAt?hm(loadMs(o))+(pzN(o)?'<br><small>+'+hm(pzMs(o))+' paused</small>':''):'–')+'</td><td class="n">'+(o.acidGal!=null&&o.acidGal!==""?num(o.acidGal):'–')+'</td><td class="n">'+(o.waterGal!=null&&o.waterGal!==""?num(o.waterGal):'–')+'</td><td>'+rpFlags(o)+'</td></tr>'};
     if(split){var hf=Math.ceil(dn.length/2);h+='<h3>Finished loads</h3><div class="rp2"><table class="rpt">'+fhead+dn.slice(0,hf).map(frow).join("")+'</table><table class="rpt">'+fhead+dn.slice(hf).map(frow).join("")+'</table></div>'}
     else h+='<h3>Finished loads</h3><div class="rpw"><table class="rpt">'+fhead+dn.map(frow).join("")+'</table></div>';
   }
   if(P.open){var ld=ORD.filter(function(o){return status(o)==="loading"}),wt=ORD.filter(function(o){return status(o)==="waiting"}).sort(byLbt);
     var oh2='<tr><th>Trailer</th><th>Status</th><th>Loader</th><th>Product</th><th class="n">Gal</th><th>Leave by</th></tr>',all2=ld.concat(wt);
-    var orow=function(o){var st=status(o);return '<tr><td>'+esc(o.name||"–")+'</td><td>'+(st==="loading"?'Loading '+hm(now-o.startAt):'Waiting')+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+(o.lbtAt?T(o.lbtAt)+(o.lbtAt<now?' (late)':''):'–')+'</td></tr>'};
+    var orow=function(o){var st=status(o);return '<tr><td>'+esc(o.name||"–")+'</td><td>'+(st==="loading"?(isPz(o)?'Paused'+(o.pauseWhy?' ('+esc(o.pauseWhy)+')':'')+' · '+hm(loadMs(o,now))+' loaded':'Loading '+hm(loadMs(o,now))):'Waiting')+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+(o.lbtAt?T(o.lbtAt)+(o.lbtAt<now?' (late)':''):'–')+'</td></tr>'};
     if(forPrint&&all2.length>8){var ho=Math.ceil(all2.length/2);h+='<h3>Still open now</h3><div class="rp2"><table class="rpt">'+oh2+all2.slice(0,ho).map(orow).join("")+'</table><table class="rpt">'+oh2+all2.slice(ho).map(orow).join("")+'</table></div>'}
     else h+='<h3>Still open now</h3><div class="rpw"><table class="rpt">'+oh2+(all2.length?all2.map(orow).join(""):'<tr><td colspan="6" class="rpnone">Nothing loading or waiting.</td></tr>')+'</table></div>'}
   return h;
@@ -3850,9 +3920,9 @@ function dmOrders(){
     if(st==="waiting"){if(Math.random()<dmPct("dm_lbt"))o.lbtAt=Math.round((now+dmRnd(.5,7)*36e5)/9e5)*9e5;if(Math.random()<.6)o.lightWt=lw}
     else{
       o.lightWt=lw;
-      if(st==="loading"){o.startAt=now-dmRi(300,4200)*1000;if(Math.random()<.6){var wmn=waterMins(o);if(wmn>0){o.waterMin=Math.round(wmn*100)/100;o.waterAt=now-Math.round(Math.random()*wmn*0.8*60000)}}if(busy.length<lds.length){var fr=lds.filter(function(x){return busy.indexOf(x)<0});o.loader=dmPick(fr)}busy.push(o.loader)}
+      if(st==="loading"){o.startAt=now-dmRi(300,4200)*1000;if(Math.random()<.25){o.pauseAt=now-dmRi(60,Math.min(1500,Math.round((now-o.startAt)/1000)-30))*1000;if(Math.random()<.7)o.pauseWhy=dmPick(PZ_WHY);o.pauseBy=o.loader||""}if(Math.random()<.6){var wmn=waterMins(o);if(wmn>0){o.waterMin=Math.round(wmn*100)/100;o.waterAt=now-Math.round(Math.random()*wmn*0.8*60000)}}if(busy.length<lds.length){var fr=lds.filter(function(x){return busy.indexOf(x)<0});o.loader=dmPick(fr)}busy.push(o.loader)}
       else{
-        o.endAt=now-dmRi(10,600)*6e4;o.startAt=o.endAt-dmRi(35,80)*6e4;
+        o.endAt=now-dmRi(10,600)*6e4;o.startAt=o.endAt-dmRi(35,80)*6e4;if(Math.random()<.2){var dpz=dmRi(4,20)*6e4,dpa=o.startAt+dmRi(5,20)*6e4;o.startAt-=dpz;o.pausedMs=dpz;o.pz={d1:{a:dpa,b:dpa+dpz,w:dmPick(PZ_WHY),by:o.loader||""}}}
         var wi=wtFor(o.prod,o),c=wtCut(o,lw),tot=c?c.total:o.gal,hl=heelOf(o),hv=hl?hl.gal:0,ld=Math.max(0,(tot-hv)*dmRnd(.985,1.015)),hg=halGal(o);
         if(wi)o.heavyWt=Math.round(lw+(ld+hg)*wi.w);
         if(!miss){var sp=finSplit(o.prod,ld,o.gal,hl&&o.prod!=="acid"?hl.water:0,c?c.total:0);

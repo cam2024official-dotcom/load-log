@@ -57,4 +57,6 @@ Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have
 - `_hist`: History. `{orderId: <the finished order> + clearedAt, clearedBy}`, written by Clear finished orders (instead of deleting) and kept 7 days; the first phone that can write removes older entries. The Shift Report reads it through `allDone()`. Remove on a load still deletes outright.
 - `_presence`: who's online. `{deviceId: {n: name, v: page, t: ms}}`, written by `DL.presence` with a Firebase onDisconnect remove; the phone also removes it when the app goes to the background, and entries older than 3 minutes are ignored.
 
+Pausing a load (v85) is saved on the order itself: `pauseAt` (start of the pause going now; null while loading), `pauseWhy`, `pauseBy`, `pausedMs` (total of finished pauses) and `pz` (`{pKEY:{a,b,w,by}}`, finished pauses; missing when empty). A paused load still has `status()` "loading"; check `isPz(o)`. Use `loadMs(o)` for load time (paused time left out) and `wEnd(o)` for when the water timer ends (it freezes while paused). Ending a paused load closes the pause through `pzClose`.
+
 Changes to `_chat`, `_handoff`, `_presence` and `_hist` skip the board rebuild. `update` with `null` deletes a key.
