@@ -676,6 +676,10 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .rpw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .rpf{display:inline-block;margin:0 3px 2px 0;padding:0 5px;border-radius:3px;font:700 11px/1.6 var(--display);letter-spacing:.05em;background:var(--hl);color:var(--ink);border:1px solid var(--line)}
 .rpf.late,.rpf.cut{border-color:var(--bad);color:var(--bad);background:transparent}
+.rpt td.lo{color:var(--bad);font-weight:700}
+.rpls{margin-bottom:12px}
+.rpls .rpt th,.rpls .rpt td{white-space:nowrap}
+.rpnote{margin:4px 0 0;font-size:12px;color:var(--mute)}
 .rpnone{color:var(--mute);font-size:14px;margin:4px 0}
 #repview{position:fixed;inset:0;z-index:31;background:var(--bg);overflow:auto;padding-bottom:40px}
 #rpv_wrap{margin:14px 16px 0;overflow:hidden}#rpv_sheet{width:1056px;transform-origin:top left}
@@ -698,6 +702,8 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .rps .rp2 td,.rps .rp2 th{padding-left:.3em;padding-right:.3em}.rps .rp2 td.n,.rps .rp2 th{white-space:nowrap}
 .rps .rpf{font-family:Arial,Helvetica,sans-serif;font-size:.8em;line-height:1.4;padding:0 .3em;margin:0 .15em 0 0;background:#f1f3f6;border-color:#c8cdd3;color:#111}
 .rps .rpf.late,.rps .rpf.cut{color:#b3261e;border-color:#b3261e;background:#fff}
+.rps .rpt td.lo{color:#b3261e}
+.rps .rpnote{color:#444;font-size:.8em}
 .rps .rpnone{color:#666}
 /* Water timer: logo blue with white lettering */
 .wtbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:10px;padding:10px 14px;min-height:52px;text-align:left;background:#2c6384;border:1px solid #2c6384;color:#fff;border-radius:var(--r)}
@@ -1109,7 +1115,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <form id="ask_f" class="askf chf" autocomplete="off"><button id="ask_mic" class="tqmic" type="button" aria-label="Speak your question" title="Speak your question" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button><input id="ask_in" type="text" enterkeyhint="send" placeholder="Message Tarquino" aria-label="Message Tarquino"><button class="go" type="submit">Send</button></form>
 </div></main>
 <main id="v-rep" hidden><div class="wrap rep">
-  <div class="rpbar"><div class="rpsel" id="rp_sel" role="group" aria-label="Report period"><button type="button" data-rp="this" aria-pressed="true">This shift</button><button type="button" data-rp="last" aria-pressed="false">Last shift</button><button type="button" data-rp="today" aria-pressed="false">Today</button><button type="button" data-rp="24h" aria-pressed="false">Last 24 h</button><select id="rp_old" aria-label="Earlier shift"></select></div>
+  <div class="rpbar"><div class="rpsel" id="rp_sel" role="group" aria-label="Report period"><button type="button" data-rp="this" aria-pressed="true">This shift</button><button type="button" data-rp="last" aria-pressed="false">Last shift</button><button type="button" data-rp="today" aria-pressed="false">Today</button><button type="button" data-rp="24h" aria-pressed="false">Last 24 h</button><button type="button" data-rp="7d" aria-pressed="false">7 days</button><select id="rp_old" aria-label="Earlier shift"></select></div>
   <button type="button" class="go" id="rp_print">Print or save PDF</button></div>
   <div id="rp_body"></div>
   <p class="note">Includes loads still on the board and finished loads from History (the last 7 days).</p>
@@ -1286,8 +1292,8 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   </details>
   <details><summary>Shift Report</summary>
     <ol>
-      <li>Open the menu and tap <span class="kb">Shift Report</span> (leads and managers). Pick <b>This shift</b>, <b>Last shift</b>, <b>Today</b> or <b>Last 24 h</b>.</li>
-      <li>It shows loads finished, gallons, acid and water loaded, average load time, late loads, loads cut for weight and missing amounts, then totals by product, loader and destination, Halliburton chem totals, every finished load, and what's still open.</li>
+      <li>Open the menu and tap <span class="kb">Shift Report</span> (leads and managers). Pick <b>This shift</b>, <b>Last shift</b>, <b>Today</b>, <b>Last 24 h</b> or <b>7 days</b>.</li>
+      <li>It shows loads finished, gallons, acid and water loaded, average load time, late loads, loads cut for weight and missing amounts, then <b>Loader stats</b> (each loader's loads, gallons, average and fastest load time, how many went out on time, paused time, and how often they inspected their own truck), totals by product and destination, Halliburton chem totals, every finished load, and what's still open.</li>
       <li>Tap <span class="kb">Print or save PDF</span> for a paper copy. It prints in landscape on one page, with the text sized to fill the page: bigger on a quiet shift, smaller on a busy one.</li>
       <li>It includes finished loads in History, so it still works after <span class="kb">Clear finished orders</span>. Pick <b>Earlier shift</b> for any shift in the last 7 days.</li>
     </ol>
@@ -4088,6 +4094,7 @@ function rpPeriod(k){
   if(k==="last"){var pv=curShift(cs.start-60000);return {a:pv.start,b:cs.start,t:(pv.s==="D"?"Day":"Night")+" shift",open:false}}
   if(k==="today"){var t=new Date(now),st=new Date(t.getFullYear(),t.getMonth(),t.getDate());st.setMinutes(D);var a=st.getTime();if(a>now)a-=864e5;return {a:a,b:now,t:"Today",open:true}}
   if(k==="24h")return {a:now-864e5,b:now,t:"Last 24 hours",open:true};
+  if(k==="7d")return {a:now-7*864e5,b:now,t:"Last 7 days",open:true};
   if(/^s:\d+$/.test(k)){var a2=+k.slice(2),sh=curShift(a2+60000);return {a:sh.start,b:sh.end,t:(sh.s==="D"?"Day":"Night")+" shift · "+new Date(sh.start).toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"}),open:false}}
   return {a:cs.start,b:now,t:(cs.s==="D"?"Day":"Night")+" shift",open:true};
 }
@@ -4095,6 +4102,27 @@ function rpDT(ms){return new Date(ms).toLocaleString([],{weekday:"short",month:"
 function rpFlags(o){var f=[];if(o.state==="NM")f.push("NM");if(isTP(o))f.push("3P");if(isCS(o.prod))f.push("CS");if(halHas(o))f.push("HAL");if(heelOf(o))f.push("HEEL");
   if(o.lightWt&&wtCut(o,o.lightWt))f.push('<span class="rpf cut">CUT</span>');if(o.lbtAt&&o.endAt>o.lbtAt)f.push('<span class="rpf late">LATE</span>');
   return f.map(function(x){return x.charAt(0)==="<"?x:'<span class="rpf">'+x+'</span>'}).join("")}
+/* Loader stats (v87): one row per loader for the report period. Load times leave out paused time.
+   On time = finished by the leave-by (loads that had one). Truck checks come from the Daily Checklist:
+   shifts in the period where the loader had a truck, and how many of those they inspected it themselves. */
+function rpLoaders(dn,P){
+  var m={},order=[],row=function(n){var k=n.toLowerCase();if(!m[k]){m[k]={n:n,c:0,g:0,t:0,tc:0,f:0,lb:0,ot:0,pz:0,ta:0,ts:0};order.push(k)}return m[k]};
+  dn.forEach(function(o){var r=row(canonName(o.loader)||"No loader");r.c++;r.g+=parseFloat(o.gal)||0;
+    if(o.startAt){var t=loadMs(o);r.t+=t;r.tc++;if(!r.f||t<r.f)r.f=t}
+    if(o.lbtAt){r.lb++;if(o.endAt<=o.lbtAt)r.ot++}
+    r.pz+=pzMs(o)});
+  Object.keys(DC.s).map(Number).filter(function(k){return k&&k<P.b&&curShift(k+60000).end>P.a}).forEach(function(k){var c2={start:k},as=dcAs(c2),ins=dcIn(c2);
+    Object.keys(as).forEach(function(q){var a=as[q];if(!dcEqOf(a.e)&&!ins[a.e])return;var r=row(canonName(a.n)||a.n);r.ta++;var x=ins[a.e];if(x&&x.n&&skey(x.n)===skey(a.n))r.ts++})});
+  if(!order.length)return "";
+  order.sort(function(a,b){var x=m[a],y=m[b];if((x.n==="No loader")!==(y.n==="No loader"))return x.n==="No loader"?1:-1;return y.c-x.c||x.n.localeCompare(y.n,undefined,{sensitivity:"base"})});
+  var frac=function(a,b){return b?'<td class="n'+(a<b?' lo':'')+'">'+a+' of '+b+'</td>':'<td class="n">–</td>'};
+  var T0={c:0,g:0,t:0,tc:0,lb:0,ot:0,pz:0,ta:0,ts:0};
+  var rows=order.map(function(k){var r=m[k];Object.keys(T0).forEach(function(f){T0[f]+=r[f]});
+    return '<tr><td>'+esc(r.n)+'</td><td class="n">'+r.c+'</td><td class="n">'+num(r.g)+'</td><td class="n">'+(r.tc?hm(r.t/r.tc):'–')+'</td><td class="n">'+(r.f?hm(r.f):'–')+'</td>'+frac(r.ot,r.lb)+'<td class="n">'+(r.pz?hm(r.pz):'–')+'</td>'+frac(r.ts,r.ta)+'</tr>'}).join("");
+  return '<div class="rpc rpls"><h3>Loader stats</h3><div class="rpw"><table class="rpt"><tr><th>Loader</th><th class="n">Loads</th><th class="n">Gallons</th><th class="n">Avg time</th><th class="n">Fastest</th><th class="n">On time</th><th class="n">Paused</th><th class="n">Truck checks</th></tr>'+rows+
+    '<tr class="tot"><td>Total</td><td class="n">'+T0.c+'</td><td class="n">'+num(T0.g)+'</td><td class="n">'+(T0.tc?hm(T0.t/T0.tc):'–')+'</td><td class="n"></td>'+frac(T0.ot,T0.lb)+'<td class="n">'+(T0.pz?hm(T0.pz):'–')+'</td>'+frac(T0.ts,T0.ta)+'</tr></table></div>'+
+    '<p class="rpnote">On time: finished by the leave-by. Paused time isn\'t counted in load times. Truck checks: shifts they inspected their own truck (Daily Checklist).</p></div>';
+}
 function repHtml(k,forPrint){
   var P=rpPeriod(k),now=Date.now(),cs=curShift(now);
   var dn=allDone().filter(function(o){return o.endAt>=P.a&&o.endAt<P.b+1}).sort(function(a,b){return a.endAt-b.endAt});
@@ -4109,9 +4137,9 @@ function repHtml(k,forPrint){
   else{
     var grp=function(keyf){var m={},order=[];dn.forEach(function(o){var k2=keyf(o);if(!m[k2]){m[k2]={k:k2,n:0,g:0,a:0,w:0,t:0,tc:0};order.push(k2)}var r=m[k2];r.n++;r.g+=parseFloat(o.gal)||0;r.a+=parseFloat(o.acidGal)||0;r.w+=parseFloat(o.waterGal)||0;if(o.startAt){r.t+=loadMs(o);r.tc++}});return order.map(function(x){return m[x]}).sort(function(a,b){return b.n-a.n||a.k.localeCompare(b.k)})};
     var gtab=function(title,rows,first){return '<div class="rpc"><h3>'+title+'</h3><div class="rpw"><table class="rpt"><tr><th>'+first+'</th><th class="n">Loads</th><th class="n">Gallons</th><th class="n">Acid</th><th class="n">Water</th><th class="n">Avg time</th></tr>'+rows.map(function(r){return '<tr><td>'+esc(r.k)+'</td><td class="n">'+r.n+'</td><td class="n">'+num(r.g)+'</td><td class="n">'+num(r.a)+'</td><td class="n">'+num(r.w)+'</td><td class="n">'+(r.tc?hm(r.t/r.tc):'–')+'</td></tr>'}).join("")+'<tr class="tot"><td>Total</td><td class="n">'+dn.length+'</td><td class="n">'+num(tg)+'</td><td class="n">'+num(ta)+'</td><td class="n">'+num(tw)+'</td><td class="n">'+(tm.length?hm(avg):'–')+'</td></tr></table></div></div>'};
+    h+=rpLoaders(dn,P);
     h+='<div class="rpcols">';
     h+=gtab("By product",grp(function(o){return prodName(o)}),"Product");
-    h+=gtab("By loader",grp(function(o){return canonName(o.loader)||"No loader"}),"Loader");
     h+=gtab("By destination",grp(function(o){return stName(stOf(o))}),"Delivering to");
     var hc={},hn=0;dn.forEach(function(o){if(halHas(o))hn++;HAL_N.forEach(function(k2){var n=String(o["hn"+k2]||"").trim(),a=parseFloat(o["ha"+k2])||0;if(n||a){var key=n||"Unnamed";hc[key]=(hc[key]||0)+a}})});
     var cnt=function(f){return dn.filter(f).length};
@@ -4120,7 +4148,7 @@ function repHtml(k,forPrint){
     h+='</div>';
     /* On paper, a long list goes in two columns (without BOL) so it fits one page */
     var split=forPrint&&dn.length>16,fhead='<tr><th>Trailer</th><th>Loader</th><th>Product</th><th class="n">Gal</th><th>Ticket</th>'+(split?'':'<th>BOL</th>')+'<th>Start – end</th><th class="n">Time</th><th class="n">Acid</th><th class="n">Water</th><th></th></tr>';
-    var frow=function(o){return '<tr><td>'+esc(o.name||"–")+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+esc(o.ticket||"–")+'</td>'+(split?'':'<td>'+esc(o.bol||"–")+'</td>')+'<td>'+(o.startAt?T(o.startAt)+' – ':'')+T(o.endAt)+'</td><td class="n">'+(o.startAt?hm(loadMs(o))+(pzN(o)?'<br><small>+'+hm(pzMs(o))+' paused</small>':''):'–')+'</td><td class="n">'+(o.acidGal!=null&&o.acidGal!==""?num(o.acidGal):'–')+'</td><td class="n">'+(o.waterGal!=null&&o.waterGal!==""?num(o.waterGal):'–')+'</td><td>'+rpFlags(o)+'</td></tr>'};
+    var frow=function(o){return '<tr><td>'+esc(o.name||"–")+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+esc(o.ticket||"–")+'</td>'+(split?'':'<td>'+esc(o.bol||"–")+'</td>')+'<td>'+(P.b-P.a>864e5+6e4?'<b>'+new Date(o.endAt).toLocaleDateString([],{weekday:"short",month:"numeric",day:"numeric"})+'</b> ':'')+(o.startAt?T(o.startAt)+' – ':'')+T(o.endAt)+'</td><td class="n">'+(o.startAt?hm(loadMs(o))+(pzN(o)?'<br><small>+'+hm(pzMs(o))+' paused</small>':''):'–')+'</td><td class="n">'+(o.acidGal!=null&&o.acidGal!==""?num(o.acidGal):'–')+'</td><td class="n">'+(o.waterGal!=null&&o.waterGal!==""?num(o.waterGal):'–')+'</td><td>'+rpFlags(o)+'</td></tr>'};
     if(split){var hf=Math.ceil(dn.length/2);h+='<h3>Finished loads</h3><div class="rp2"><table class="rpt">'+fhead+dn.slice(0,hf).map(frow).join("")+'</table><table class="rpt">'+fhead+dn.slice(hf).map(frow).join("")+'</table></div>'}
     else h+='<h3>Finished loads</h3><div class="rpw"><table class="rpt">'+fhead+dn.map(frow).join("")+'</table></div>';
   }
