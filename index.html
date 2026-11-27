@@ -828,6 +828,24 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .insb .iok.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
 .insb .ibad.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
 .insprev{margin:8px 0 0}
+/* Yard notes (v91) */
+.yard{margin:10px 0 12px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:4px}
+.yard[hidden]{display:none}
+.yard.has{border-left-color:var(--acc)}
+.yard>summary{display:flex;align-items:baseline;gap:10px;padding:10px 12px;cursor:pointer;list-style:none}
+.yard>summary::-webkit-details-marker{display:none}
+.yard>summary::after{content:"›";margin-left:auto;font-size:20px;line-height:1;color:var(--mute);transform:rotate(90deg);transition:transform .15s}
+.yard:not([open])>summary::after{transform:none}
+.yard>summary b{font:700 16px/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase}
+.yard>summary span{font-size:13px;color:var(--mute)}
+.yard.has>summary span{color:var(--acc);font-weight:700}
+.yard .dcl{padding:0 12px}
+.yard .dcadd{margin:8px 12px 12px}
+.yard .dcadd[hidden]{display:none}
+.yard .dcl:last-child{padding-bottom:12px}
+.yard .dct b{font:600 16px/1.25 var(--body);letter-spacing:0;text-transform:none}
+.yard .dci.on .dct b{text-decoration:line-through;color:var(--mute)}
+.ydno{display:block!important;padding:2px 0 4px;font-size:14px;color:var(--mute)}
 /* Railcar timer (v88) */
 .rail{margin:10px 0 4px}
 .rlh{display:flex;align-items:center;gap:10px;padding:6px 0}
@@ -951,6 +969,10 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <p class="sync" id="sync" role="status" aria-live="polite"><i></i><span>Connecting</span></p>
   <p class="onl" id="onl" hidden></p>
   <div id="ro" class="ro" hidden>Access changed. Reopen the app.</div>
+  <details id="yard" class="yard" hidden><summary><b>Yard notes</b><span id="yd_c"></span></summary>
+    <ul id="yd_l" class="dcl"></ul>
+    <div class="dcadd" id="yd_add" hidden><input id="yd_in" type="text" autocomplete="off" enterkeyhint="done" maxlength="200" placeholder="What needs taking care of?" aria-label="New yard note"><button type="button" class="go" id="yd_go">Add</button></div>
+  </details>
   <div id="myeq" class="myeq" hidden></div>
   <div id="crew" hidden><label class="f">Crew · tap a name to go to their load</label><div class="cg" id="crewg"></div></div>
   <div class="sum" id="sum"></div>
@@ -1226,6 +1248,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>When a lead gives you a truck for the shift, it shows at the top of the Load Log. Tap <span class="kb">Inspect</span>.</li>
       <li>Mark each point <span class="kb">OK</span> or <span class="kb">Problem</span>, or tap <span class="kb">All OK</span> if everything checks out. If something's wrong, say what in the notes. Then tap <span class="kb">Save inspection</span>.</li>
       <li>The strip turns green when it's done (red if you reported a problem), and your lead sees it on the Daily Checklist. You can inspect a forklift or other equipment from the same window by picking it in the Equipment box.</li>
+    </ol>
+  </details>
+  <details><summary>Yard notes</summary>
+    <ol>
+      <li><b>Yard notes</b> at the top of the Load Log is this shift's to-do list from the lead's walk around the yard. Tap the heading to fold it up or open it.</li>
+      <li>Took care of one? Tap it to check it off. It records your name and the time. Tap again if you checked the wrong one.</li>
+      <li>Leads: type what you see in the box and tap <span class="kb">Add</span> (or press Enter). <span class="kb">×</span> removes a note. The list starts fresh each shift.</li>
     </ol>
   </details>
   <details><summary>Railcar timer</summary>
@@ -2411,14 +2440,14 @@ function syncState(){
 function onData(list){
   var rs=null,ch=null,sc=null;
   var ho=null;
-  var rc=null,pr=null,mgo=null,hso=null,dly=null,rlo=null;
-  list.forEach(function(o){if(o.id===RAIL_ID)rlo=o;else if(o.id===DAILY_ID)dly=o;else if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
+  var rc=null,pr=null,mgo=null,hso=null,dly=null,rlo=null,ydo=null;
+  list.forEach(function(o){if(o.id===YARD_ID)ydo=o;else if(o.id===RAIL_ID)rlo=o;else if(o.id===DAILY_ID)dly=o;else if(o.id===HIST_ID)hso=o;else if(o.id===MGMT_ID)mgo=o;else if(o.id===PRES_ID)pr=o;else if(o.id===RECIPE_ID)rc=o;else if(o.id===ROSTER_ID)rs=o;else if(o.id===CHAT_ID)ch=o;else if(o.id===SCHED_ID)sc=o;else if(o.id===HO_ID)ho=o});
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();setRail(rlo);
+  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();setRail(rlo);setYard(ydo);
   /* A new chat message or someone coming online doesn't need the board rebuilt */
-  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID&&o.id!==RAIL_ID}));
+  var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID&&o.id!==RAIL_ID&&o.id!==YARD_ID}));
   if(gotData&&sig===dataSig)return;
   dataSig=sig;
   ORD=list.filter(function(o){return o.prod!==undefined});
@@ -2517,7 +2546,7 @@ $("sc_hsave").onclick=function(){
 /* Names come and go from the crew board and loader list as shifts change */
 function onShiftChange(force){
   var s=onShiftSig();if(!force&&s===shiftSig)return;shiftSig=s;
-  crewList();crewHtml="";crewBoard();renderSched();renderDC();myEq();
+  crewList();crewHtml="";crewBoard();renderSched();renderDC();myEq();renderYard();
   if(!$("signin").hidden)renderSignIn();
 }
 setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
@@ -3005,7 +3034,7 @@ function applyAuth(){
   $("nav_rep").hidden=!perm("rep");if(curView==="rep"&&!perm("rep"))showView("log");
   $("nav_hist").hidden=!perm("rep");if(curView==="hist"&&!perm("rep"))showView("log");
   $("nav_dc").hidden=!perm("dc");if(curView==="dc"&&!perm("dc"))showView("log");
-  myEq();renderDC();
+  myEq();renderDC();renderYard();
   $("nav_demo").hidden=!canDemo();if(DEMO&&!canDemo())exitDemo();
   if(ME&&ME.name!==was)presSoon();
   renderSched();renderHO();
@@ -4206,6 +4235,35 @@ $("rlm_ok").onclick=function(){if(!RLM)return;var car=$("rlm_car").value.trim(),
     p["c/r"+now.toString(36)]={car:car,tk:RLM.tk||null,by:ME&&!ME.admin?ME.name:"",at:now,min:m};try{localStorage.setItem(RL_LAST,String(m))}catch(e){}}
   upd(RAIL_ID,p);$("rlm").hidden=true;RLM=null;toast(p["c/r"+now.toString(36)]?"Railcar timer started. Done at "+T(now+m*60000)+".":"Saved.")};
 $("rlm").addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("rlm_ok").click()}});
+/* ---- Yard notes (v91): a lead's walk-around to-do list, collapsible at the top of the Load Log.
+   _yard = {n:{yID:{tx, by, t, dn:{n,t}}}}. Leads add and remove; anyone can check an item done.
+   The list is for this shift only (items added since the shift started); older ones drop off after 7 days. ---- */
+var YARD_ID="_yard",YARD={},YD_KEEP=7*864e5,ydPruned=0,YD_OPEN="tcw-yard-open";
+function setYard(o){var s=JSON.stringify(o||null);if(s===setYard.sig)return;setYard.sig=s;var n=o&&o.n&&typeof o.n==="object"?o.n:{};YARD={};
+  Object.keys(n).forEach(function(k){var x=n[k];if(x&&x.tx&&+x.t)YARD[k]=x});
+  var now=Date.now();if(DL&&can()&&now-ydPruned>36e5){ydPruned=now;var p={},c=0;Object.keys(YARD).forEach(function(k){if(now-YARD[k].t>YD_KEEP){p["n/"+k]=null;c++}});if(c)upd(YARD_ID,p)}
+  renderYard()}
+function ydCan(){return canManage()&&can()&&!!DL&&!DEMO}
+function ydList(){var cs=curShift();return Object.keys(YARD).map(function(k){return Object.assign({id:k},YARD[k])}).filter(function(x){return +x.t>=cs.start}).sort(function(a,b){return (a.dn?1:0)-(b.dn?1:0)||a.t-b.t})}
+function renderYard(){var d=$("yard");if(!d)return;var L=DEMO?[]:ydList(),lead=ydCan(),w=can()&&!!DL&&!DEMO,open=L.filter(function(x){return !x.dn}).length;
+  if(!L.length&&!lead){d.hidden=true;return}
+  d.hidden=false;$("yd_add").hidden=!lead;
+  $("yd_c").textContent=L.length?(open?open+' to do':'All done')+(L.length-open?' · '+(L.length-open)+' done':''):'Nothing yet this shift';
+  d.classList.toggle("has",open>0);
+  var h=L.map(function(x){var id=esc(x.id),dn=x.dn&&x.dn.t;
+    return '<li><button type="button" class="dci'+(dn?' on':'')+'" data-yd="'+id+'"'+(w?'':' disabled')+' aria-pressed="'+!!dn+'"><span class="dcb" aria-hidden="true">'+(dn?'✓':'')+'</span><span class="dct"><b>'+esc(x.tx)+'</b><small>'+(dn?'Done'+(x.dn.n?' by '+esc(x.dn.n):'')+' · '+T(x.dn.t):(x.by?esc(x.by)+' · ':'')+T(+x.t))+'</small></span></button>'+(lead?'<button type="button" class="dcx" data-ydx="'+id+'" aria-label="Remove note">×</button>':'')+'</li>'}).join("");
+  if(!L.length)h='<li class="ydno">Walking the yard? Type what needs taking care of and tap Add. The whole crew sees it.</li>';
+  if(h!==renderYard.h){renderYard.h=h;$("yd_l").innerHTML=h}}
+(function(){var o=null;try{o=localStorage.getItem(YD_OPEN)}catch(e){}$("yard").open=o!=="0"})();
+$("yard").addEventListener("toggle",function(){try{localStorage.setItem(YD_OPEN,this.open?"1":"0")}catch(e){}});
+$("yd_l").addEventListener("click",function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var id,p={};
+  if(!can()||!DL){toast("Not connected. Changes need a signal.");return}
+  if((id=b.getAttribute("data-yd"))){var x=YARD[id];if(!x)return;p["n/"+id+"/dn"]=x.dn?null:{n:ME&&!ME.admin?ME.name:"",t:Date.now()};upd(YARD_ID,p);return}
+  if((id=b.getAttribute("data-ydx"))&&ydCan()){p["n/"+id]=null;upd(YARD_ID,p)}});
+function ydAdd(){var i=$("yd_in"),t=i.value.trim();if(!t){i.focus();return}if(!ydCan()){toast(can()?"Only leads can add yard notes.":"Not connected. Changes need a signal.");return}
+  var p={},now=Date.now();p["n/y"+now.toString(36)]={tx:t.slice(0,200),by:ME&&!ME.admin?ME.name:"",t:now};upd(YARD_ID,p);i.value="";i.focus()}
+$("yd_go").onclick=ydAdd;
+$("yd_in").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();ydAdd()}});
 var HIST_ID="_hist",HIST={},HIST_KEEP=7*864e5,histPruned={};
 function setHist(o){
   var m={},old={},now=Date.now();
