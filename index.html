@@ -828,6 +828,67 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .insb .iok.on{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:700}
 .insb .ibad.on{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
 .insprev{margin:8px 0 0}
+/* Shop TV board (v92): full screen, sized from the screen width so it reads from across the office */
+.tv{position:fixed;inset:0;z-index:95;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-size:clamp(13px,1.05vw,30px);overflow:hidden}
+.tv[hidden]{display:none}
+html.tvon,html.tvon body{overflow:hidden}
+.sbh{display:flex;align-items:center;gap:1.4em;padding:.6em 1.2em;background:var(--head);color:#fff;border-bottom:.35em solid var(--brand)}
+.sbt{display:flex;flex-direction:column;min-width:0}
+.sbt b{font:700 1.6em/1.05 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.sbt span{font-size:.95em;opacity:.8}
+.sbs{display:flex;gap:.6em;margin-left:auto}
+.sbs div{display:flex;flex-direction:column;align-items:center;min-width:5.5em;padding:.25em .6em;border:1px solid rgba(255,255,255,.25);border-radius:4px}
+.sbs b{font:700 1.9em/1 var(--display)}
+.sbs span{font-size:.72em;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.sbk{display:flex;flex-direction:column;align-items:flex-end}
+.sbk b{font:700 2.2em/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sbk span{font-size:.85em;opacity:.8}
+.sbx{display:flex;flex-direction:column;gap:.3em;opacity:.35;transition:opacity .2s}
+.sbx:hover{opacity:1}
+.sbx button{min-height:0;padding:.2em .7em;font-size:.75em;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.sbg{flex:1;min-height:0;display:grid;grid-template-columns:1.15fr 1.15fr 1fr .95fr;gap:.8em;padding:.8em 1.2em 1em}
+.sbc{display:flex;flex-direction:column;min-height:0;background:var(--card);border:1px solid var(--line);border-radius:4px}
+.sbc h2{margin:0;padding:.45em .7em;font:700 1.15em/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase;border-bottom:3px solid var(--line)}
+.sbc h2 span{margin-left:.3em;padding:0 .4em;border-radius:3px;background:var(--hl);color:var(--mute)}
+.sbld h2{border-bottom-color:var(--ok)}.sbwt h2{border-bottom-color:var(--acc)}.sbdn h2{border-bottom-color:var(--mute)}
+.sbb{flex:1;min-height:0;overflow:hidden;padding:.5em}
+.sbo{margin:0 0 .5em;padding:.45em .6em .5em .7em;border:1px solid var(--line);border-left:.4em solid var(--lc);border-radius:4px;background:var(--card)}
+.sbo.pz{background:var(--warnbg);border-color:var(--warn)}
+.sb1{display:flex;align-items:center;gap:.5em}
+.sb1 b{flex:1;min-width:0;font:700 1.45em/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase;overflow-wrap:anywhere}
+.sb2{display:flex;flex-wrap:wrap;align-items:center;gap:.25em .6em;margin-top:.2em;font-size:.9em;color:var(--mute)}
+.sb2 span[class]{font-size:.85em}
+.sbn{padding:0 .4em;border-radius:3px;background:var(--hl);color:var(--ink);font-weight:700}
+.sbn.none{color:var(--mute);font-weight:500}
+.sb3{display:flex;flex-wrap:wrap;gap:.3em .9em;margin-top:.25em}
+.sbtm{font:700 1.25em/1.1 var(--display);font-variant-numeric:tabular-nums;color:var(--ok)}
+.sbtm.pz{color:var(--warn)}
+.sbw{font:700 1.1em/1.2 var(--display);color:#2c6384}
+.sbw.over{color:var(--warn)}
+.sbnt{margin-top:.3em;padding:.15em .45em;border-left:3px solid var(--note);background:var(--notebg);color:var(--noteink);font-size:.85em;font-weight:600}
+.sbl{flex:none;padding:.05em .45em;border-radius:3px;font:700 .85em/1.4 var(--display);letter-spacing:.05em;background:var(--okbg);color:var(--ok)}
+.sbl.warn{background:var(--warnbg);color:var(--warn)}.sbl.bad{background:var(--badbg);color:var(--bad)}.sbl.mute{background:var(--hl);color:var(--mute)}
+.sbd .sb1 b{font-size:1.15em}
+.tv .qpos{font-size:.85em}
+.sbno{margin:.3em .2em;color:var(--mute)}
+.sbsd h3{margin:.3em .2em .3em;font:700 1em/1.1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.sbsd h3:not(:first-child){margin-top:.8em}
+.sbsd h3 span{color:var(--acc)}
+.sbr{display:flex;justify-content:space-between;align-items:center;gap:.5em;margin-bottom:.4em;padding:.35em .5em;border:1px solid var(--line);border-left:.4em solid #2c6384;border-radius:4px}
+.sbr div{display:flex;flex-direction:column;min-width:0}
+.sbr b{font:700 1.1em/1.1 var(--display);text-transform:uppercase}
+.sbr small{font-size:.75em;color:var(--mute)}
+.sbrc{font:700 1.4em/1 var(--display);font-variant-numeric:tabular-nums}
+.sbr.over{border-color:#eca03f;border-left-color:#eca03f;background:var(--warnbg)}.sbr.over .sbrc{color:var(--warn)}
+.sby,.sbcr{list-style:none;margin:0;padding:0}
+.sby li{margin-bottom:.3em;padding:.25em .45em;border-left:3px solid var(--acc);background:var(--hl);border-radius:2px;font-weight:600}
+.sby li.dn{border-left-color:var(--ok);color:var(--mute);text-decoration:line-through;font-weight:400}
+.sby small{color:var(--mute)}
+.sbcr li{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .5em;margin-bottom:.3em;padding:.2em .45em;border-left:.35em solid var(--lc)}
+.sbcr b{font:700 1.05em/1.2 var(--display);text-transform:uppercase}
+.sbcr small{font-size:.8em;color:var(--mute)}
+.sbcr span{flex-basis:100%;font-size:.8em;color:var(--mute)}
+@media (max-width:900px){.sbg{grid-template-columns:1fr 1fr}.sbs{display:none}}
 /* Yard notes (v91) */
 .yard{margin:10px 0 12px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:4px}
 .yard[hidden]{display:none}
@@ -1078,6 +1139,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <div class="lbq" id="qcm_q" data-for="qcm_in" hidden><button type="button" data-h="1">+1 h</button><button type="button" data-h="2">+2 h</button><button type="button" data-h="3">+3 h</button><button type="button" data-h="4">+4 h</button><button type="button" data-h="0">Clear</button></div>
   <div class="pinr"><button id="qcm_c" type="button">Cancel</button><button id="qcm_ok" class="go" type="button">Save</button></div>
 </div></div>
+<div id="tv" class="tv" hidden></div>
 <div id="rlm" class="pinm" hidden><div class="pinb" role="dialog" aria-modal="true" aria-labelledby="rlm_t">
   <b id="rlm_t">Start railcar</b>
   <label class="f" for="rlm_car" style="margin-top:10px">Car #</label><input id="rlm_car" type="text" autocomplete="off" maxlength="20" placeholder="e.g. TILX 290114">
@@ -1255,6 +1317,13 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li><b>Yard notes</b> at the top of the Load Log is this shift's to-do list from the lead's walk around the yard. Tap the heading to fold it up or open it.</li>
       <li>Took care of one? Tap it to check it off. It records your name and the time. Tap again if you checked the wrong one.</li>
       <li>Leads: type what you see in the box and tap <span class="kb">Add</span> (or press Enter). <span class="kb">×</span> removes a note. The list starts fresh each shift.</li>
+    </ol>
+  </details>
+  <details><summary>Shop TV board</summary>
+    <ol>
+      <li>For the office desktop or a TV: open the menu and tap <b>Shop TV board</b>. It fills the screen with Loading now, Waiting (in the order the lead set), Done this shift, and Railcars, Yard notes and Crew on shift, with a big clock.</li>
+      <li>It updates live, and long columns scroll by themselves. Tap <span class="kb">Full screen</span> in the top corner to hide the browser bar. Press Esc or tap <span class="kb">Exit</span> to go back.</li>
+      <li>To open straight into it, bookmark the app's address with <b>#tv</b> on the end. The computer needs the crew PIN entered once, like a phone. It's view only: nothing can be changed from the board.</li>
     </ol>
   </details>
   <details><summary>Railcar timer</summary>
@@ -1483,6 +1552,7 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
   <button type="button" data-view="lw">Load Weight</button>
   <button type="button" data-view="chat">Crew Chat<span id="ch_badge" class="nb" hidden></span></button>
   <button type="button" data-view="sched">Schedule</button>
+  <button type="button" id="nav_tv">Shop TV board</button>
   <button type="button" data-view="help">Help</button>
   <div class="navsep">Lead</div>
   <button type="button" data-view="lead">Lead Panel</button>
@@ -1916,7 +1986,7 @@ function tick(){
       ch.className=cls;ch.textContent=tx;
     }
   });
-  crewBoard();railTick(now);
+  crewBoard();railTick(now);tvTick(now);
   $("sum").innerHTML=[["loading","Loading"],["waiting","Waiting"],["done","Done"]].map(function(x){return '<div class="tile'+(x[0]==="loading"&&c.loading?" on":"")+'"><b>'+c[x[0]]+'</b><span>'+x[1]+'</span></div>'}).join("");
   $("gal").textContent=num(gal)+" gal acid pulled"+(noAcid?" · "+noAcid+" finished load"+(noAcid===1?"":"s")+" missing acid":"");
 }
@@ -2445,7 +2515,7 @@ function onData(list){
   setSched(sc);setHO(ho);
   RCP={};if(rc)Object.keys(rc).forEach(function(k){var r=rc[k];if(k!=="id"&&r&&r.n&&cxOf(cxKey(r.b,parseFloat(r.f))))RCP[k]={n:String(r.n),b:String(r.b),f:parseFloat(r.f)}});
   renderRecipes();
-  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();setRail(rlo);setYard(ydo);
+  setChat(ch);setPres(pr);setMgmt(mgo);setHist(hso);setDaily(dly);renderDC();myEq();setRail(rlo);setYard(ydo);renderTV();
   /* A new chat message or someone coming online doesn't need the board rebuilt */
   var sig=JSON.stringify(list.filter(function(o){return o.id!==CHAT_ID&&o.id!==HO_ID&&o.id!==PRES_ID&&o.id!==HIST_ID&&o.id!==DAILY_ID&&o.id!==RAIL_ID&&o.id!==YARD_ID}));
   if(gotData&&sig===dataSig)return;
@@ -2461,6 +2531,7 @@ function onData(list){
     if(rs.leads&&rs.leads[k])RLEAD[lk]=true});
   ROSTER.sort(function(a,b){return a.localeCompare(b,undefined,{sensitivity:"base"})});
   gotData=true;syncState();renderRoster();applyAuth();refresh();renderSched();renderHO();shiftSig=onShiftSig();if(curView==="rep")renderRep();
+  renderTV();if(TV_AUTO&&!TV){TV_AUTO=false;tvOpen()}
 }
 
 /* Shift schedule, beside the orders under a fixed key:
@@ -2546,7 +2617,7 @@ $("sc_hsave").onclick=function(){
 /* Names come and go from the crew board and loader list as shifts change */
 function onShiftChange(force){
   var s=onShiftSig();if(!force&&s===shiftSig)return;shiftSig=s;
-  crewList();crewHtml="";crewBoard();renderSched();renderDC();myEq();renderYard();
+  crewList();crewHtml="";crewBoard();renderSched();renderDC();myEq();renderYard();renderTV();
   if(!$("signin").hidden)renderSignIn();
 }
 setInterval(function(){onShiftChange(false);if(curView==="sched")renderSched()},60000);
@@ -4264,6 +4335,66 @@ function ydAdd(){var i=$("yd_in"),t=i.value.trim();if(!t){i.focus();return}if(!y
   var p={},now=Date.now();p["n/y"+now.toString(36)]={tx:t.slice(0,200),by:ME&&!ME.admin?ME.name:"",t:now};upd(YARD_ID,p);i.value="";i.focus()}
 $("yd_go").onclick=ydAdd;
 $("yd_in").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();ydAdd()}});
+/* ---- Shop TV board (v92): a full-screen, read-only board for the office desktop.
+   Open from the menu, or bookmark the app with #tv on the end to open straight into it.
+   Columns: Loading now | Waiting (in the lead's order) | Done this shift | Railcars, Yard notes, Crew.
+   The layout redraws when data changes; clocks and timers update every second; long columns
+   scroll by themselves. Keeps the screen awake where the browser allows. Esc or Exit closes it. ---- */
+var TV=false,TV_AUTO=/(^#tv$)|([?&]tv\b)/.test(location.hash+location.search),tvSig="",tvLock=null,tvScrollT=null;
+function tvOpen(){TV=true;tvSig="";$("tv").hidden=false;document.documentElement.classList.add("tvon");renderTV();tvWake();
+  if(!tvScrollT)tvScrollT=setInterval(tvScroll,60);try{if(location.hash!=="#tv")history.replaceState(null,"","#tv")}catch(e){}}
+function tvClose(){TV=false;$("tv").hidden=true;document.documentElement.classList.remove("tvon");clearInterval(tvScrollT);tvScrollT=null;
+  try{if(tvLock)tvLock.release()}catch(e){}tvLock=null;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
+  try{if(location.hash==="#tv")history.replaceState(null,"",location.pathname+location.search.replace(/[?&]tv\b/,""))}catch(e){}}
+function tvWake(){try{if(TV&&navigator.wakeLock&&document.visibilityState==="visible")navigator.wakeLock.request("screen").then(function(l){tvLock=l}).catch(function(){})}catch(e){}}
+document.addEventListener("visibilitychange",function(){if(TV&&document.visibilityState==="visible")tvWake()});
+function tvTags(o){return (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(heelOf(o)?'<span class="heelt">HEEL</span>':'')}
+function tvLbt(o,now){if(!o.lbtAt)return '<span class="sbl mute">No LBT</span>';var m=(o.lbtAt-now)/60000;
+  return m<0?'<span class="sbl bad" data-tvlbt="'+esc(o.id)+'">Late '+hm(now-o.lbtAt)+'</span>':'<span class="sbl'+(m<30?' warn':'')+'" data-tvlbt="'+esc(o.id)+'">LBT '+T(o.lbtAt)+'</span>'}
+function tvCol(title,cnt,body,cls){return '<section class="sbc '+(cls||'')+'"><h2>'+title+(cnt!=null?' <span>'+cnt+'</span>':'')+'</h2><div class="sbb">'+body+'</div></section>'}
+function renderTV(){if(!TV)return;var now=Date.now(),cs=curShift(now);
+  var L=ORD.filter(function(o){return status(o)==="loading"}).sort(function(a,b){return a.startAt-b.startAt});
+  var W=ORD.filter(function(o){return status(o)==="waiting"}).sort(byQ),qset=W.some(function(o){return qoOf(o)});
+  var D=allDone().filter(function(o){return o.endAt>=cs.start}).sort(function(a,b){return b.endAt-a.endAt});
+  var R=DEMO?[]:rlRun(),Y=DEMO?[]:ydList(),as=dcAs(cs),on=dcOn(cs);
+  var acid=D.reduce(function(t,o){return t+(parseFloat(o.acidGal)||0)},0);
+  var sig=JSON.stringify([L,W,D.map(function(o){return [o.id,o.endAt,o.loader]}),R,Y,as,on,cs.start,DEMO,ROSTER,RCOL,acid]);if(sig===tvSig)return;tvSig=sig;
+  var h='<header class="sbh"><div class="sbt"><b>Tarquin Coolpro · Load Board</b><span>'+esc(shiftLabel(cs))+(DEMO?' · DEMO BOARD':'')+'</span></div>'+
+    '<div class="sbs"><div><b>'+L.length+'</b><span>Loading</span></div><div><b>'+W.length+'</b><span>Waiting</span></div><div><b>'+D.length+'</b><span>Done this shift</span></div><div><b>'+num(acid)+'</b><span>Gal acid pulled</span></div></div>'+
+    '<div class="sbk"><b id="tv_clock"></b><span id="tv_date"></span></div><div class="sbx"><button type="button" id="tv_fs">Full screen</button><button type="button" id="tv_exit">Exit</button></div></header><div class="sbg">';
+  h+=tvCol("Loading now",L.length,L.length?L.map(function(o){var ld=canonName(o.loader),id=esc(o.id),pz=isPz(o);
+    return '<div class="sbo'+(pz?' pz':'')+'" style="--lc:'+(ld?colOf(ld):'transparent')+'"><div class="sb1"><b>'+esc(o.name||"Unnamed order")+'</b>'+tvLbt(o,now)+'</div><div class="sb2">'+(ld?'<span class="sbn">'+esc(ld)+'</span>':'<span class="sbn none">No loader</span>')+'<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+tvTags(o)+'</div>'+
+      '<div class="sb3"><span class="sbtm" data-tvld="'+id+'"></span>'+(o.waterAt&&!o.waterDone?'<span class="sbw" data-tvw="'+id+'"></span>':'')+'</div>'+(o.notes?'<div class="sbnt">'+esc(o.notes)+'</div>':'')+'</div>'}).join(""):'<p class="sbno">Nothing loading.</p>',"sbld");
+  h+=tvCol("Waiting",W.length,W.length?W.map(function(o,i){var ld=canonName(o.loader);
+    return '<div class="sbo" style="--lc:'+(ld?colOf(ld):'transparent')+'"><div class="sb1">'+(qset&&qoOf(o)?'<span class="qpos'+(i===0?' nx':'')+'">'+(i===0?'NEXT':'#'+(i+1))+'</span>':'')+'<b>'+esc(o.name||"Unnamed order")+'</b>'+tvLbt(o,now)+'</div><div class="sb2">'+(ld?'<span class="sbn">'+esc(ld)+'</span>':'<span class="sbn none">No loader</span>')+'<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+tvTags(o)+'</div>'+(o.notes?'<div class="sbnt">'+esc(o.notes)+'</div>':'')+'</div>'}).join(""):'<p class="sbno">No orders waiting.</p>',"sbwt");
+  h+=tvCol("Done this shift",D.length,D.length?D.map(function(o){var ld=canonName(o.loader),df=o.lbtAt?o.lbtAt-o.endAt:null;
+    return '<div class="sbo sbd" style="--lc:'+(ld?colOf(ld):'transparent')+'"><div class="sb1"><b>'+esc(o.name||"Unnamed order")+'</b><span class="sbl'+(df!=null&&df<0?' bad':' ok')+'">'+(df==null?'Done '+T(o.endAt):df>=0?'Out '+hm(df)+' early':'Out '+hm(-df)+' late')+'</span></div><div class="sb2"><span class="sbn">'+esc(ld||"No loader")+'</span><span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span><span>'+(o.startAt?'took '+hm(loadMs(o)):'')+'</span></div></div>'}).join(""):'<p class="sbno">Nothing finished yet.</p>',"sbdn");
+  var side='';
+  side+='<h3>Railcars</h3>'+(R.length?R.map(function(x){return '<div class="sbr" data-tvrl="'+esc(x.id)+'"><div><b>Car '+esc(x.car)+'</b><small>'+(x.tk?esc(x.tk)+' tank · ':'')+'done by '+T(rlEnd(x))+'</small></div><span class="sbrc"></span></div>'}).join(""):'<p class="sbno">None offloading.</p>');
+  var yo=Y.filter(function(x){return !x.dn});
+  side+='<h3>Yard notes'+(Y.length?' <span>'+yo.length+' to do</span>':'')+'</h3>'+(Y.length?'<ul class="sby">'+Y.map(function(x){return '<li class="'+(x.dn?'dn':'')+'">'+(x.dn?'✓ ':'')+esc(x.tx)+(x.dn&&x.dn.n?' <small>'+esc(x.dn.n)+'</small>':'')+'</li>'}).join("")+'</ul>':'<p class="sbno">None this shift.</p>');
+  side+='<h3>Crew on shift</h3>'+(on.length?'<ul class="sbcr">'+on.map(function(n){var a=as[skey(n)],e=a?dcEqOf(a.e):null,ld=L.filter(function(o){return canonName(o.loader).toLowerCase()===n.toLowerCase()});
+    return '<li style="--lc:'+colOf(n)+'"><b>'+esc(n)+'</b>'+(e?'<small>'+esc(e.n)+'</small>':'')+'<span>'+(ld.length?(isPz(ld[0])?'Paused · ':'Loading · ')+esc(ld.map(function(o){return o.name||"load"}).join(", ")):'Not loading')+'</span></li>'}).join("")+'</ul>':'<p class="sbno">No one on the schedule.</p>');
+  h+=tvCol("Yard",null,side,"sbsd")+'</div>';
+  $("tv").innerHTML=h;tvTick(now)}
+function tvTick(now){if(!TV)return;var d=new Date(now),c=$("tv_clock");if(!c)return;
+  c.textContent=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",second:"2-digit"});$("tv_date").textContent=d.toLocaleDateString([],{weekday:"long",month:"short",day:"numeric"});
+  var q=function(sel,f){var a=$("tv").querySelectorAll(sel);for(var i=0;i<a.length;i++)f(a[i])};
+  q("[data-tvld]",function(e){var o=find(e.getAttribute("data-tvld"));if(!o)return;e.className="sbtm"+(isPz(o)?" pz":"");e.textContent=isPz(o)?"Paused "+mmss(now-o.pauseAt)+(o.pauseWhy?" · "+o.pauseWhy:""):"Loading "+hms(loadMs(o,now))});
+  q("[data-tvw]",function(e){var o=find(e.getAttribute("data-tvw"));if(!o||!o.waterAt)return;var r=wEnd(o,now)-now;e.className="sbw"+(r<=0?" over":"");e.textContent=r>0?(isPz(o)?"Water on hold ":"Water ")+mmss(r):"Water done";});
+  q("[data-tvrl]",function(e){var x=RAIL[e.getAttribute("data-tvrl")];if(!x)return;var over=rlEnd(x)<=now;e.classList.toggle("over",over);e.querySelector(".sbrc").textContent=over?rlLeft(x,now)+" past":rlLeft(x,now)});
+  q("[data-tvlbt]",function(e){var o=find(e.getAttribute("data-tvlbt"));if(!o||!o.lbtAt)return;var m=(o.lbtAt-now)/60000;e.className="sbl"+(m<0?" bad":m<30?" warn":"");e.textContent=m<0?"Late "+hm(now-o.lbtAt):"LBT "+T(o.lbtAt)})}
+/* Long columns scroll slowly by themselves, wait at the bottom, then start over */
+function tvScroll(){if(!TV)return;var bs=$("tv").querySelectorAll(".sbb");for(var i=0;i<bs.length;i++){var b=bs[i],max=b.scrollHeight-b.clientHeight;
+  if(max<=4){b.scrollTop=0;b._w=0;b._ph=0;continue}
+  if(b._w>0){b._w--;continue}
+  if(!b._ph){b._ph=1;b._w=80;continue}
+  if(b._ph===1){b.scrollTop=b.scrollTop+1;if(b.scrollTop>=max-1){b._ph=2;b._w=80}continue}
+  b.scrollTop=0;b._ph=0}}
+$("tv").addEventListener("click",function(e){var t=e.target;if(t.id==="tv_exit")tvClose();else if(t.id==="tv_fs"){try{if(document.fullscreenElement)document.exitFullscreen();else $("tv").requestFullscreen()}catch(x){}}});
+document.addEventListener("keydown",function(e){if(TV&&e.key==="Escape"&&!document.fullscreenElement)tvClose()});
+$("nav_tv").onclick=function(){setDrawer(false);tvOpen()};
+window.addEventListener("hashchange",function(){if(location.hash==="#tv"&&!TV&&gotData)tvOpen()});
 var HIST_ID="_hist",HIST={},HIST_KEEP=7*864e5,histPruned={};
 function setHist(o){
   var m={},old={},now=Date.now();

@@ -64,4 +64,6 @@ Pausing a load (v85) is saved on the order itself: `pauseAt` (start of the pause
 
 Waiting order (v90): a lead can set the order of waiting loads; each gets `qo` (1, 2, 3…). Sort waiting loads with `byQ` (loads with `qo` first, then by leave-by), not `byLbt`. Starting a load clears `qo`.
 
+Shop TV board (v92): a read-only, full-screen board for the office desktop (`tvOpen`, `renderTV`, menu **Shop TV board**, or the app address with `#tv`). Its CSS classes start with `sb` because `tv*` names already belong to the Turnover sheet. It redraws when data changes (signature check) and updates timers in `tvTick` from `tick()`.
+
 Changes to `_chat`, `_handoff`, `_presence` and `_hist` skip the board rebuild. `update` with `null` deletes a key.
