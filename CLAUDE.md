@@ -61,4 +61,6 @@ Path: `crews/<prefix+PIN>/orders/<id>`. Fixed keys live inside `orders` and have
 
 Pausing a load (v85) is saved on the order itself: `pauseAt` (start of the pause going now; null while loading), `pauseWhy`, `pauseBy`, `pausedMs` (total of finished pauses) and `pz` (`{pKEY:{a,b,w,by}}`, finished pauses; missing when empty). A paused load still has `status()` "loading"; check `isPz(o)`. Use `loadMs(o)` for load time (paused time left out) and `wEnd(o)` for when the water timer ends (it freezes while paused). Ending a paused load closes the pause through `pzClose`.
 
+Waiting order (v90): a lead can set the order of waiting loads; each gets `qo` (1, 2, 3…). Sort waiting loads with `byQ` (loads with `qo` first, then by leave-by), not `byLbt`. Starting a load clears `qo`.
+
 Changes to `_chat`, `_handoff`, `_presence` and `_hist` skip the board rebuild. `update` with `null` deletes a key.

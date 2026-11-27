@@ -677,6 +677,21 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
 .rpf{display:inline-block;margin:0 3px 2px 0;padding:0 5px;border-radius:3px;font:700 11px/1.6 var(--display);letter-spacing:.05em;background:var(--hl);color:var(--ink);border:1px solid var(--line)}
 .rpf.late,.rpf.cut{border-color:var(--bad);color:var(--bad);background:transparent}
 .rpt td.lo{color:var(--bad);font-weight:700}
+/* Waiting order (v90) */
+.qob{margin-left:auto;font:600 13px var(--body);letter-spacing:0;text-transform:none}
+.grp h2:has(.qob){display:flex;align-items:center;gap:8px}
+.qpos{flex:none;padding:0 6px;border-radius:3px;border:1px solid var(--line);font:700 13px/1.5 var(--display);letter-spacing:.06em;color:var(--mute)}
+.qpos.nx{background:var(--acc);border-color:var(--acc);color:var(--accink)}
+.orl1 .qpos+.oname{flex:1}
+.qol ol{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.qol li{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.qn{flex:none;width:28px;font:700 22px/1 var(--display);color:var(--acc);text-align:center}
+.qt{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.qt b{font:700 18px/1.15 var(--display);letter-spacing:.04em}
+.qt small{font-size:13px;color:var(--mute)}
+.qb{flex:none;display:flex;gap:4px}
+.qb button{min-width:44px;min-height:44px;padding:0 8px;font-size:16px}
+.qb button:disabled{opacity:.35}
 .hssh{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
 .hssh small{font:500 13px var(--body);letter-spacing:0;text-transform:none;color:var(--mute)}
 .hssh span{margin-left:auto;font:600 13px var(--body);letter-spacing:0;text-transform:none;color:var(--mute)}
@@ -1336,6 +1351,14 @@ button.go{font:700 17px/1 var(--display);letter-spacing:.08em;text-transform:upp
       <li>To remove one, open it, tap <b>Details</b> at the bottom, then <span class="kb">Remove</span>. Only leads see these buttons.</li>
     </ol>
   </details>
+  <details><summary>Setting the order of waiting loads</summary>
+    <ol>
+      <li>Tap <span class="kb">Set order</span> on the Waiting heading of the Load Log (leads, and anyone who can add orders).</li>
+      <li>Use <span class="kb">▲</span> and <span class="kb">▼</span> to move a load up or down, or <span class="kb">Top</span> to put it first. It saves as you go and every phone sees it. Tap <span class="kb">Done</span> when you're finished.</li>
+      <li>Waiting loads then show their place in line, and the first one shows <b>NEXT</b>. Tarquino, the Shift Handoff and the Shift Report use the same order. New orders go to the end, after the ones you placed, by leave-by time.</li>
+      <li>Starting a load takes it out of line. <span class="kb">Back to leave-by order</span> clears the order you set.</li>
+    </ol>
+  </details>
   <details><summary>Shift Report</summary>
     <ol>
       <li>Open the menu and tap <span class="kb">Shift Report</span> (leads and managers). Pick <b>This shift</b>, <b>Last shift</b>, <b>Today</b>, <b>Last 24 h</b> or <b>7 days</b>.</li>
@@ -1474,6 +1497,27 @@ function lbtFrom(s){if(!s||s.indexOf(":")<0)return null;var p=s.split(":"),d=new
 function tval(ms){if(!ms)return "";var d=new Date(ms);return pad(d.getHours())+":"+pad(d.getMinutes())}
 function status(o){return o.endAt?"done":o.startAt?"loading":"waiting"}
 function byLbt(a,b){return (a.lbtAt||9e15)-(b.lbtAt||9e15)}
+/* Waiting order (v90): a lead can set the order waiting loads go in (qo = 1, 2, 3… on each waiting
+   load). Loads with a spot come first in that order; the rest follow by leave-by. Starting a load
+   clears its spot. QPOS = each waiting load's place in line when an order is set. */
+function qoOf(o){var v=+o.qo;return v>0?v:0}
+function byQ(a,b){var x=qoOf(a),y=qoOf(b);if(x&&y)return x-y;if(x||y)return x?-1:1;return byLbt(a,b)}
+var QO_MODE=false,QPOS={};
+function qoWait(){return ORD.filter(function(o){return status(o)==="waiting"}).sort(byQ)}
+function qoSet(list){if(!can()||!perm("add"))return;list.forEach(function(o,i){if(qoOf(o)!==i+1)upd(o.id,{qo:i+1})})}
+function qoHtml(){var w=qoWait();
+  if(!w.length)return '<p class="gn">No orders waiting.</p><div class="acts"><button type="button" class="go" data-qo="off">Done</button></div>';
+  return '<div class="qol"><p class="note">Put the loads in the order they should go. It saves as you go, and every phone sees it.</p><ol>'+w.map(function(o,i){var id=esc(o.id),ld=canonName(o.loader);
+    return '<li><span class="qn">'+(i+1)+'</span><span class="qt"><b>'+esc(o.name||"Unnamed order")+'</b><small>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+(ld?' · '+esc(ld):'')+(o.lbtAt?' · LBT '+T(o.lbtAt):'')+'</small></span>'+
+      '<span class="qb"><button type="button" data-qmv="top" data-id="'+id+'"'+(i?'':' disabled')+' aria-label="Move '+esc(o.name||"load")+' to the top">Top</button><button type="button" data-qmv="up" data-id="'+id+'"'+(i?'':' disabled')+' aria-label="Move '+esc(o.name||"load")+' up">▲</button><button type="button" data-qmv="dn" data-id="'+id+'"'+(i<w.length-1?'':' disabled')+' aria-label="Move '+esc(o.name||"load")+' down">▼</button></span></li>'}).join("")+'</ol>'+
+    '<div class="acts"><button type="button" class="go" data-qo="off">Done</button><button type="button" data-qo="reset">Back to leave-by order</button></div></div>'}
+function qoClick(b){var a=b.getAttribute("data-qo"),mv=b.getAttribute("data-qmv");
+  if(a==="on"){QO_MODE=true;build();return true}
+  if(a==="off"){QO_MODE=false;build();return true}
+  if(a==="reset"){if(!can()||!perm("add"))return true;ORD.forEach(function(o){if(o.qo!=null)upd(o.id,{qo:null})});QO_MODE=false;build();toast("Waiting loads are back in leave-by order.");return true}
+  if(mv){var w=qoWait(),id=b.getAttribute("data-id"),i=-1;w.forEach(function(o,j){if(o.id===id)i=j});if(i<0)return true;
+    var o=w.splice(i,1)[0],to=mv==="top"?0:mv==="up"?Math.max(0,i-1):Math.min(w.length,i+1);w.splice(to,0,o);qoSet(w);return true}
+  return false}
 
 var TP_MOVED={};
 var ORD=[],OPEN={},editing={},rmId=null,clrArm=false,timers={},deb={},q={},pendingBuild=false;
@@ -1630,7 +1674,7 @@ var WOPEN={};
 function viewCard(o){
   var st=status(o),b="",id=esc(o.id),w=can(),ld=canonName(o.loader),op=!!OPEN[o.id],hl=heelOf(o);
   var row='<button type="button" class="orow" data-act="toggle" data-id="'+id+'" aria-expanded="'+op+'" style="--lc:'+(ld?colOf(ld):'transparent')+'"><span class="lcb"></span><span class="orm">'+
-    '<span class="orl1"><span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
+    '<span class="orl1">'+(QPOS[o.id]&&st==="waiting"?'<span class="qpos'+(QPOS[o.id]===1?' nx':'')+'">'+(QPOS[o.id]===1?'NEXT':'#'+QPOS[o.id])+'</span>':'')+'<span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
     (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+(isPz(o)?'<span class="pzt">PAUSED</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span>'+
@@ -1714,20 +1758,23 @@ function build(){
   var me=ME&&!ME.admin&&can()?ME.name.toLowerCase():"";
   function mine(o){if(!me)return false;var n=canonName(o.loader);if(!n||n.toLowerCase()!==me)return false;if(status(o)!=="done")return true;var m=missing(o);return m.acid||m.water}
   function rank(o){var s=status(o);return s==="loading"?0:s==="done"?1:2}
+  QPOS={};var qw=qoWait();if(qw.some(function(o){return qoOf(o)}))qw.forEach(function(o,i){QPOS[o.id]=i+1});
+  var qoCan=can()&&perm("add");if(!qoCan)QO_MODE=false;
   /* Search: keeps loads whose trailer, ticket, BOL, loader or notes contain what's typed */
   var q=$("srch").value.trim().toLowerCase();
   $("srchw").hidden=!ORD.length;$("srchx").hidden=!q;
   function hit(o){return [o.name,o.ticket,o.bol,canonName(o.loader),o.notes,halText(o)].some(function(v){return String(v||"").toLowerCase().indexOf(q)>=0})}
-  var os=q?ORD.filter(hit):ORD;srHits=os;var M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||byLbt(a,b)}),rest=os.filter(function(o){return !mine(o)});
+  var os=q?ORD.filter(hit):ORD;srHits=os;var M=os.filter(mine).sort(function(a,b){return rank(a)-rank(b)||(rank(a)===2?byQ(a,b):byLbt(a,b))}),rest=os.filter(function(o){return !mine(o)});
   var L=rest.filter(function(o){return status(o)==="loading"}).sort(byLbt),
-      W=rest.filter(function(o){return status(o)==="waiting"}).sort(byLbt),
+      W=rest.filter(function(o){return status(o)==="waiting"}).sort(byQ),
       D=rest.filter(function(o){return status(o)==="done"}).sort(function(a,b){return b.endAt-a.endAt});
   if(M.length&&OPEN[M[0].id]===undefined)OPEN[M[0].id]=true;
   var h="";
   [["Your loads",M,"",true,"mine"],["Loading now",L,"Nothing loading right now.",false,"gld"],["Waiting",W,"No orders waiting.",false,"gwt"],["Done",D,"Nothing finished yet.",false,"gdn"]].forEach(function(g){
     if(g[3]&&!g[1].length)return;
-    h+='<section class="grp '+g[4]+(g[1].length?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+'</h2>'+
-      (g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
+    var qg=g[4]==="gwt"&&!q;
+    h+='<section class="grp '+g[4]+(g[1].length||(qg&&QO_MODE)?'':' none')+'"><h2>'+g[0]+(g[3]?' <span class="mnm">· '+esc(ME.name)+'</span>':'')+(g[1].length?' <span class="cnt">'+g[1].length+'</span>':'')+(qg&&qoCan&&!QO_MODE&&qw.length>1?'<button type="button" class="small qob" data-qo="on">Set order</button>':'')+'</h2>'+
+      (qg&&QO_MODE?qoHtml():g[1].length?g[1].map(function(o){return editing[o.id]&&can()?editCard(o):viewCard(o)}).join(""):'<p class="gn">'+g[2]+'</p>')+'</section>'});
   if(q)h=(os.length?'<p class="srn">'+os.length+' of '+ORD.length+' loads match “'+esc(q)+'”</p>'+h:'<div class="empty">No loads match “'+esc(q)+'”.</div>');
   else if(!os.length)h='<div class="empty">'+(can()&&perm("add")?'No orders yet. Tap Add an order to log the first one. Everyone with this page open will see it.':'No orders yet.')+'</div>';
   $("list").innerHTML=h;
@@ -1964,7 +2011,7 @@ function doAct(a,id,why){
     else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
     return}
   rmId=null;
-  if(a==="start"){var sp={startAt:Date.now(),endAt:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
+  if(a==="start"){var sp={startAt:Date.now(),endAt:null,qo:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
   else if(a==="end"){var ep={endAt:Date.now()};if(isPz(o))Object.assign(ep,pzClose(o,ep.endAt));upd(id,ep);openFin(id)}
   else if(a==="pause"){if(status(o)!=="loading"||isPz(o))return;delete WT_ARM[id];upd(id,{pauseAt:Date.now(),pauseWhy:why||null,pauseBy:ME&&!ME.admin?ME.name:""})}
   else if(a==="resume"){if(!isPz(o))return;upd(id,pzClose(o,Date.now()))}
@@ -2204,7 +2251,7 @@ function buildText(){
   return rows.map(function(r){return r.map(cell).join("\t")}).join("\n");
 }
 
-$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}
+$("list").onclick=function(e){var b=e.target.closest?e.target.closest("button"):null;if(!b)return;if(qoClick(b))return;var a=b.getAttribute("data-act"),id=b.getAttribute("data-id");if(a==="toggle"){openCard(id,!OPEN[id]);return}
   if(a==="qc"){qcOpen(id,b.getAttribute("data-q"));return}
   if(a==="copy"){copyLoad(id);return}
   if(a==="pzwhy"){var po=find(id);if(po&&isPz(po)&&can()){var pw=b.getAttribute("data-w");upd(id,{pauseWhy:po.pauseWhy===pw?null:pw})}return}
@@ -2696,10 +2743,10 @@ function hoLoads(){
   var cs=curShift(),run=[],wait=[],miss=[],dn=0,acid=0;
   ORD.forEach(function(o){var st=status(o),b={n:o.name||"Unnamed order",l:canonName(o.loader)||"",p:prodName(o),g:parseFloat(o.gal)||0,tk:o.ticket||""};
     if(st==="loading"){b.st=o.startAt;if(isPz(o)){b.pz=o.pauseAt;if(o.pauseWhy)b.pw=o.pauseWhy}run.push(b)}
-    else if(st==="waiting"){b.lbt=o.lbtAt||null;wait.push(b)}
+    else if(st==="waiting"){b.lbt=o.lbtAt||null;if(qoOf(o))b.q=qoOf(o);wait.push(b)}
     else{var m=missing(o);if(m.acid||m.water){b.w=m.acid&&m.water?"acid + water":m.acid?"acid":"water";miss.push(b)}
       if(o.endAt>=cs.start){dn++;acid+=parseFloat(o.acidGal)||0}}});
-  wait.sort(function(a,b){return (a.lbt||9e15)-(b.lbt||9e15)});
+  wait.sort(function(a,b){return byQ({qo:a.q,lbtAt:a.lbt},{qo:b.q,lbtAt:b.lbt})});
   return {run:run,wait:wait,miss:miss,dn:dn,acid:Math.round(acid)};
 }
 function hoLoadsHtml(ld,at){
@@ -3278,7 +3325,7 @@ function askBoard(q){
   if(/\b(pulled|acid used|acid this shift|used this shift|how much acid.*(shift|today))\b/.test(q))return {h:num(ld.acid)+' <small>gal of 36% acid pulled</small>',d:'<p class="asn">From '+ld.dn+' finished load'+(ld.dn===1?'':'s')+' this '+(cs.s==="D"?"day":"night")+' shift (acid loaded amounts).'+(ld.miss.length?' '+ld.miss.length+' finished load'+(ld.miss.length===1?' is':'s are')+' still missing amounts.':'')+'</p>'};
   if(/\b(done|finished|completed)\b/.test(q)&&/\b(how many|loads|shift|today)\b/.test(q))return {h:ld.dn+' <small>load'+(ld.dn===1?'':'s')+' finished this shift</small>',d:'<p class="asn">'+num(ld.acid)+' gal of acid pulled.</p>'};
   if(/\b(loading|in progress|going)\b/.test(q)&&!/\bgallons? loaded\b/.test(q)){var run=ORD.filter(function(o){return status(o)==="loading"});return {h:run.length+' <small>loading now</small>',d:run.length?'<ul>'+run.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul>':'<p class="asn">Nothing is loading.</p>'}}
-  if(/\b(waiting|next|queue|up next|lined up|to load)\b/.test(q)){var w=ORD.filter(function(o){return status(o)==="waiting"}).sort(function(a,b){return (a.lbtAt||9e15)-(b.lbtAt||9e15)});return {h:w.length+' <small>waiting</small>',d:w.length?'<ul>'+w.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul>':'<p class="asn">Nothing waiting.</p>'}}
+  if(/\b(waiting|next|queue|up next|lined up|to load)\b/.test(q)){var w=ORD.filter(function(o){return status(o)==="waiting"}).sort(byQ);return {h:w.length+' <small>waiting</small>',d:w.length?'<ul>'+w.map(function(o){return '<li>'+askLoadLine(o)+'</li>'}).join("")+'</ul>':'<p class="asn">Nothing waiting.</p>'}}
   if(/\b(missing|need amounts|needs acid|needs water)\b/.test(q)){return {h:ld.miss.length+' <small>finished, missing amounts</small>',d:ld.miss.length?'<ul>'+ld.miss.map(function(b){return '<li><b>'+esc(b.n)+'</b> · needs '+b.w+(b.tk?' · ticket '+esc(b.tk):'')+'</li>'}).join("")+'</ul>':'<p class="asn">All finished loads have amounts.</p>'}}
   if(/\b(who|on shift|working)\b/.test(q)&&/\b(shift|working|on)\b/.test(q)){var on=ROSTER.filter(function(n){return n.toLowerCase()!=="admin"&&shiftState(n,cs).on});return {h:on.length+' <small>on '+(cs.s==="D"?"day":"night")+' shift</small>',d:'<p class="asn">'+(on.length?on.map(esc).join(", "):"No one on the schedule.")+'</p>'}}
   return null;
@@ -4269,7 +4316,7 @@ function repHtml(k,forPrint){
     if(split){var hf=Math.ceil(dn.length/2);h+='<h3>Finished loads</h3><div class="rp2"><table class="rpt">'+fhead+dn.slice(0,hf).map(frow).join("")+'</table><table class="rpt">'+fhead+dn.slice(hf).map(frow).join("")+'</table></div>'}
     else h+='<h3>Finished loads</h3><div class="rpw"><table class="rpt">'+fhead+dn.map(frow).join("")+'</table></div>';
   }
-  if(P.open){var ld=ORD.filter(function(o){return status(o)==="loading"}),wt=ORD.filter(function(o){return status(o)==="waiting"}).sort(byLbt);
+  if(P.open){var ld=ORD.filter(function(o){return status(o)==="loading"}),wt=ORD.filter(function(o){return status(o)==="waiting"}).sort(byQ);
     var oh2='<tr><th>Trailer</th><th>Status</th><th>Loader</th><th>Product</th><th class="n">Gal</th><th>Leave by</th></tr>',all2=ld.concat(wt);
     var orow=function(o){var st=status(o);return '<tr><td>'+esc(o.name||"–")+'</td><td>'+(st==="loading"?(isPz(o)?'Paused'+(o.pauseWhy?' ('+esc(o.pauseWhy)+')':'')+' · '+hm(loadMs(o,now))+' loaded':'Loading '+hm(loadMs(o,now))):'Waiting')+'</td><td>'+esc(canonName(o.loader)||"–")+'</td><td>'+esc(prodName(o))+'</td><td class="n">'+(o.gal?num(o.gal):'–')+'</td><td>'+(o.lbtAt?T(o.lbtAt)+(o.lbtAt<now?' (late)':''):'–')+'</td></tr>'};
     if(forPrint&&all2.length>8){var ho=Math.ceil(all2.length/2);h+='<h3>Still open now</h3><div class="rp2"><table class="rpt">'+oh2+all2.slice(0,ho).map(orow).join("")+'</table><table class="rpt">'+oh2+all2.slice(ho).map(orow).join("")+'</table></div>'}
