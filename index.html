@@ -1334,7 +1334,7 @@ html.tvon,html.tvon body{overflow:hidden}
     <figure class="hx" aria-hidden="true" inert><div class="hxb"><div class="ord vc waiting open"><button type="button" class="orow" aria-expanded="true" style="--lc:#d9600f" tabindex="-1"><span class="lcb"></span><span class="orm"><span class="orl1"><span class="oname">Trailer 214</span><span class="chip">LBT 3:45 PM</span></span><span class="orl2"><span class="lp">Sam</span><span>5,000 gal 15% HCl</span><span>Ticket 4412</span><span class="rsx"></span></span></span><span class="chev" aria-hidden="true">›</span></button><div class="obody"><div class="qch"><button type="button" class="qcb" tabindex="-1"><small>Gallons ✎</small><b>5,000</b></button><button type="button" class="qcb" tabindex="-1"><small>Leave by ✎</small><b>3:45 PM</b></button><button type="button" class="qcb" tabindex="-1"><small>Ticket ✎</small><b>4412</b></button><button type="button" class="qcb" tabindex="-1"><small>BOL ✎</small><b>88120</b></button><button type="button" class="qcb qhl" tabindex="-1"><small>Heel ✎</small><b>No heel · tap to add</b></button></div><div class="split"><p class="sl">Needs</p><div class="sg"><div><span>Water</span><b>3,060 <small>gal</small></b></div><div><span>36% acid</span><b>1,940 <small>gal</small></b></div></div></div><details class="wck"><summary><span class="wst">Weight check</span><span class="wsm"><span class="wsn">Enter scale-in weight</span></span></summary></details><div class="tm2"><span class="tmr">Not started</span><button type="button" class="go" tabindex="-1" data-n="1">Start load</button></div><button type="button" class="wtbtn" tabindex="-1" data-n="2"><b>Start water timer · 35:48</b><small>3,060 gal ÷ 75 gpm − 5 min buffer</small></button><details class="wck omore"><summary><span class="wst">Details</span><span class="wsm"><span class="wsn">Sam · Texas · BOL 88120</span></span></summary></details></div></div></div><ol class="hxl"><li><i>1</i><span>Tap Start load. The timer starts</span></li><li><i>2</i><span>Loads that need water: tap the blue water timer when the water starts</span></li></ol></figure>
     <ol>
       <li>Open the order and tap <span class="kb">Start load</span>. The timer starts.</li>
-      <li>If no loader is named yet, your name is filled in. You can change it in the Loader box.</li>
+      <li>If no loader is named yet, your name is filled in. You can change it in the Loader box. Managers and dispatch logins are never filled in as the loader.</li>
       <li>Started the wrong one? Open <b>Details</b> at the bottom of the load and tap <span class="kb">Undo start</span>.</li>
       <li>Loads that need water have a blue <b>water timer</b> button. Tap it when the water starts. It counts down the water gallons ÷ 75 gpm, minus 5 minutes so you have time to get back to the water tower. The countdown also shows on the load's row, and your phone buzzes when the water should be done. Water done before the timer, for example because the timer was started late? Tap the timer twice and it ends right away. The status shows <b>Water finished</b>. Started it by mistake? Tap <span class="kb">Cancel timer</span> twice.</li>
     </ol>
@@ -2160,6 +2160,9 @@ function flushKey(k){
 }
 function flushAll(id){var n=0;Object.keys(deb).forEach(function(k){if(id==null||deb[k].id===id)n+=flushKey(k)});return n}
 var LD_KEY="tcw-loadlog-loader";
+/* Office logins (v95): Admin, managers and anyone given Dispatcher view who isn't a lead never get
+   their own name filled in as the loader (Add order, after saving, or when they start a load). */
+function isOffice(){if(!ME)return false;if(ME.admin||ME.mgr)return true;var k=ME.name.toLowerCase(),p=RPERM[k];return !RLEAD[k]&&!!(p&&p.dsp)}
 function rememberLoader(v){try{localStorage.setItem(LD_KEY,String(v||"").trim())}catch(e){}}
 try{$("a_ld").value=localStorage.getItem(LD_KEY)||""}catch(e){}
 function setField(id,f,v){if(f==="loader")rememberLoader(v);
@@ -2176,7 +2179,7 @@ function doAct(a,id,why){
     else askPin("Enter the lead PIN to remove this load.","Remove load",rmGo);
     return}
   rmId=null;
-  if(a==="start"){var sp={startAt:Date.now(),endAt:null,qo:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null};if(!o.loader&&ME&&!ME.admin&&!ME.mgr)sp.loader=ME.name;upd(id,sp)}
+  if(a==="start"){var sp={startAt:Date.now(),endAt:null,qo:null,pauseAt:null,pauseWhy:null,pauseBy:null,pausedMs:null,pz:null};if(!o.loader&&ME&&!isOffice())sp.loader=ME.name;upd(id,sp)}
   else if(a==="end"){var ep={endAt:Date.now()};if(isPz(o))Object.assign(ep,pzClose(o,ep.endAt));upd(id,ep);openFin(id)}
   else if(a==="pause"){if(status(o)!=="loading"||isPz(o))return;delete WT_ARM[id];upd(id,{pauseAt:Date.now(),pauseWhy:why||null,pauseBy:ME&&!ME.admin?ME.name:""})}
   else if(a==="resume"){if(!isPz(o))return;upd(id,pzClose(o,Date.now()))}
@@ -2398,7 +2401,7 @@ function addOrder(){
   if(st){data.startAt=pastTime(st);if(en){var ee=atTime(en,data.startAt);if(ee<data.startAt)ee+=864e5;data.endAt=ee}}
   var nid=DL.newId();
   enqueue(nid,function(){return DL.set(nid,data)});
-  rememberLoader(data.loader);$("a_ld").value=ME&&!ME.admin?ME.name:data.loader;
+  rememberLoader(data.loader);$("a_ld").value=isOffice()?"":ME&&!ME.admin?ME.name:data.loader;
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";$("a_tp").checked=false;updState();
   HAL_N.forEach(function(k){$("a_hn"+k).value="";$("a_ha"+k).value=""});$("a_hal").checked=false;$("a_halw").hidden=true;
@@ -2508,7 +2511,7 @@ function fillAdd(s){
   HAL_N.forEach(function(k,i){$("a_hn"+k).value=s.hal[i][0];$("a_ha"+k).value=s.hal[i][1]||""});
   updSplit();addMoreSum();
 }
-function openAdd(){$("addp").hidden=false;renderRepeat();addMoreSum()}
+function openAdd(){$("addp").hidden=false;if(isOffice()&&ME&&canonName($("a_ld").value).toLowerCase()===ME.name.toLowerCase())$("a_ld").value="";renderRepeat();addMoreSum()}
 /* Copy on a load: Add order filled in from it; only the trailer, ticket and leave-by are left */
 function copyLoad(id){
   var o=find(id);if(!o||!can()||!perm("add"))return;
@@ -3163,7 +3166,7 @@ function applyAuth(){
   if(saved&&!nm&&gotData){try{localStorage.removeItem(USER_KEY)}catch(e){}}  /* removed from the roster: signed out */
   var was=ME&&ME.name;
   ME=nm?{name:nm,lead:adm||!!mg||!!RLEAD[nm.toLowerCase()],admin:adm,mgr:!!mg}:null;
-  if(ME&&ME.name!==was&&$("addp").hidden)$("a_ld").value=adm||mg?"":ME.name;
+  if(ME&&$("addp").hidden&&(ME.name!==was||isOffice()&&$("a_ld").value===ME.name))$("a_ld").value=isOffice()?"":ME.name;
   var w=$("who");w.hidden=!ME&&!needSignIn();
   $("who_t").innerHTML=ME?'<b>'+esc(ME.name)+'</b>'+(adm?'Admin on this phone':ME.mgr?'Management on this phone':ME.lead?'Lead on this phone':'Signed in on this phone'):'<b>Not signed in</b>';
   $("who_sw").textContent=ME?"Switch person":"Sign in";
