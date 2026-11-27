@@ -1046,6 +1046,7 @@ html.tvon,html.tvon body{overflow:hidden}
       <div class="full arep" id="a_rep" hidden></div>
       <div class="full"><label class="f" for="a_name">Trailer or customer</label><input id="a_name" type="text" autocomplete="off" placeholder="Trailer number or customer"></div>
       <div class="full"><label class="f" for="a_prod">Product</label><select id="a_prod"></select></div>
+      <div class="full" id="a_j2w" hidden><label class="chk j2chk"><input id="a_j2" type="checkbox"> J2 load (original CableShield batch)</label></div>
       <div class="full cxw" id="a_cx" hidden><div class="g2">
         <div class="full"><label class="f" for="a_rcp">Saved recipe</label><select id="a_rcp"></select></div>
         <div class="full"><label class="f" for="a_cn">Blend name</label><input id="a_cn" type="text" autocomplete="off" placeholder="e.g. 7.5% CableShield"></div>
@@ -1187,7 +1188,7 @@ html.tvon,html.tvon body{overflow:hidden}
   </div>
   <div class="cr">
   <div id="cout"></div>
-  <p class="note">Blend factors come from the CableShield charts effective 11/10/2026 and the Acid Dilution Chart, and are scaled to any gallon amount. Results match the printed rows. Check against your chart before loading. Weights (lb per gallon) can be changed on the Load Weight page.</p>
+  <p class="note">J2 tabs use the original CableShield chart (water, 36% acid and Y007). Blend factors come from the CableShield charts effective 11/10/2026 and the Acid Dilution Chart, and are scaled to any gallon amount. Results match the printed rows. Check against your chart before loading. Weights (lb per gallon) can be changed on the Load Weight page.</p>
   </div>
 </div></main>
 <main id="v-lw" class="calc" hidden><div class="wrap">
@@ -1442,6 +1443,7 @@ html.tvon,html.tvon body{overflow:hidden}
       <li>BOL # goes next to Ticket #. Put special instructions in <b>Notes / special instructions</b>: they show in blue on the load so the loader sees them.</li>
       <li>Halliburton chems, the loadout sheet box and start and end times for a load that already happened are under <b>More</b>. When it's closed, the More bar shows anything filled in there.</li>
       <li>To add another load like one on the board, open it, tap <b>Details</b>, then <span class="kb">Copy</span>. Add order opens filled in from it, so you only type the new trailer, ticket and leave-by.</li>
+      <li><b>J2 loads</b> use the original CableShield batch (36% acid, water and Y007 only). Pick <b>CableShield 100%</b> or <b>CableShield 33%</b> and tick <b>J2 load (original CableShield batch)</b> under Product. Needs, the weight check, the load weight window and the reports then use the J2 chart, and the load shows a <b>CS · J2</b> tag. You can also tick or untick it later under Edit.</li>
       <li>Blended order, like a CableShield batch cut with water? Pick <b>Custom blend</b> under Product. Enter a blend name, the base batch product and gallons, and the water added after. Needs shows the water, acid and chemicals for the whole load. Tap <span class="kb">Save as recipe</span> to keep it: next time pick it under <b>Saved recipe</b> and it scales to the total gallons. If the load is too heavy, every part is cut back evenly.</li>
       <li>Trailer came back with product in it? Tick <b>Heel?</b> under Third party driver, pick the heel product and enter its gallons. Found a heel after the order was added? Open the load and tap the <b>Heel ✎</b> box under the other ✎ boxes. Its acid and water come off what the load needs, and the weight check counts it as already in the trailer.</li>
       <li>Halliburton load? Open <b>More</b>, tick <b>Halliburton chems</b> and fill in up to 3 chems, each with its name and amount in gallons. They show on the order and are a record only. They don't change the acid and water math.</li>
@@ -1583,7 +1585,8 @@ html.tvon,html.tvon body{overflow:hidden}
 </div>
 <script src="config.js"></script>
 <script>
-var PRODUCTS=[["acid","36% acid"],["32","32% HCl"],["28","28% HCl"],["20","20% HCl"],["15","15% HCl"],["10","10% HCl"],["7.5","7.5% HCl"],["5","5% HCl"],["cs100","CableShield 100%"],["cs33","CableShield 33%"],["other","Other"]];
+var PRODUCTS=[["acid","36% acid"],["32","32% HCl"],["28","28% HCl"],["20","20% HCl"],["15","15% HCl"],["10","10% HCl"],["7.5","7.5% HCl"],["5","5% HCl"],["cs100","CableShield 100%"],["cs33","CableShield 33%"],["j100","CableShield 100% · J2 original"],["j33","CableShield 33% · J2 original"],["other","Other"]];
+var J2OF={cs100:"j100",cs33:"j33"},J2B={j100:"cs100",j33:"cs33"};
 var $=function(i){return document.getElementById(i)};
 function pad(n){return (n<10?"0":"")+n}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -1623,13 +1626,25 @@ var ORD=[],OPEN={},editing={},rmId=null,clrArm=false,timers={},deb={},q={},pendi
 var DL=null,canWrite=true,ro=false,loadTimer=null,msgT=null,gotData=false,online=false;
 function can(){return !ro&&canWrite!==false}
 
-$("a_prod").innerHTML=PRODUCTS.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join("")+'<option value="custom">Custom blend</option>';
-function opts(sel,lbl){return (cxOf(sel)?'<option value="'+esc(sel)+'" selected>'+esc(lbl||"Custom blend")+'</option>':'')+PRODUCTS.map(function(p){return '<option value="'+p[0]+'"'+(p[0]===sel?" selected":"")+'>'+p[1]+'</option>'}).join("")}
+$("a_prod").innerHTML=PRODUCTS.filter(function(p){return !isJ2(p[0])}).map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>'}).join("")+'<option value="custom">Custom blend</option>';
+function opts(sel,lbl,noJ){if(noJ)sel=j2Base(sel);return (cxOf(sel)?'<option value="'+esc(sel)+'" selected>'+esc(lbl||"Custom blend")+'</option>':'')+PRODUCTS.filter(function(p){return !(noJ&&isJ2(p[0]))}).map(function(p){return '<option value="'+p[0]+'"'+(p[0]===sel?" selected":"")+'>'+p[1]+'</option>'}).join("")}
 function setSync(cls,txt){var s=$("sync");s.className="sync "+cls;s.lastChild.textContent=txt}
 function toast(t){var m=$("msg");m.textContent=t;m.hidden=false;clearTimeout(msgT);msgT=setTimeout(function(){m.hidden=true},6000)}
 
 var DIL={5:[.123,.877],7.5:[.187,.813],10:[.253,.747],15:[.388,.612],20:[.53,.47],28:[.75,.25],32:[.88,.12]};
 var CSB={cs100:{hcl:15,f:{hcl:.97,y7:.01,y7a:.003,a272:.017}},cs33:{hcl:5,f:{hcl:.99,y7:.01/3,y7a:.001,a272:.017/3}}};
+/* J2 loads (v93) use the original CableShield batch: 36% acid + water + Y007 only, no 15% HCl step and
+   no Y007A or A272. From the J2 chart: 100% = 39.2% acid, 2.74% Y007, the rest water (5,000 gal =
+   1,960 acid, 137 Y007, 2,903 water); 33% is a third of that. f.hcl = acid + water share,
+   d = how that acid + water splits (acid, water). Orders store prod "j100" / "j33"; the order form
+   shows CableShield 100% / 33% plus a "J2 load" tick box (J2OF / J2B map between them). */
+(function(){function j(x){var a=.392*x,y=.0274*x,w=1-a-y;return {j2:1,f:{hcl:a+w,y7:y,y7a:0,a272:0},d:[a/(a+w),w/(a+w)]}}CSB.j100=j(1);CSB.j33=j(.33)})();
+function j2Key(base,on){return on&&J2OF[base]?J2OF[base]:base}
+function j2Base(k){return J2B[k]||k}
+function isJ2(k){return !!J2B[k]}
+function csD(k){var b=CSB[k];return b.d||DIL[b.hcl]}
+function csBlendName(k){return CSB[k].j2?"acid and water":CSB[k].hcl+"% HCl blend"}
+function csChemTxt(c){return [["Y007",c.y7],["Y007A",c.y7a],["A272",c.a272]].filter(function(x){return x[1]>0}).map(function(x){return x[0]+" "+gf(x[1])}).join(" · ")}
 function gf(n){var d=n<1?3:(n<500?2:1);return n.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d})}
 /* Custom blends: the product key carries the recipe, "x:<base product>:<base share>".
    e.g. "x:cs100:0.25" = 1 part CableShield 100% batch, then 3 parts water. Everything scales
@@ -1645,12 +1660,12 @@ function splitOf(prod,gal){
     var bg=gal*cx.f,aw=gal-bg,bs=splitOf(cx.b,bg),pt=[],hw=false;
     bs.parts.forEach(function(p){if(p[0]==="Water"){pt.push(["Water",p[1]+aw]);hw=true}else pt.push(p)});
     if(!hw)pt.unshift(["Water",aw]);
-    var hd="Make "+gf(bg)+" gal of "+pname(cx.b)+" first"+(CSB[cx.b]?" ("+gf(bg*CSB[cx.b].f.hcl)+" gal of "+CSB[cx.b].hcl+"% HCl, then the chemicals)":"")+", then add "+gf(aw)+" gal of water";
+    var hd="Make "+gf(bg)+" gal of "+pname(cx.b)+" first"+(CSB[cx.b]?(CSB[cx.b].j2?" (36% acid and water, then Y007)":" ("+gf(bg*CSB[cx.b].f.hcl)+" gal of "+CSB[cx.b].hcl+"% HCl, then the chemicals)"):"")+", then add "+gf(aw)+" gal of water";
     return {acid:bs.acid,head:hd,parts:pt};
   }
   if(prod==="acid")return {acid:gal,head:"",parts:[["36% acid",gal]]};
   if(DIL[prod]){var d=DIL[prod];return {acid:gal*d[0],head:"",parts:[["Water",gal*d[1]],["36% acid",gal*d[0]]]}}
-  if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d2=DIL[b.hcl];return {acid:hg*d2[0],head:"Blend "+gf(hg)+" gal of "+b.hcl+"% HCl first, then the chemicals",parts:[["Water",hg*d2[1]],["36% acid",hg*d2[0]],["Y007",gal*b.f.y7],["Y007A",gal*b.f.y7a],["A272",gal*b.f.a272]]}}
+  if(CSB[prod]){var b=CSB[prod],hg=gal*b.f.hcl,d2=csD(prod);return {acid:hg*d2[0],head:b.j2?"J2 original batch: water, then 36% acid, then Y007":"Blend "+gf(hg)+" gal of "+b.hcl+"% HCl first, then the chemicals",parts:[["Water",hg*d2[1]],["36% acid",hg*d2[0]],["Y007",gal*b.f.y7],["Y007A",gal*b.f.y7a],["A272",gal*b.f.a272]].filter(function(x){return x[1]>0||x[0]==="Water"||x[0]==="36% acid"})}}
   return null;
 }
 /* Heel: product left in a trailer that comes back. Its acid and water are already in the
@@ -1685,8 +1700,8 @@ function wtFor(prod,o){
   if(cx){var bw=wtFor(cx.b,o);if(!bw)return null;return {w:Math.round((cx.f*bw.w+(1-cx.f)*W.water)*1000)/1000,est:bw.est}}
   if(prod==="acid")return {w:W.acid,est:""};
   if(W[prod]>0&&prod!=="water")return {w:W[prod],est:""};
-  if(prod==="cs100")return {w:W[15],est:"15% HCl"};
-  if(prod==="cs33")return {w:W[5],est:"5% HCl"};
+  if(prod==="cs100"||prod==="j100")return {w:W[15],est:"15% HCl"};
+  if(prod==="cs33"||prod==="j33")return {w:W[5],est:"5% HCl"};
   var c=parseFloat(o&&o.wtPerGal);return c>0?{w:c,est:""}:null;
 }
 /* Weight limits: New Mexico loads, and any load hauled by a third party driver, 80,000 max (aim 79,000).
@@ -1776,7 +1791,7 @@ function viewCard(o){
     '<span class="orl1">'+(QPOS[o.id]&&st==="waiting"?'<span class="qpos'+(QPOS[o.id]===1?' nx':'')+'">'+(QPOS[o.id]===1?'NEXT':'#'+QPOS[o.id])+'</span>':'')+'<span class="oname">'+esc(o.name||"Unnamed order")+'</span><span class="chip" id="c-'+id+'"></span></span>'+
     '<span class="orl2">'+(ld?'<span class="lp">'+esc(ld)+'</span>':'<span class="lp none">No loader</span>')+
     '<span>'+(o.gal?num(o.gal)+' gal ':'')+esc(prodName(o))+'</span>'+(o.ticket?'<span>Ticket '+esc(o.ticket)+'</span>':'')+
-    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+(isPz(o)?'<span class="pzt">PAUSED</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span>'+
+    (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">'+(isJ2(o.prod)?'CS · J2':'CS')+'</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(hl?'<span class="heelt">HEEL</span>':'')+(isPz(o)?'<span class="pzt">PAUSED</span>':'')+'<span class="wtc" id="wr-'+id+'" hidden></span><span class="rsx" id="rs-'+id+'"></span></span>'+
     (o.notes?'<span class="orl3"><b>Note</b>'+esc(o.notes)+'</span>':'')+'</span><span class="chev" aria-hidden="true">›</span></button>';
   /* 0. Notes / special instructions first, in a box that can't be missed (v82) */
   if(o.notes)b+='<div class="ntb"><p class="ntl">Special instructions</p><p class="nt">'+esc(o.notes)+'</p></div>';
@@ -1835,7 +1850,8 @@ function editCard(o){
   var i=esc(o.id);
   return '<div class="ord'+(o.state==="NM"?' nm':isTP(o)?' tp':'')+'" id="o-'+i+'"><div class="g2">'+
    '<div class="full"><label class="f" for="e_name'+i+'">Trailer or customer</label><input id="e_name'+i+'" data-f="name" data-id="'+i+'" type="text" value="'+esc(o.name)+'"></div>'+
-   '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod,prodName(o))+'</select></div>'+
+   '<div class="full"><label class="f" for="e_prod'+i+'">Product</label><select id="e_prod'+i+'" data-f="prod" data-id="'+i+'">'+opts(o.prod,prodName(o),true)+'</select></div>'+
+   '<div class="full" id="e_j2w'+i+'"'+(J2OF[j2Base(o.prod)]?'':' hidden')+'><label class="chk j2chk"><input type="checkbox" data-j2="'+i+'"'+(isJ2(o.prod)?' checked':'')+'> J2 load (original CableShield batch)</label></div>'+
    (cxOf(o.prod)?'<div class="full"><label class="f" for="e_cn'+i+'">Blend name</label><input id="e_cn'+i+'" data-f="cname" data-id="'+i+'" type="text" value="'+esc(o.cname||"")+'"></div><p class="note full">Changing the total gallons keeps the same recipe. To change the recipe, remove this order and add it again.</p>':'')+
    '<div><label class="f" for="e_gal'+i+'">Total gallons (ticket)</label><input id="e_gal'+i+'" data-f="gal" data-id="'+i+'" type="number" inputmode="decimal" min="0" step="any" value="'+esc(o.gal)+'"></div>'+
    '<div><label class="f" for="e_lbt'+i+'">Leave by (LBT)</label><input id="e_lbt'+i+'" data-f="lbt" data-id="'+i+'" type="time" value="'+tval(o.lbtAt)+'"></div>'+
@@ -2159,7 +2175,7 @@ function ticketWater(prod,tg){
   var cx=cxOf(prod);
   if(cx){var bw=cx.b==="acid"?0:ticketWater(cx.b,tg*cx.f);return bw==null?null:bw+tg*(1-cx.f)}
   if(DIL[prod])return tg*DIL[prod][1];
-  if(CSB[prod]){var hb=tg-csChems(prod,tg,tg).total;return hb>0?hb*DIL[CSB[prod].hcl][1]:null}
+  if(CSB[prod]){var hb=tg-csChems(prod,tg,tg).total;return hb>0?hb*csD(prod)[1]:null}
   return null;
 }
 /* tw: gallons the water is based on when it isn't the ticket (a load cut for weight) */
@@ -2174,7 +2190,7 @@ function finSplit(prod,gal,tg,hw,tw){
   var hg=gal;
   if(CSB[prod]){hg=gal-csChems(prod,gal,tg).total;if(!(hg>0))return null}
   else if(!DIL[prod])return null;
-  var d=DIL[DIL[prod]?prod:CSB[prod].hcl],w=ticketWater(prod,tw>0?tw:tg);
+  var d=DIL[prod]||csD(prod),w=ticketWater(prod,tw>0?tw:tg);
   /* Heel water is already in the trailer, so less water goes in */
   if(w!=null&&hw>0)w=Math.max(0,w-hw);
   if(w==null)return {acid:hg*d[0],water:hg*d[1],fromTicket:false};
@@ -2202,8 +2218,8 @@ function finCalc(){
     /* Show the exact chemicals coming off before the acid/water split (the split uses the HCl blend only) */
     var hb=gal-c.total;
     oh+='<div class="fr"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>'+
-      '<div class="fr"><span>− CableShield chemicals<small>Y007 '+gf(c.y7)+' · Y007A '+gf(c.y7a)+' · A272 '+gf(c.a272)+(c.fromTicket?' · for '+gf(c.base)+' gal '+(cxOf(prod)?'batch':'ticket'):' · no ticket gallons, scaled')+'</small></span><b>−'+gf(c.total)+' gal</b></div>'+
-      (hb>0?'<div class="fr big"><span>= '+(CSB[prod]?CSB[prod].hcl+'% HCl blend':'Acid and water')+'</span><b>'+gf(hb)+' gal</b></div>':'<p class="er">The scale shows less than the chemicals alone. Check the weights.</p>');
+      '<div class="fr"><span>− CableShield chemicals<small>'+csChemTxt(c)+(c.fromTicket?' · for '+gf(c.base)+' gal '+(cxOf(prod)?'batch':'ticket'):' · no ticket gallons, scaled')+'</small></span><b>−'+gf(c.total)+' gal</b></div>'+
+      (hb>0?'<div class="fr big"><span>= '+(CSB[prod]?csBlendName(prod).replace(/^a/,"A"):'Acid and water')+'</span><b>'+gf(hb)+' gal</b></div>':'<p class="er">The scale shows less than the chemicals alone. Check the weights.</p>');
   }else oh+='<div class="fr big"><span>Gallons loaded</span><b>'+gf(gal)+' gal</b></div>';
   if(s&&s.fromTicket){
     oh+='<div class="fr"><span>− Water '+(cg?'for cut load':'from ticket')+'<small>'+(cg?'cut to '+gf(cg)+' gal for weight, ticket '+gf(tg):gf(tg)+' gal ticket')+(hw>0?', less '+gf(hw)+' gal heel water':'')+'</small></span><b>−'+gf(s.water)+' gal</b></div>'+
@@ -2256,7 +2272,7 @@ $("a_cb").innerHTML=PRODUCTS.filter(function(p){return p[0]!=="other"}).map(func
 $("a_cb").value="cs100";
 function r2(v){return Math.round(v*100)/100}
 function cxForm(){var b=$("a_cb").value,bg=parseFloat($("a_cbg").value)||0,aw=parseFloat($("a_caw").value)||0,t=bg+aw;return t>0&&bg>0?{key:cxKey(b,bg/t),t:t,f:bg/t,b:b}:null}
-function aProd(){if($("a_prod").value!=="custom")return $("a_prod").value;var c=cxForm();return c?c.key:""}
+function aProd(){var v=$("a_prod").value;if(v!=="custom")return j2Key(v,J2OF[v]&&$("a_j2").checked);var c=cxForm();return c?c.key:""}
 function renderRecipes(){
   var sel=rcpPend||$("a_rcp").value,ids=Object.keys(RCP).sort(function(a,b){return String(RCP[a].n).localeCompare(String(RCP[b].n),undefined,{sensitivity:"base"})});
   $("a_rcp").innerHTML='<option value="">New blend (type it in)</option>'+ids.map(function(k){return '<option value="'+esc(k)+'">'+esc(RCP[k].n)+'</option>'}).join("");
@@ -2265,7 +2281,7 @@ function renderRecipes(){
 }
 function updSplit(){
   var hl=$("a_heel").checked?heelOf({heelGal:$("a_heelg").value,heelProd:$("a_heelp").value}):null,pk=aProd();
-  $("a_cx").hidden=$("a_prod").value!=="custom";
+  $("a_cx").hidden=$("a_prod").value!=="custom";$("a_j2w").hidden=!J2OF[$("a_prod").value];
   $("a_split").innerHTML=pk?splitHtml(pk,$("a_gal").value,pk==="acid"?"Requested":"Needs",hl):'<p class="note">Enter the base batch and the water to see what it needs.</p>';
 }
 $("a_prod").onchange=function(){
@@ -2273,7 +2289,7 @@ $("a_prod").onchange=function(){
   updSplit();
 };
 ["a_cbg","a_caw"].forEach(function(i){$(i).oninput=function(){var c=cxForm();if(c)$("a_gal").value=r2(c.t);updSplit()}});
-$("a_cb").onchange=updSplit;
+$("a_cb").onchange=updSplit;$("a_j2").onchange=updSplit;
 $("a_gal").oninput=function(){
   if($("a_prod").value==="custom"){var c=cxForm(),t=parseFloat($("a_gal").value)||0;if(c&&t>0){var bg=r2(t*c.f);$("a_cbg").value=bg;$("a_caw").value=r2(t-bg)}}
   updSplit();
@@ -2322,7 +2338,7 @@ function addOrder(){
   var cxf=$("a_prod").value==="custom"?cxForm():null;
   if($("a_prod").value==="custom"&&!cxf){toast("Enter the base batch and the water for the custom blend.");return}
   if(cxf)gal=cxf.t;
-  var data={loader:canonName($("a_ld").value),name:$("a_name").value.trim(),prod:cxf?cxf.key:$("a_prod").value,gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
+  var data={loader:canonName($("a_ld").value),name:$("a_name").value.trim(),prod:cxf?cxf.key:aProd(),gal:gal>0?gal:0,ticket:$("a_tk").value.trim(),bol:$("a_bl").value.trim(),notes:$("a_nt").value.trim(),lbtAt:lbtFrom($("a_lbt").value),startAt:null,endAt:null,state:$("a_state").value,onSheet:$("a_sh").checked,createdAt:Date.now()};
   if($("a_tp").checked)data.tp=true;
   if(cxf)data.cname=$("a_cn").value.trim()||"Custom blend";
   if($("a_heel").checked){var hgv=parseFloat($("a_heelg").value);if(hgv>0){data.heelGal=hgv;data.heelProd=$("a_heelp").value}}
@@ -2336,7 +2352,7 @@ function addOrder(){
   ["a_name","a_tk","a_bl","a_nt","a_lbt","a_st","a_en"].forEach(function(i){$(i).value=""});
   $("a_sh").checked=true;$("a_state").value="TX";$("a_tp").checked=false;updState();
   HAL_N.forEach(function(k){$("a_hn"+k).value="";$("a_ha"+k).value=""});$("a_hal").checked=false;$("a_halw").hidden=true;
-  $("a_heel").checked=false;$("a_heelw").hidden=true;$("a_heelg").value="";$("a_heelp").value="20";updSplit();
+  $("a_heel").checked=false;$("a_heelw").hidden=true;$("a_heelg").value="";$("a_heelp").value="20";$("a_j2").checked=false;updSplit();
   $("a_more").open=false;addMoreSum();
   $("addp").hidden=true;
 }
@@ -2379,7 +2395,8 @@ $("list").addEventListener("pointerdown",function(e){
 });
 ["pointerup","pointercancel","pointerleave"].forEach(function(t){$("list").addEventListener(t,function(e){if(holdB&&(t!=="pointerleave"||e.target===holdB))holdStop(t==="pointerup"&&!holdDone)},true)});
 $("list").addEventListener("contextmenu",function(e){if(e.target.closest&&e.target.closest("button.hold"))e.preventDefault()});
-function onEdit(e){if(e.target.getAttribute("data-f")==="tp"){if(e.type==="change"){var ti=e.target.getAttribute("data-id"),to=find(ti);if(to&&isTP(to)!==e.target.checked){var tpp={tp:e.target.checked};if(to.state==="TP")tpp.state="TX";upd(ti,tpp)}}return}
+function onEdit(e){var j2i=e.target.getAttribute("data-j2");if(j2i!=null){if(e.type==="change"){var jo=find(j2i),sp=$("e_prod"+j2i);if(jo&&sp&&J2OF[sp.value]){var nk=j2Key(sp.value,e.target.checked);if(nk!==jo.prod)upd(j2i,{prod:nk})}}return}
+  if(e.target.getAttribute("data-f")==="tp"){if(e.type==="change"){var ti=e.target.getAttribute("data-id"),to=find(ti);if(to&&isTP(to)!==e.target.checked){var tpp={tp:e.target.checked};if(to.state==="TP")tpp.state="TX";upd(ti,tpp)}}return}
   var ek=e.target.getAttribute("data-heel");if(ek!=null){if(e.type!=="change")return;var ew=$("e_heelw"+ek),eon=e.target.checked;if(ew)ew.hidden=!eon;
     if(eon){var ep=$("e_heelp"+ek);if(ep)setField(ek,"heelProd",ep.value)}
     else{Object.keys(deb).forEach(function(d){if(deb[d].id===ek&&(deb[d].f==="heelGal"||deb[d].f==="heelProd")){clearTimeout(deb[d].t);delete deb[d]}});var eg=$("e_heelg"+ek);if(eg)eg.value="";var eo=find(ek);if(eo&&(eo.heelGal!=null||eo.heelProd!=null))upd(ek,{heelGal:null,heelProd:null})}
@@ -2389,6 +2406,7 @@ function onEdit(e){if(e.target.getAttribute("data-f")==="tp"){if(e.type==="chang
     if(!hon){var hp={};HAL_N.forEach(function(k){hp["hn"+k]=null;hp["ha"+k]=null;Object.keys(deb).forEach(function(d){if(deb[d].id===hk&&(deb[d].f==="hn"+k||deb[d].f==="ha"+k)){clearTimeout(deb[d].t);delete deb[d]}})});if(hw)hw.querySelectorAll("input").forEach(function(x){x.value=""});if(halHas(find(hk)||{}))upd(hk,hp)}
     return}var f=e.target.getAttribute("data-f");if(f==="onSheet"){if(e.type==="change"){var id=e.target.getAttribute("data-id"),o=find(id);if(o&&(o.onSheet!==false)!==e.target.checked)upd(id,{onSheet:e.target.checked})}return}var eid=e.target.getAttribute("data-id");
   if(f==="state"){setField(eid,f,e.target.value);flushAll(eid);return}
+  if(f==="prod"){var jw=$("e_j2w"+eid),jb=jw&&jw.querySelector("input");if(jw)jw.hidden=!J2OF[e.target.value];if(e.type!=="change")return;setField(eid,f,j2Key(e.target.value,jb&&jb.checked));flushAll(eid);return}
   if(f==="lightWt"||f==="wtPerGal")nmUpdate(eid);
   if(f)setField(eid,f,e.target.value)}
 $("list").oninput=onEdit;$("list").onchange=onEdit;
@@ -2433,7 +2451,7 @@ $("a_rep").onclick=function(e){var b=e.target.closest?e.target.closest("button[d
 function fillAdd(s){
   var cx=cxOf(s.prod);
   if(cx){$("a_prod").value="custom";$("a_rcp").value="";$("a_rdel").hidden=true;$("a_cn").value=s.cname||"Custom blend";$("a_cb").value=cx.b;var bg=r2(s.gal*cx.f);$("a_cbg").value=bg;$("a_caw").value=r2(s.gal-bg)}
-  else $("a_prod").value=s.prod;
+  else{$("a_prod").value=j2Base(s.prod);$("a_j2").checked=isJ2(s.prod)}
   $("a_gal").value=r2(s.gal);
   $("a_state").value=s.state;$("a_tp").checked=!!s.tp;updState();
   var hh=s.hal.some(function(x){return x[0]||x[1]});$("a_hal").checked=hh;$("a_halw").hidden=!hh;
@@ -3264,7 +3282,9 @@ var $=function(i){return document.getElementById("c"+i)};
 var DIL={5:[.123,.877],7.5:[.187,.813],10:[.253,.747],15:[.388,.612],20:[.53,.47],28:[.75,.25],32:[.88,.12]};
 var BL={
  c100:{name:"CableShield 100%",hcl:15,f:{hcl:.97,y7:.01,y7a:.003,a272:.017}},
- c33:{name:"CableShield 33%",hcl:5,f:{hcl:.99,y7:.01/3,y7a:.001,a272:.017/3}}
+ c33:{name:"CableShield 33%",hcl:5,f:{hcl:.99,y7:.01/3,y7a:.001,a272:.017/3}},
+ j100:{name:"CableShield 100% · J2 original",j2:1,x:1},
+ j33:{name:"CableShield 33% · J2 original",j2:1,x:.33}
 };
 var DEF={acid:9.85,water:8.34,5:8.5,7.5:8.6,10:8.7,15:9.0,20:9.2,28:9.5,32:9.68};
 var W=Object.assign({},DEF);
@@ -3274,14 +3294,14 @@ function fmt(n){var d=n<1?3:(n<500?2:1);return n.toLocaleString("en-US",{minimum
 function lb(n){return Math.round(n).toLocaleString("en-US")+" lb"}
 function row(name,gal,wt,cls){var m=/^(\d)\. (.*)/.exec(name),b="";if(m){b='<i class="b">'+m[1]+'</i>';name=m[2]}return '<div class="row '+(cls||"")+'"><span class="n">'+b+'<span class="t">'+name+(wt!=null?'<span class="w">'+lb(wt)+'</span>':'')+'</span></span><span class="v">'+fmt(gal)+' <small>gal</small></span></div>'}
 function rowu(name,val,unit,cls,sub){return '<div class="row '+(cls||"")+'"><span class="n"><span class="t">'+name+(sub?'<span class="w">'+sub+'</span>':'')+'</span></span><span class="v">'+val+' <small>'+unit+'</small></span></div>'}
-var PN=[["acid","36%"],["32","32%"],["28","28%"],["20","20%"],["15","15%"],["10","10%"],["7.5","7.5%"],["5","5%"],["cs100","CableShield 100%"],["cs33","CableShield 33%"]];
+var PN=[["acid","36%"],["32","32%"],["28","28%"],["20","20%"],["15","15%"],["10","10%"],["7.5","7.5%"],["5","5%"],["cs100","CableShield 100%"],["cs33","CableShield 33%"],["j100","CS 100% J2"],["j33","CS 33% J2"]];
 var customW=false;
 function rp(){$("pr").innerHTML=PN.map(function(p){return '<button data-k="'+p[0]+'" aria-pressed="'+(prodKey===p[0])+'">'+p[1]+'</button>'}).join("")}
 /* Same math as the load weight window at the end of a load: CableShield chemicals come off
    first (exact ticket amounts), water comes from the ticket, acid is the rest. */
 function calcLw(){
-  var est=prodKey==="cs100"?"15% HCl":prodKey==="cs33"?"5% HCl":"";
-  if(!customW)$("cw").value=prodKey==="acid"?W.acid:prodKey==="cs100"?W[15]:prodKey==="cs33"?W[5]:W[prodKey];
+  var big=prodKey==="cs100"||prodKey==="j100",sm=prodKey==="cs33"||prodKey==="j33",est=big?"15% HCl":sm?"5% HCl":"";
+  if(!customW)$("cw").value=prodKey==="acid"?W.acid:big?W[15]:sm?W[5]:W[prodKey];
   var L=parseFloat($("lt").value),H=parseFloat($("hv").value),P=parseFloat($("cw").value),tg=parseFloat($("tg").value)||0;
   var msg=function(t){$("out2").innerHTML='<div class="order">'+t+'</div>'};
   if(!(L>=0)||!(H>=0)){msg("Enter the light weight and the heavy weight.");return}
@@ -3292,9 +3312,9 @@ function calcLw(){
   var s=finSplit(prodKey,gl,tg);
   if(CSB[prodKey]){
     var ch=csChems(prodKey,gl,tg),hb=gl-ch.total;
-    h+=rowu("− CableShield chemicals","−"+fmt(ch.total),"gal","sub","Y007 "+gf(ch.y7)+" · Y007A "+gf(ch.y7a)+" · A272 "+gf(ch.a272)+(ch.fromTicket?" · for "+gf(ch.base)+" gal ticket":" · no ticket gallons, scaled"));
+    h+=rowu("− CableShield chemicals","−"+fmt(ch.total),"gal","sub",csChemTxt(ch)+(ch.fromTicket?" · for "+gf(ch.base)+" gal ticket":" · no ticket gallons, scaled"));
     if(!(hb>0)){h+='<div class="order">The scale shows less than the chemicals alone. Check the weights.</div>';$("out2").innerHTML=h;return}
-    h+=rowu("= "+CSB[prodKey].hcl+"% HCl blend",fmt(hb),"gal");
+    h+=rowu("= "+csBlendName(prodKey).replace(/^a/,"A"),fmt(hb),"gal");
   }
   if(s&&s.fromTicket){
     h+=rowu("− Water from ticket","−"+fmt(s.water),"gal","sub",gf(tg)+" gal ticket");
@@ -3316,7 +3336,12 @@ function calcDil(){
   h+=row("Water",w,w*W.water)+row("36% acid",a,a*W.acid);
   h+=row("Total "+pct+"% HCl",G,G*W[pct],"tot");
  }else{
-  var b=BL[mode],f=b.f,hg=G*f.hcl,d2=DIL[b.hcl],a2=hg*d2[0],w2=hg*d2[1];
+  var b=BL[mode];
+  if(b.j2){var ja=G*.392*b.x,jy=G*.0274*b.x,jw=G-ja-jy;
+   h+='<div class="order">J2 original batch: water, then 36% acid, then Y007. No 15% HCl step, no Y007A or A272.</div>';
+   h+=row("1. Water",jw,jw*W.water)+row("2. 36% acid",ja,ja*W.acid)+row("3. Y007",jy);
+   h+=row("Total "+b.name,G,null,"tot");$("out").innerHTML=h;return}
+  var f=b.f,hg=G*f.hcl,d2=DIL[b.hcl],a2=hg*d2[0],w2=hg*d2[1];
   h+='<div class="order">Blend the '+b.hcl+'% HCl first. Then add Y007, then Y007A, then A272.</div>';
   h+=row("1. "+b.hcl+"% HCl",hg,hg*W[b.hcl]);
   h+=row("Water",w2,w2*W.water,"sub")+row("36% acid",a2,a2*W.acid,"sub");
@@ -3327,7 +3352,7 @@ function calcDil(){
 }
 function calc(){calcDil();calcLw()}
 function tabs(){
- var t=[["dil","Acid dilution"],["c100","CableShield 100%"],["c33","CableShield 33%"]];
+ var t=[["dil","Acid dilution"],["c100","CableShield 100%"],["c33","CableShield 33%"],["j100","CS 100% · J2"],["j33","CS 33% · J2"]];
  $("tabs").innerHTML=t.map(function(x){return '<button data-m="'+x[0]+'" aria-pressed="'+(mode===x[0])+'">'+x[1]+'</button>'}).join("");
  $("pcts").style.display=mode==="dil"?"flex":"none";
  rp();
@@ -3389,13 +3414,13 @@ function askEx(){$("ask_ex").innerHTML=ASK_EX.map(function(t){return '<button ty
 /* Product named in the question: a saved recipe, CableShield, or an HCl strength */
 function askProd(q){
   var k=null;Object.keys(RCP).forEach(function(id){var r=RCP[id];if(!k&&r.n&&q.indexOf(r.n.toLowerCase())>=0)k={key:cxKey(r.b,r.f),name:r.n}});if(k)return k;
-  if(/cable ?shield|\bcs ?(100|33)\b|\bcs\b/.test(q))return /33/.test(q)?{key:"cs33"}:{key:"cs100"};
+  if(/cable ?shield|\bcs ?(100|33)\b|\bcs\b|jtwo|\bj ?2\b/.test(q)){var j2=/jtwo|\bj ?2\b|original/.test(q);return /33/.test(q)?{key:j2?"j33":"cs33"}:{key:j2?"j100":"cs100"}}
   var m,re=/(\d+(?:\.\d+)?)\s*(?:%|percent|pct)/g;while((m=re.exec(q))){var v=String(parseFloat(m[1]));if(ASK_PRODS[v])return {key:ASK_PRODS[v]}}
   if(/\b(straight|raw|full strength|concentrated)\b|\b36\b/.test(q))return {key:"acid"};
   return null;
 }
 /* Every number in the question, with what it most likely is (light/heavy/system weight, gallons...) */
-function askNums(q){
+function askNums(q){q=String(q).replace(/\bj ?2\b/g,"jtwo");
   var out=[],re=/(\d[\d,]*(?:\.\d+)?)\s*(k\b)?/g,m,last=0;
   while((m=re.exec(q))){
     var v=parseFloat(m[1].replace(/,/g,""));if(m[2])v*=1000;
@@ -4348,7 +4373,7 @@ function tvClose(){TV=false;$("tv").hidden=true;document.documentElement.classLi
   try{if(location.hash==="#tv")history.replaceState(null,"",location.pathname+location.search.replace(/[?&]tv\b/,""))}catch(e){}}
 function tvWake(){try{if(TV&&navigator.wakeLock&&document.visibilityState==="visible")navigator.wakeLock.request("screen").then(function(l){tvLock=l}).catch(function(){})}catch(e){}}
 document.addEventListener("visibilitychange",function(){if(TV&&document.visibilityState==="visible")tvWake()});
-function tvTags(o){return (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">CS</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(heelOf(o)?'<span class="heelt">HEEL</span>':'')}
+function tvTags(o){return (o.state==="NM"?'<span class="nmt">NM</span>':'')+(isTP(o)?'<span class="tpt">3P</span>':'')+(isCS(o.prod)?'<span class="cst">'+(isJ2(o.prod)?'CS · J2':'CS')+'</span>':'')+(halHas(o)?'<span class="halt">HAL</span>':'')+(heelOf(o)?'<span class="heelt">HEEL</span>':'')}
 function tvLbt(o,now){if(!o.lbtAt)return '<span class="sbl mute">No LBT</span>';var m=(o.lbtAt-now)/60000;
   return m<0?'<span class="sbl bad" data-tvlbt="'+esc(o.id)+'">Late '+hm(now-o.lbtAt)+'</span>':'<span class="sbl'+(m<30?' warn':'')+'" data-tvlbt="'+esc(o.id)+'">LBT '+T(o.lbtAt)+'</span>'}
 function tvCol(title,cnt,body,cls){return '<section class="sbc '+(cls||'')+'"><h2>'+title+(cnt!=null?' <span>'+cnt+'</span>':'')+'</h2><div class="sbb">'+body+'</div></section>'}
@@ -4452,7 +4477,7 @@ function rpPeriod(k){
   return {a:cs.start,b:now,t:(cs.s==="D"?"Day":"Night")+" shift",open:true};
 }
 function rpDT(ms){return new Date(ms).toLocaleString([],{weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"})}
-function rpFlags(o){var f=[];if(o.state==="NM")f.push("NM");if(isTP(o))f.push("3P");if(isCS(o.prod))f.push("CS");if(halHas(o))f.push("HAL");if(heelOf(o))f.push("HEEL");
+function rpFlags(o){var f=[];if(o.state==="NM")f.push("NM");if(isTP(o))f.push("3P");if(isCS(o.prod))f.push(isJ2(o.prod)?"CS J2":"CS");if(halHas(o))f.push("HAL");if(heelOf(o))f.push("HEEL");
   if(o.lightWt&&wtCut(o,o.lightWt))f.push('<span class="rpf cut">CUT</span>');if(o.lbtAt&&o.endAt>o.lbtAt)f.push('<span class="rpf late">LATE</span>');
   return f.map(function(x){return x.charAt(0)==="<"?x:'<span class="rpf">'+x+'</span>'}).join("")}
 /* Loader stats (v87): one row per loader for the report period. Load times leave out paused time.
